@@ -9,6 +9,7 @@ import User from './pages/User'
 import UserHandle from './pages/UserHandle'
 import CreateProfile from "./components/CreateProfile";
 import Button from './components/Button'
+import Follow from "./components/Follow";
 
 import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
 
@@ -38,6 +39,7 @@ function App() {
       { wallet.signer ? 'Connected' : <Button onClick={connectWallet}>Connect Wallet</Button> }
       <h1>Iris</h1>
       {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
+      {LensHubContract && <Follow wallet={wallet} contract={LensHubContract}/>}
       <Routes>
         <Route path="/" element={<div>Welcome to Iris</div>} />
         <Route path="user" element={<User/>} >
