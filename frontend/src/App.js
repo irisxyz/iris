@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { ethers } from 'ethers'
+import { useEffect, useState } from 'react'
 import { Routes, Route } from "react-router-dom"
 import styled from 'styled-components'
 
@@ -9,8 +8,8 @@ import ThemeProvider from './theme/ThemeProvider'
 import NotFound from './pages/NotFound'
 import User from './pages/User'
 import UserHandle from './pages/UserHandle'
+import Wallet from "./components/Wallet"
 import Login from "./components/Login"
-import Button from './components/Button'
 import Follow from "./components/Follow"
 
 const Container = styled.div`
@@ -33,28 +32,9 @@ const Navbar = styled.nav`
   margin-bottom: 1em;
 `
 
-const Wallet = styled.div`
-  border: #E2E4E8 1px solid;
-  border-radius: 100px;
-  padding: .3em .6em;
-`
-
 function App() {
   const [wallet, setWallet] = useState({})
-
-  const connectWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner()
-    const address = await signer.getAddress()
-  
-    provider.getBalance(address).then((balance) => {
-      // convert a currency unit from wei to ether
-      const balanceInEth = ethers.utils.formatEther(balance)
-      console.log(balanceInEth)
-      setWallet({...wallet, signer, address, balanceInEth})
-      })
-  }
+  const [authToken, setAuthToken] = useState(false)
 
   return (
     <ApolloProvider>
@@ -62,15 +42,10 @@ function App() {
         <Container>
           <Navbar>
             <h1>Iris</h1>
-            <div>
-              { wallet.signer
-              ? <Wallet>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Wallet>
-              : <Button onClick={connectWallet} >Connect Wallet</Button>
-              }
-            </div>
+            <Wallet wallet={wallet} setWallet={setWallet} authToken={authToken} />
           </Navbar>
           <GlobalStyle />
-          {wallet.address && <Login wallet={wallet} />}
+          {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
           {wallet.address && <Follow wallet={wallet} />}
           <Routes>
             <Route path="/" element={<div>Welcome to Iris</div>} />

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import Button from './Button'
 
@@ -31,12 +31,11 @@ const CREATE_PROFILE = gql`
 }
 `;
 
-function Login({ wallet }) {
-    const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE);
-    const [mutateAuth, authData] = useMutation(AUTHENTICATION);
-    const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
-
-    const [authToken, setAuthToken] = useState()
+function Login({ wallet, auth }) {
+    const [authToken, setAuthToken] = auth
+    const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE)
+    const [mutateAuth, authData] = useMutation(AUTHENTICATION)
+    const [createProfile, createProfileData] = useMutation(CREATE_PROFILE)
 
     const handleClick = async () => {
     
