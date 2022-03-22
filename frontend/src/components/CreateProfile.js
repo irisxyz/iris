@@ -8,7 +8,7 @@ function CreateProfile({ wallet, contract }) {
 
         const profile = {
             to: wallet.address,
-            handle: 'gaia',
+            handle: 'test1234',
             imageURI:
               'https://ipfs.fleek.co/ipfs/ghostplantghostplantghostplantghostplantghostplantghostplan',
             followModule: ZERO_ADDRESS,
