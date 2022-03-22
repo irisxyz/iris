@@ -31,7 +31,8 @@ const httpLink = new HttpLink({
 });
   
 const authLink = new ApolloLink((operation, forward) => {
-    const token = window.authToken;
+    // const token = window.authToken;
+    const token = window.sessionStorage.getItem('lensToken')
     console.log('jwt token:', token);
 
     // Use the setContext method to set the HTTP headers.
