@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { ethers } from 'ethers'
 import { Routes, Route, Link } from "react-router-dom";
 
+import GlobalStyle from './theme/GlobalStyle'
+import ThemeProvider from './theme/ThemeProvider'
 import NotFound from './pages/NotFound'
 import User from './pages/User'
 import UserHandle from './pages/UserHandle'
@@ -30,7 +32,8 @@ function App() {
   }
 
   return (
-    <div>
+    <ThemeProvider>
+      <GlobalStyle />
       { wallet.signer ? 'Connected' : <button onClick={connectWallet}>Connect Wallet</button> }
       <h1>Iris</h1>
       {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
@@ -41,7 +44,7 @@ function App() {
         </Route>
         <Route path="*" element={<NotFound/>} />
       </Routes>
-    </div>
+    </ThemeProvider>
   );
 }
 
