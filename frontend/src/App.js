@@ -1,19 +1,54 @@
 import { useState } from 'react'
 import { ethers } from 'ethers'
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+  ApolloProvider,
+} from "@apollo/client";
 
 import GlobalStyle from './theme/GlobalStyle'
 import ThemeProvider from './theme/ThemeProvider'
 import NotFound from './pages/NotFound'
 import User from './pages/User'
 import UserHandle from './pages/UserHandle'
-import CreateProfile from "./components/CreateProfile";
+import Login from "./components/Login";
 import Button from './components/Button'
 import Follow from "./components/Follow";
 
 import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
 
 let LensHubContract;
+
+const LENS_API = 'https://api-mumbai.lens.dev/';
+
+const httpLink = new HttpLink({
+    uri: LENS_API,
+    fetch,
+});
+  
+const authLink = new ApolloLink((operation, forward) => {
+    const token = window.authToken;
+    console.log('jwt token:', token);
+
+    // Use the setContext method to set the HTTP headers.
+    operation.setContext({
+        headers: {
+        'x-access-token': token ? `Bearer ${token}` : '',
+        },
+    });
+
+    // Call the next link in the middleware chain.
+    return forward(operation);
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 function App() {
   const [wallet, setWallet] = useState({})
@@ -34,20 +69,22 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <GlobalStyle />
-      { wallet.signer ? 'Connected' : <Button onClick={connectWallet}>Connect Wallet</Button> }
-      <h1>Iris</h1>
-      {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
-      {LensHubContract && <Follow wallet={wallet} contract={LensHubContract}/>}
-      <Routes>
-        <Route path="/" element={<div>Welcome to Iris</div>} />
-        <Route path="user" element={<User/>} >
-          <Route path=":handle" element={<UserHandle />} />
-        </Route>
-        <Route path="*" element={<NotFound/>} />
-      </Routes>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider>
+        <GlobalStyle />
+        { wallet.signer ? 'Connected' : <Button onClick={connectWallet}>Connect Wallet</Button> }
+        <h1>Iris</h1>
+        {LensHubContract && <Login wallet={wallet} contract={LensHubContract}/>}
+        {LensHubContract && <Follow wallet={wallet} contract={LensHubContract}/>}
+        <Routes>
+          <Route path="/" element={<div>Welcome to Iris</div>} />
+          <Route path="user" element={<User/>} >
+            <Route path=":handle" element={<UserHandle />} />
+          </Route>
+          <Route path="*" element={<NotFound/>} />
+        </Routes>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
 
