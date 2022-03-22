@@ -5,6 +5,8 @@ import CreateProfile from "./components/CreateProfile";
 
 import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
 
+let LensHubContract;
+
 function App() {
   const [wallet, setWallet] = useState({})
 
@@ -13,7 +15,7 @@ function App() {
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
     const address = await signer.getAddress()      
-    new ethers.Contract('0xa439225B4a4BF47b355Dd1d3e50D5Ba4984c1Db0', LensHub.abi, signer)
+    LensHubContract = new ethers.Contract('0xa439225B4a4BF47b355Dd1d3e50D5Ba4984c1Db0', LensHub.abi, signer)
   
     provider.getBalance(address).then((balance) => {
       // convert a currency unit from wei to ether
@@ -38,7 +40,7 @@ function App() {
         >
           Learn React. Find God.
         </a>
-        <CreateProfile/>
+        {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
       </header>
     </div>
   );
