@@ -5,6 +5,7 @@ import { useLazyQuery, useMutation } from '@apollo/client'
 import Button from './Button'
 import { GET_PROFILES } from '../utils/queries'
 import gradient from '../utils/gradients'
+import avatar from '../assets/avatar.png'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -14,7 +15,7 @@ const WalletContainer = styled.div`
 `
 
 const Address = styled.div`
-  border: #E2E4E8 1px solid;
+  border: #E2E4E8 2px solid;
   border-radius: 100px;
   height: 30px;
   display: flex;
@@ -25,7 +26,7 @@ const Address = styled.div`
 const WalletIcon = styled.div`
   height: 30px;
   width: 30px;
-  border: #E2E4E8 1px solid;
+  border: #E2E4E8 2px solid;
   border-radius: 100px;
   &:hover {
     cursor: pointer;
@@ -33,21 +34,23 @@ const WalletIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background: url(${avatar});
+  background-size: cover;
 `
 
 const AccountPicker = styled.div`
   position: absolute;
-  padding-top: 30px;
+  top: 38px;
   max-height: 100px;
-  right: 0;
+  right: -10px;
+  padding-right: 10px;
   width: 260px;
-  border: #E2E4E8 1px solid;
+  border: ${p=>p.theme.border};
   border-radius: 6px;
   background: ${p=>p.theme.background};
   z-index: -300;
   transition: all 300ms cubic-bezier(0.455, 0.030, 0.515, 0.955);
   ${p => !p.show && `
-    max-height: 0;
     opacity: 0;
   `}
 
@@ -65,7 +68,7 @@ const StyledProfile = styled.div`
 const Profile = ({ profile }) => {
   return <StyledProfile>
     {profile.handle}
-    <WalletIcon>{profile.handle[0]}</WalletIcon>
+    <WalletIcon/>
   </StyledProfile>
 }
 
