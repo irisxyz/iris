@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { ethers } from 'ethers'
+import { Routes, Route, Link } from "react-router-dom";
 
+import GlobalStyle from './theme/GlobalStyle'
+import ThemeProvider from './theme/ThemeProvider'
+import NotFound from './pages/NotFound'
+import User from './pages/User'
+import UserHandle from './pages/UserHandle'
 import CreateProfile from "./components/CreateProfile";
 
 import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
@@ -26,23 +32,19 @@ function App() {
   }
 
   return (
-    <div>
-      <header>
-        { wallet.signer ? 'Connected' : <button onClick={connectWallet}>Connect Wallet</button> }
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React. Find God.
-        </a>
-        {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
-      </header>
-    </div>
+    <ThemeProvider>
+      <GlobalStyle />
+      { wallet.signer ? 'Connected' : <button onClick={connectWallet}>Connect Wallet</button> }
+      <h1>Iris</h1>
+      {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
+      <Routes>
+        <Route path="/" element={<div>Welcome to Iris</div>} />
+        <Route path="user" element={<User/>} >
+          <Route path=":handle" element={<UserHandle />} />
+        </Route>
+        <Route path="*" element={<NotFound/>} />
+      </Routes>
+    </ThemeProvider>
   );
 }
 
