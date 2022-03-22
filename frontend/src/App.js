@@ -8,6 +8,7 @@ import NotFound from './pages/NotFound'
 import User from './pages/User'
 import UserHandle from './pages/UserHandle'
 import CreateProfile from "./components/CreateProfile";
+import Button from './components/Button'
 
 import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
 
@@ -34,7 +35,7 @@ function App() {
   return (
     <ThemeProvider>
       <GlobalStyle />
-      { wallet.signer ? 'Connected' : <button onClick={connectWallet}>Connect Wallet</button> }
+      { wallet.signer ? 'Connected' : <Button onClick={connectWallet}>Connect Wallet</Button> }
       <h1>Iris</h1>
       {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
       <Routes>

@@ -1,4 +1,5 @@
 import { ZERO_ADDRESS } from '../utils/constants'
+import Button from '../components/Button'
 
 function CreateProfile({ wallet, contract }) {
 
@@ -25,7 +26,7 @@ function CreateProfile({ wallet, contract }) {
 
     return (
         <div>
-            <button onClick={handleClick}>Create profile</button>
+            <Button onClick={handleClick}>Create profile</Button>
         </div>
     )
 }

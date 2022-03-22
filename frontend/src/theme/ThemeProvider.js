@@ -3,8 +3,11 @@ import { ThemeProvider } from 'styled-components'
 
 const theme = {
     primary: '#8247E5',
-    background: '#232323',
-    text: '#fff',
+    primaryHover: '#A673EF',
+    background: '#fff',
+    text: '#232323',
+    textLight: '#fff',
+    font: `'General Sans', sans-serif`,
 }
 
 
