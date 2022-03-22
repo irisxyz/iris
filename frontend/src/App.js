@@ -19,13 +19,13 @@ const Container = styled.div`
   min-height: 90vh;
   box-sizing: border-box;
   margin: auto;
-  border-left: #eee 1px solid;
-  border-right: #eee 1px solid;
+  border-left: #E2E4E8 1px solid;
+  border-right: #E2E4E8 1px solid;
 `
 
 const Navbar = styled.nav`
   box-sizing: border-box;
-  border-bottom: #eee 1px solid;
+  border-bottom: #E2E4E8 1px solid;
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -34,6 +34,9 @@ const Navbar = styled.nav`
 `
 
 const Wallet = styled.div`
+  border: #E2E4E8 1px solid;
+  border-radius: 100px;
+  padding: .3em .6em;
 `
 
 function App() {
@@ -59,9 +62,12 @@ function App() {
         <Container>
           <Navbar>
             <h1>Iris</h1>
-            <Wallet>
-              { wallet.signer ? <p>{wallet.address}</p> : <Button onClick={connectWallet} >Connect Wallet</Button> }
-            </Wallet>
+            <div>
+              { wallet.signer
+              ? <Wallet>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Wallet>
+              : <Button onClick={connectWallet} >Connect Wallet</Button>
+              }
+            </div>
           </Navbar>
           <GlobalStyle />
           {wallet.address && <Login wallet={wallet} />}
