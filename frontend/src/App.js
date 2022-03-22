@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ethers } from 'ethers'
 
 import CreateProfile from "./components/CreateProfile";
+import Follow from "./components/Follow";
 
 import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
 
@@ -41,6 +42,7 @@ function App() {
           Learn React. Find God.
         </a>
         {LensHubContract && <CreateProfile wallet={wallet} contract={LensHubContract}/>}
+        {LensHubContract && <Follow wallet={wallet} contract={LensHubContract}/>}
       </header>
     </div>
   );
