@@ -4,10 +4,9 @@ import styled from 'styled-components'
 const Button = styled.button`
     border: none;
     border-radius: 6px;
-    padding: 0.8em 3em;
+    padding: 0.6em 2em;
     font-family: ${p => p.theme.font};
     font-weight: 500;
-    font-size: 1em;
     color: ${p => p.theme.textLight};
     background: ${p => p.theme.primary};
     letter-spacing: 0.02em;

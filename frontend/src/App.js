@@ -1,54 +1,43 @@
 import { useState } from 'react'
 import { ethers } from 'ethers'
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"
+import styled from 'styled-components'
 
-import {
-  ApolloClient,
-  ApolloLink,
-  HttpLink,
-  InMemoryCache,
-  ApolloProvider,
-} from "@apollo/client";
-
+import ApolloProvider from './components/Apollo'
 import GlobalStyle from './theme/GlobalStyle'
 import ThemeProvider from './theme/ThemeProvider'
 import NotFound from './pages/NotFound'
 import User from './pages/User'
 import UserHandle from './pages/UserHandle'
-import Login from "./components/Login";
+import Login from "./components/Login"
 import Button from './components/Button'
-import Follow from "./components/Follow";
+import Follow from "./components/Follow"
 
-import LensHub from './artifacts/contracts/core/LensHub.sol/LensHub.json'
+const Container = styled.div`
+  max-width: 1200px;
+  padding: 0 1em 1em 1em;
+  min-height: 90vh;
+  box-sizing: border-box;
+  margin: auto;
+  border-left: #E2E4E8 1px solid;
+  border-right: #E2E4E8 1px solid;
+`
 
-let LensHubContract;
+const Navbar = styled.nav`
+  box-sizing: border-box;
+  border-bottom: #E2E4E8 1px solid;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+`
 
-const LENS_API = 'https://api-mumbai.lens.dev/';
-
-const httpLink = new HttpLink({
-    uri: LENS_API,
-    fetch,
-});
-  
-const authLink = new ApolloLink((operation, forward) => {
-    const token = window.authToken;
-    console.log('jwt token:', token);
-
-    // Use the setContext method to set the HTTP headers.
-    operation.setContext({
-        headers: {
-        'x-access-token': token ? `Bearer ${token}` : '',
-        },
-    });
-
-    // Call the next link in the middleware chain.
-    return forward(operation);
-});
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
+const Wallet = styled.div`
+  border: #E2E4E8 1px solid;
+  border-radius: 100px;
+  padding: .3em .6em;
+`
 
 function App() {
   const [wallet, setWallet] = useState({})
@@ -57,8 +46,7 @@ function App() {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
-    const address = await signer.getAddress()      
-    LensHubContract = new ethers.Contract('0xa439225B4a4BF47b355Dd1d3e50D5Ba4984c1Db0', LensHub.abi, signer)
+    const address = await signer.getAddress()
   
     provider.getBalance(address).then((balance) => {
       // convert a currency unit from wei to ether
@@ -69,20 +57,29 @@ function App() {
   }
 
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider>
       <ThemeProvider>
-        <GlobalStyle />
-        { wallet.signer ? 'Connected' : <Button onClick={connectWallet}>Connect Wallet</Button> }
-        <h1>Iris</h1>
-        {LensHubContract && <Login wallet={wallet} contract={LensHubContract}/>}
-        {LensHubContract && <Follow wallet={wallet} contract={LensHubContract}/>}
-        <Routes>
-          <Route path="/" element={<div>Welcome to Iris</div>} />
-          <Route path="user" element={<User/>} >
-            <Route path=":handle" element={<UserHandle />} />
-          </Route>
-          <Route path="*" element={<NotFound/>} />
-        </Routes>
+        <Container>
+          <Navbar>
+            <h1>Iris</h1>
+            <div>
+              { wallet.signer
+              ? <Wallet>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Wallet>
+              : <Button onClick={connectWallet} >Connect Wallet</Button>
+              }
+            </div>
+          </Navbar>
+          <GlobalStyle />
+          {wallet.address && <Login wallet={wallet} />}
+          {wallet.address && <Follow wallet={wallet} />}
+          <Routes>
+            <Route path="/" element={<div>Welcome to Iris</div>} />
+            <Route path="user" element={<User/>} >
+              <Route path=":handle" element={<UserHandle />} />
+            </Route>
+            <Route path="*" element={<NotFound/>} />
+          </Routes>
+        </Container>
       </ThemeProvider>
     </ApolloProvider>
   );

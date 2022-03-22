@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import { ZERO_ADDRESS } from '../utils/constants'
 import Button from './Button'
-
-export const prettyJSON = (message, obj) => {
-    console.log(message, JSON.stringify(obj, null, 2));
-  };
 
 const GET_CHALLENGE = gql`
   query($request: ChallengeRequest!) {
@@ -36,7 +31,7 @@ const CREATE_PROFILE = gql`
 }
 `;
 
-function Login({ wallet, contract }) {
+function Login({ wallet }) {
     const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE);
     const [mutateAuth, authData] = useMutation(AUTHENTICATION);
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
@@ -82,10 +77,18 @@ function Login({ wallet, contract }) {
     useEffect(() => {
       if (!authData.data) return
 
-      window.authToken = authData.data.authenticate.accessToken
+      // window.authToken = authData.data.authenticate.accessToken
+      window.sessionStorage.setItem('lensToken', authData.data.authenticate.accessToken)
+
       setAuthToken(true)
 
     }, [authData.data])
+
+    useEffect(() => {
+      if (window.sessionStorage.getItem('lensToken')) {
+        setAuthToken(true)
+      }
+    }, [])
 
     const handleCreate = async () => {
       createProfile({
