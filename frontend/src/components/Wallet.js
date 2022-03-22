@@ -73,7 +73,7 @@ const Profile = ({ profile }) => {
 }
 
 
-function Wallet({ wallet, setWallet, authToken }) {
+function Wallet({ wallet, setWallet, authToken, setProfile }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 
@@ -94,7 +94,10 @@ function Wallet({ wallet, setWallet, authToken }) {
   }, [authToken])
 
   useEffect(() => {
-    console.log(profiles.data?.profiles.items)
+    if (!profiles.data) return
+    console.log(profiles.data.profiles.items)
+
+    setProfile(profiles.data.profiles.items[0])
 
   }, [profiles.data])
 
