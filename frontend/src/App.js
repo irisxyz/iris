@@ -12,7 +12,6 @@ import Profile from "./components/Profile"
 import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
 import Login from "./components/Login"
-import Follow from "./components/Follow"
 
 const Container = styled.div`
   max-width: 1200px;
@@ -75,7 +74,7 @@ function App() {
                   <Compose wallet={wallet} profile={profile} lensHub={lensHub} />
                 </div>} />
                 <Route path="user" element={<User/>} >
-                  <Route path=":handle" element={<UserHandle />} />
+                  <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
                 </Route>
                 <Route path="*" element={<NotFound/>} />
               </Routes>
