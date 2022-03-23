@@ -10,6 +10,7 @@ import User from './pages/User'
 import UserHandle from './pages/UserHandle'
 import Profile from "./components/Profile"
 import Wallet from "./components/Wallet"
+import Compose from "./components/Compose"
 import Login from "./components/Login"
 
 const Container = styled.div`
@@ -44,13 +45,14 @@ const Sidebar = styled.div`
 `
 
 const Content = styled.main`
-  max-width: 300px;
+  width: 460px;
 `
 
 function App() {
   const [wallet, setWallet] = useState({})
   const [authToken, setAuthToken] = useState(false)
   const [profile, setProfile] = useState({})
+  const [lensHub, setLensHub] = useState()
 
   return (
     <ApolloProvider>
@@ -59,7 +61,7 @@ function App() {
         <Container>
           <Navbar>
             <h1>Iris</h1>
-            <Wallet wallet={wallet} setWallet={setWallet} authToken={authToken} currProfile={profile} setProfile={setProfile} />
+            <Wallet wallet={wallet} setWallet={setWallet} authToken={authToken} currProfile={profile} setProfile={setProfile} setLensHub={setLensHub} />
           </Navbar>
           <Columns>
             <Sidebar>
@@ -68,7 +70,9 @@ function App() {
             <Content>
               {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
               <Routes>
-                <Route path="/" element={<div>Welcome to Iris</div>} />
+                <Route path="/" element={<div>
+                  <Compose wallet={wallet} profile={profile} lensHub={lensHub} />
+                </div>} />
                 <Route path="user" element={<User/>} >
                   <Route path=":handle" element={<UserHandle />} />
                 </Route>

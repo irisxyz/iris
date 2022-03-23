@@ -105,8 +105,8 @@ function Login({ wallet, auth }) {
             {
               authToken
               ? <div>
-                  Logged in.
-                  <Button onClick={handleCreate}>Create Profile</Button>
+                  {/* Logged in. */}
+                  {/* <Button onClick={handleCreate}>Create Profile</Button> */}
                 </div>
               : <Button onClick={handleClick}>Login to Lens</Button>
             }
