@@ -11,7 +11,6 @@ import UserHandle from './pages/UserHandle'
 import Profile from "./components/Profile"
 import Wallet from "./components/Wallet"
 import Login from "./components/Login"
-import Follow from "./components/Follow"
 
 const Container = styled.div`
   max-width: 1200px;
