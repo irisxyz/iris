@@ -38,18 +38,7 @@ function Follow({ wallet, lensHub }) {
 
     const followRequest = [
         {
-           profile: "0x01",
-        },
-        {
-           profile: "0x02",
-           followModule: {
-             feeFollowModule: {
-               amount: {
-                 currency: "0xD40282e050723Ae26Aeb0F77022dB14470f4e011",
-                 value: "0.01"
-               }
-             }
-           }
+           profile: "0x0112",
         }
     ];
     
