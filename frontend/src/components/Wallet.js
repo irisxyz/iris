@@ -128,7 +128,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const signer = provider.getSigner()
     const address = await signer.getAddress()
 
-    const contract = new ethers.Contract('0x7c86e2a63941442462cce73EcA9F07F4Ad023261', LensHub.abi, signer)
+    const contract = new ethers.Contract('0xd7B3481De00995046C7850bCe9a5196B7605c367', LensHub.abi, signer)
     console.log({contract})
     setLensHub(contract)
   

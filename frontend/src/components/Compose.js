@@ -51,7 +51,8 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
 
     const handleSubmit = async () => {
-        console.log(name, description)
+        const id = profile.id.replace('0x', '')
+        console.log({id, name, description})
 
         
         const ipfsResult = await client.add(JSON.stringify({
