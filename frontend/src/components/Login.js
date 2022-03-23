@@ -93,7 +93,7 @@ function Login({ wallet, auth }) {
       createProfile({
         variables: {
           request: {
-            handle: 'gaia'
+            handle: 'isaac'
           }
         }
       })

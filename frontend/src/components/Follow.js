@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { signedTypeData, getAddressFromSigner, splitSignature } from './ethers.service';
-import { gql } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
+import { utils } from 'ethers'
+import omitDeep from 'omit-deep'
 import Button from './Button'
 
 const CREATE_FOLLOW_TYPED_DATA = gql`
@@ -32,7 +33,7 @@ const CREATE_FOLLOW_TYPED_DATA = gql`
  }
 `
 
-function Follow({ wallet, contract }) {
+function Follow({ wallet, lensHub }) {
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA)
 
     const followRequest = [
@@ -66,25 +67,32 @@ function Follow({ wallet, contract }) {
         if (!createFollowTypedData.data) return
   
         const handleCreate = async () => {
-          console.log(createFollowTypedData.data)
-          
-          const typedData = createFollowTypedData.data.createFollowTypedData.typedData;
-          const signature = await signedTypeData(typedData.domain, typedData.types, typedData.value);
-          
-          const { v, r, s } = splitSignature(signature);
-          const tx = await contract.followWithSig({
-            follower: getAddressFromSigner(),
-            profileIds: typedData.value.profileIds,
-            datas: typedData.value.datas,
-            sig: {
-              v,
-              r,
-              s,
-              deadline: typedData.value.deadline,
-            },
-          });
-          
-          console.log(tx.hash);
+            console.log(createFollowTypedData.data)
+            
+            const typedData = createFollowTypedData.data.createFollowTypedData.typedData;
+            const {domain, types, value} = typedData
+    
+            const signature = await wallet.signer._signTypedData(
+                omitDeep(domain, '__typename'),
+                omitDeep(types, '__typename'),
+                omitDeep(value, '__typename')
+            )
+
+            const { v, r, s } = utils.splitSignature(signature);
+            
+            const tx = await lensHub.followWithSig({
+                follower: wallet.address,
+                profileIds: typedData.value.profileIds,
+                datas: typedData.value.datas,
+                sig: {
+                    v,
+                    r,
+                    s,
+                deadline: typedData.value.deadline,
+                },
+            });
+            
+            console.log('Following:', tx.hash);
         }
 
         handleCreate()

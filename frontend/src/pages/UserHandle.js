@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import Follow from "./components/Follow.js"
+import Follow from "../components/Follow.js"
 
 function User({ wallet, lensHub }) {
     let params = useParams();

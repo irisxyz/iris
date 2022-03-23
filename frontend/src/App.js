@@ -74,7 +74,7 @@ function App() {
                   <Compose wallet={wallet} profile={profile} lensHub={lensHub} />
                 </div>} />
                 <Route path="user" element={<User/>} >
-                  <Route path=":handle" element={<UserHandle />} />
+                  <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
                 </Route>
                 <Route path="*" element={<NotFound/>} />
               </Routes>
