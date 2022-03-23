@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useQuery, useMutation } from '@apollo/client'
 import Button from './Button'
-import { GET_PROFILES } from '../utils/queries'
+import { GET_PROFILES, GET_PUBLICATIONS } from '../utils/queries'
 import gradient from '../utils/gradients'
 import avatar from '../assets/avatar.png'
 
@@ -97,6 +97,18 @@ const Profile = ({ profile, currProfile }) => {
 function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
+  const { loading, error, data } = useQuery(GET_PUBLICATIONS, {
+    variables: {
+      request: {
+        profileId: currProfile.id,
+        publicationTypes: ['POST', 'COMMENT', 'MIRROR'],
+      }
+    }
+  })
+
+  useEffect(() => {
+    console.log(data)
+  }, [data])
 
   useEffect(() => {
     if (!authToken) return;
@@ -118,7 +130,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     if (!profiles.data) return
     console.log(profiles.data.profiles.items)
 
-    setProfile(profiles.data.profiles.items[0])
+    setProfile(profiles.data.profiles.items[1])
 
   }, [profiles.data])
 
