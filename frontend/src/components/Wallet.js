@@ -7,6 +7,8 @@ import { GET_PROFILES } from '../utils/queries'
 import gradient from '../utils/gradients'
 import avatar from '../assets/avatar.png'
 
+import LensHub from '../artifacts/contracts/core/LensHub.sol/LensHub.json'
+
 const WalletContainer = styled.div`
   display: flex;
   gap: 5px;
@@ -92,7 +94,7 @@ const Profile = ({ profile, currProfile }) => {
 }
 
 
-function Wallet({ wallet, setWallet, authToken, currProfile, setProfile }) {
+function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 
@@ -125,6 +127,10 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile }) {
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
     const address = await signer.getAddress()
+
+    const contract = new ethers.Contract('0xd7B3481De00995046C7850bCe9a5196B7605c367', LensHub.abi, signer)
+    console.log({contract})
+    setLensHub(contract)
   
     provider.getBalance(address).then((balance) => {
       // convert a currency unit from wei to ether

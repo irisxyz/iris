@@ -31,7 +31,6 @@ const Stats = styled.div`
 `
 
 function Profile({ profile, authToken }) {
-  console.log(profile.stats)
   return (
     <Card>
         <Link to={`user/${profile.handle}`}>
