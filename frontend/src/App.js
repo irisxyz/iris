@@ -60,7 +60,7 @@ function App() {
         <Container>
           <Navbar>
             <h1>Iris</h1>
-            <Wallet wallet={wallet} setWallet={setWallet} authToken={authToken} setProfile={setProfile} />
+            <Wallet wallet={wallet} setWallet={setWallet} authToken={authToken} currProfile={profile} setProfile={setProfile} />
           </Navbar>
           <Columns>
             <Sidebar>
