@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
+import { v4 as uuidv4 } from 'uuid';
 import { create } from 'ipfs-http-client'
 import Button from './Button'
 import Card from './Card'
@@ -57,7 +58,16 @@ const Compose = ({ wallet, profile, lensHub }) => {
         
         const ipfsResult = await client.add(JSON.stringify({
             name,
-            description
+            description,
+            content: description,
+            external_url: null,
+            image: null,
+            imageMimeType: null,
+            version: "1.0.0",
+            appId: 'iris',
+            attributes: [],
+            media: [],
+            metadata_id: uuidv4(),
         }))
 
         // hard coded to make the code example clear
