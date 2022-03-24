@@ -12,6 +12,7 @@ import Profile from "./components/Profile"
 import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
 import Login from "./components/Login"
+import Feed from "./components/Feed"
 
 const Container = styled.div`
   max-width: 1200px;
@@ -72,6 +73,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<div>
                   <Compose wallet={wallet} profile={profile} lensHub={lensHub} />
+                  <Feed profile={profile} />
                 </div>} />
                 <Route path="user" element={<User/>} >
                   <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
