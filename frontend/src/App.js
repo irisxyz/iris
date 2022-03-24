@@ -73,7 +73,7 @@ function App() {
               {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
               <Routes>
                 <Route path="/" element={<div>
-                  <Compose wallet={wallet} profile={profile} lensHub={lensHub} />
+                  {profile && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
                   <Feed profile={profile} />
                 </div>} />
                 <Route path="user" element={<User/>} >

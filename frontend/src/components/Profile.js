@@ -29,8 +29,7 @@ const Stats = styled.div`
   justify-content: space-evenly;
 `
 
-function Profile({ profile }) {
-  console.log(profile.stats)
+function Profile({ profile = {} }) {
   return (
     <Card>
         <Link to={`user/${profile.handle}`}>

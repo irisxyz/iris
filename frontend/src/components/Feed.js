@@ -4,13 +4,13 @@ import { GET_TIMELINE } from '../utils/queries'
 import Card from '../components/Card'
 import Post from '../components/Post'
 
-function User({ profile }) {
+function Feed({ profile = {} }) {
     const [notFound, setNotFound] = useState(false)
     const [publications, setPublications] = useState([])
     const { loading, error, data } = useQuery(GET_TIMELINE, {
       variables: {
         request: {
-          profileId: profile.id,
+          profileId: profile,
         }
       }
     })
@@ -48,4 +48,4 @@ function User({ profile }) {
     );
   }
 
-export default User
+export default Feed
