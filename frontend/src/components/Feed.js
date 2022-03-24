@@ -38,10 +38,7 @@ function Feed({ profile = {} }) {
 
     useEffect(() => {
     if (!searchData.data) return;
-    console.log('hi')
     if (publications.length > 0) return;
-
-    console.log('hi')
 
     if (searchData.data.search.items.length < 1) {
         return

@@ -35,7 +35,6 @@ const StyledCard = styled(Card)`
 `
 
 function Post({ post }) {
-    console.log(post)
     return (
         <StyledCard>
             <Container>

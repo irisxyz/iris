@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
+import { Link } from 'react-router-dom'
 import { useLazyQuery, useQuery, useMutation } from '@apollo/client'
 import Button from './Button'
 import { GET_PROFILES } from '../utils/queries'
@@ -86,6 +87,13 @@ const StyledProfile = styled.div`
   }
 `
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+  transition: all 50ms ease-in-out;
+`
+
+
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
@@ -160,10 +168,12 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         {
           profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
+        <StyledLink to='new-profile'>
         <StyledProfile onClick={() => handleNew()}>
           <b>+ Create Profile</b>
           <UserIcon/>
         </StyledProfile>
+        </StyledLink>
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
       <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} />
