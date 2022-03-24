@@ -59,6 +59,9 @@ export default createGlobalStyle`
     font-weight: 600;
     margin: .4em 0;
   }
+  p {
+    margin: 0.3em 0;
+  }
   code {
     font-family: 'Fira Mono', monospace;
     font-size: 0.9em;

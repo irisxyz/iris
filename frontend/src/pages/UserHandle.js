@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_PROFILES, GET_PUBLICATIONS } from '../utils/queries'
 import Follow from "../components/Follow"
-import Card from "../components/Card"
+import Post from "../components/Post"
 
 function User({ wallet, lensHub }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false)
     const [publications, setPublications] = useState([])
-    const { loading, error, data } = useQuery(GET_PROFILES, {
+    const { data } = useQuery(GET_PROFILES, {
       variables: {
         request: {
           handles: [params.handle],
@@ -60,10 +60,7 @@ function User({ wallet, lensHub }) {
 
           {
             publications.map((post) => {
-              return <Card key={post.id}>
-                <h3>{post.metadata.name}</h3>
-                {post.metadata.description}
-                </Card>
+              return <Post key={post.id} post={post} />
             })
           }
         </main>

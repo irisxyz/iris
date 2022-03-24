@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_TIMELINE } from '../utils/queries'
-import Follow from "../components/Follow"
-import Card from "../components/Card"
+import Card from '../components/Card'
+import Post from '../components/Post'
 
 function User({ profile }) {
     const [notFound, setNotFound] = useState(false)
@@ -40,10 +40,7 @@ function User({ profile }) {
           <h2>Feed</h2>
           {
             publications.map((post) => {
-              return <Card key={post.id}>
-                <h3>{post.metadata.name}</h3>
-                {post.metadata.description}
-                </Card>
+              return <Post key={post.id} post={post} />
             })
           }
         </main>

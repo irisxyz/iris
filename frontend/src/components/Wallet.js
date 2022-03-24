@@ -25,7 +25,7 @@ const Address = styled.code`
   padding: 0 .6em;
 `
 
-const WalletIcon = styled.div`
+export const UserIcon = styled.div`
   height: 30px;
   width: 30px;
   border-radius: 100px;
@@ -89,7 +89,7 @@ const StyledProfile = styled.div`
 const Profile = ({ profile, currProfile }) => {
   return <StyledProfile selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
-    <WalletIcon/>
+    <UserIcon/>
   </StyledProfile>
 }
 
@@ -151,7 +151,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         }
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <WalletIcon onClick={() => setPicker(!openPicker)} selected={openPicker} />
+      <UserIcon onClick={() => setPicker(!openPicker)} selected={openPicker} />
     </>
     : <Button onClick={connectWallet} >Connect Wallet</Button>
     }

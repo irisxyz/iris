@@ -43,6 +43,7 @@ const Sidebar = styled.div`
   width: 300px;
   height: 100%
   float: left;
+  padding-right: 1em;
 `
 
 const Content = styled.main`
