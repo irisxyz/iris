@@ -4,7 +4,8 @@ const Card = styled.div`
     background: #fff;
     box-shadow: 0px 4px 5px -1px rgba(112, 58, 202, 0.08);
     border-radius: 18px;
-    padding: 1em;
+    box-sizing: border-box;
+    padding: ${p => p.padding || '1em'};
     border: #EDDAFD 1px solid;
     width: 100%;
 `

@@ -8,6 +8,7 @@ import ThemeProvider from './theme/ThemeProvider'
 import NotFound from './pages/NotFound'
 import User from './pages/User'
 import UserHandle from './pages/UserHandle'
+import NewProfile from './pages/NewProfile'
 import Profile from "./components/Profile"
 import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
@@ -43,11 +44,10 @@ const Sidebar = styled.div`
   width: 300px;
   height: 100%
   float: left;
-  padding-right: 1em;
 `
 
 const Content = styled.main`
-  width: 460px;
+  width: 700px;
 `
 
 function App() {
@@ -73,9 +73,10 @@ function App() {
               {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
               <Routes>
                 <Route path="/" element={<div>
-                  <Compose wallet={wallet} profile={profile} lensHub={lensHub} />
+                  {profile && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
                   <Feed profile={profile} />
                 </div>} />
+                <Route path="new-profile" element={<NewProfile/>} />
                 <Route path="user" element={<User/>} >
                   <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
                 </Route>

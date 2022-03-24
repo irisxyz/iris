@@ -9,6 +9,7 @@ function User({ wallet, lensHub }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false)
     const [publications, setPublications] = useState([])
+    const [id, setId] = useState('')
     const { data } = useQuery(GET_PROFILES, {
       variables: {
         request: {
@@ -27,6 +28,8 @@ function User({ wallet, lensHub }) {
         setNotFound(true)
         return
       }
+
+      setId(data.profiles.items[0].id)
 
       getPublications({
         variables: {
@@ -56,7 +59,7 @@ function User({ wallet, lensHub }) {
       <>
         <main>
           <h2>@{params.handle}</h2>
-          <Follow wallet={wallet} lensHub={lensHub} profileId={data?.profiles.items[0].id}/>
+          <Follow wallet={wallet} lensHub={lensHub} profileId={id}/>
 
           {
             publications.map((post) => {

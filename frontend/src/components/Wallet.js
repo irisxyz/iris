@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
+import { Link } from 'react-router-dom'
 import { useLazyQuery, useQuery, useMutation } from '@apollo/client'
 import Button from './Button'
 import { GET_PROFILES } from '../utils/queries'
@@ -39,10 +40,10 @@ export const UserIcon = styled.div`
   background-size: cover;
   transition: all 100ms ease-in-out;
   border: 2px solid #fff;
-  &:hover {
-    border: ${p=>p.theme.border};
+  ${p=>p.link && `&:hover {
+    border: ${p.theme.border};
     cursor: pointer;
-  }
+  }`}
   ${p => p.selected && `
     border: ${p.theme.border};
   `}
@@ -86,8 +87,15 @@ const StyledProfile = styled.div`
   }
 `
 
-const Profile = ({ profile, currProfile }) => {
-  return <StyledProfile selected={currProfile.id === profile.id}>
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+  transition: all 50ms ease-in-out;
+`
+
+
+const Profile = ({ profile, currProfile, handleClick }) => {
+  return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
     <UserIcon/>
   </StyledProfile>
@@ -97,6 +105,17 @@ const Profile = ({ profile, currProfile }) => {
 function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
+
+  const handleSelect = (profile) => {
+    console.log(profile)
+    setProfile(profile)
+    setPicker(false)
+  }
+
+  const handleNew = () => {
+    console.log('new profile')
+    setPicker(false)
+  }
   
   useEffect(() => {
     if (!authToken) return;
@@ -118,7 +137,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     if (!profiles.data) return
     console.log(profiles.data.profiles.items)
 
-    setProfile(profiles.data.profiles.items[1])
+    setProfile(profiles.data.profiles.items[0])
 
   }, [profiles.data])
 
@@ -129,13 +148,13 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const address = await signer.getAddress()
 
     const contract = new ethers.Contract('0xd7B3481De00995046C7850bCe9a5196B7605c367', LensHub.abi, signer)
-    console.log({contract})
+    // console.log({contract})
     setLensHub(contract)
   
     provider.getBalance(address).then((balance) => {
       // convert a currency unit from wei to ether
       const balanceInEth = ethers.utils.formatEther(balance)
-      console.log(balanceInEth)
+      console.log({balanceInEth})
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
@@ -147,11 +166,17 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     ? <>
       <AccountPicker show={openPicker}>
         {
-          profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} />)
+          profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
+        <StyledLink to='new-profile'>
+        <StyledProfile onClick={() => handleNew()}>
+          <b>+ Create Profile</b>
+          <UserIcon/>
+        </StyledProfile>
+        </StyledLink>
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <UserIcon onClick={() => setPicker(!openPicker)} selected={openPicker} />
+      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} />
     </>
     : <Button onClick={connectWallet} >Connect Wallet</Button>
     }
