@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLazyQuery, useQuery } from '@apollo/client'
-import { GET_TIMELINE } from '../utils/queries'
+import { GET_TIMELINE, SEARCH } from '../utils/queries'
 import Card from '../components/Card'
 import Post from '../components/Post'
 
@@ -10,7 +10,7 @@ function Feed({ profile = {} }) {
     const { loading, error, data } = useQuery(GET_TIMELINE, {
       variables: {
         request: {
-          profileId: profile,
+          profileId: profile.id,
         }
       }
     })
@@ -26,6 +26,31 @@ function Feed({ profile = {} }) {
       setPublications(data.timeline.items)
     
     }, [data])
+
+    const searchData = useQuery(SEARCH, {
+        variables: {
+          request: {
+            query: 'LFG',
+            type: 'PUBLICATION',
+          }
+        }
+      })
+
+    useEffect(() => {
+    if (!searchData.data) return;
+    console.log('hi')
+    if (publications.length > 0) return;
+
+    console.log('hi')
+
+    if (searchData.data.search.items.length < 1) {
+        return
+    }
+    
+    setPublications(searchData.data.search.items)
+    
+    }, [searchData.data])
+
     
     if (notFound) {
       return <>
