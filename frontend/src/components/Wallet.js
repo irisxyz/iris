@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { ethers } from 'ethers'
 import { useLazyQuery, useQuery, useMutation } from '@apollo/client'
 import Button from './Button'
-import { GET_PROFILES, GET_PUBLICATIONS } from '../utils/queries'
+import { GET_PROFILES } from '../utils/queries'
 import gradient from '../utils/gradients'
 import avatar from '../assets/avatar.png'
 
@@ -25,7 +25,7 @@ const Address = styled.code`
   padding: 0 .6em;
 `
 
-const WalletIcon = styled.div`
+export const UserIcon = styled.div`
   height: 30px;
   width: 30px;
   border-radius: 100px;
@@ -89,7 +89,7 @@ const StyledProfile = styled.div`
 const Profile = ({ profile, currProfile }) => {
   return <StyledProfile selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
-    <WalletIcon/>
+    <UserIcon/>
   </StyledProfile>
 }
 
@@ -97,19 +97,7 @@ const Profile = ({ profile, currProfile }) => {
 function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
-  const { loading, error, data } = useQuery(GET_PUBLICATIONS, {
-    variables: {
-      request: {
-        profileId: currProfile.id,
-        publicationTypes: ['POST', 'COMMENT', 'MIRROR'],
-      }
-    }
-  })
-
-  useEffect(() => {
-    console.log(data)
-  }, [data])
-
+  
   useEffect(() => {
     if (!authToken) return;
 
@@ -163,7 +151,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         }
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <WalletIcon onClick={() => setPicker(!openPicker)} selected={openPicker} />
+      <UserIcon onClick={() => setPicker(!openPicker)} selected={openPicker} />
     </>
     : <Button onClick={connectWallet} >Connect Wallet</Button>
     }

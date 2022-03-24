@@ -33,12 +33,12 @@ const CREATE_FOLLOW_TYPED_DATA = gql`
  }
 `
 
-function Follow({ wallet, lensHub }) {
+function Follow({ wallet, lensHub, profileId }) {
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA)
 
     const followRequest = [
         {
-           profile: "0x0112",
+           profile: profileId,
         }
     ];
     

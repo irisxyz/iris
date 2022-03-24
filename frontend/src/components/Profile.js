@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { useLazyQuery, useMutation } from '@apollo/client'
 import { Link } from 'react-router-dom'
 import Card from './Card'
 import avatar from '../assets/avatar.png'
@@ -30,7 +29,7 @@ const Stats = styled.div`
   justify-content: space-evenly;
 `
 
-function Profile({ profile, authToken }) {
+function Profile({ profile }) {
   console.log(profile.stats)
   return (
     <Card>
