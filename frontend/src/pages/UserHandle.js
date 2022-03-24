@@ -42,7 +42,6 @@ function User({ wallet, lensHub }) {
     useEffect(() => {
       if (!publicationsData.data) return;
 
-      console.log(publicationsData.data.publications.items)
       setPublications(publicationsData.data.publications.items)
 
     }, [publicationsData.data])
@@ -57,7 +56,7 @@ function User({ wallet, lensHub }) {
       <>
         <main>
           <h2>@{params.handle}</h2>
-          <Follow wallet={wallet} lensHub={lensHub}/>
+          <Follow wallet={wallet} lensHub={lensHub} profileId={data?.profiles.items[0].id}/>
 
           {
             publications.map((post) => {
