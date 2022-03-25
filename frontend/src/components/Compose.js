@@ -142,7 +142,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
                     onChange={e => setDescription(e.target.value)}
                 />
             </form>
-            <Button onClick={handleSubmit}>Post</Button>
+            <Button onClick={handleSubmit}>Plant</Button>
         </StyledCard>
     )
 }

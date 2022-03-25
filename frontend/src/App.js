@@ -15,13 +15,20 @@ import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
 import Login from "./components/Login"
 import Feed from "./components/Feed"
+import logo from "./assets/logo-open.png"
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1000px;
   padding: 0 1em 1em 1em;
   min-height: 90vh;
   box-sizing: border-box;
   margin: auto;
+`
+
+const LogoContainer = styled.div`
+  display: flex;
+  padding: .6em;
+  gap: 8px;
 `
 
 const Navbar = styled.nav`
@@ -30,7 +37,7 @@ const Navbar = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1em;
+  margin: .7em 0;
 `
 
 const Columns = styled.div`
@@ -60,13 +67,16 @@ function App() {
         <GlobalStyle />
         <Container>
           <Navbar>
-            <h1>Iris</h1>
+            <LogoContainer>
+              <img src={logo} alt="iris logo" width="50px" height="50px" />
+              <h1>Iris</h1>
+            </LogoContainer>
             <Wallet wallet={wallet} setWallet={setWallet} authToken={authToken} currProfile={profile} setProfile={setProfile} setLensHub={setLensHub} />
           </Navbar>
           <Columns>
             <Sidebar>
               <Profile profile={profile}/>
-              <Nav/>
+              <Nav handle={profile.handle} />
             </Sidebar>
             <Content>
               {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}

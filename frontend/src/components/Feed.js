@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useLazyQuery, useQuery } from '@apollo/client'
+import styled from 'styled-components'
 import { GET_TIMELINE, SEARCH } from '../utils/queries'
 import Card from '../components/Card'
 import Post from '../components/Post'
+
+const Main = styled.main`
+  margin-top: 2em;
+
+`
 
 function Feed({ profile = {} }) {
     const [notFound, setNotFound] = useState(false)
@@ -51,22 +57,18 @@ function Feed({ profile = {} }) {
     
     if (notFound) {
       return <>
-        <h2>Feed</h2>
         <h3>No posts, go follow some profiles!</h3>
       </>
     }
 
     return (
-      <>
-        <main>
-          <h2>Feed</h2>
+        <Main>
           {
             publications.map((post) => {
               return <Post key={post.id} post={post} />
             })
           }
-        </main>
-      </>
+        </Main>
     );
   }
 
