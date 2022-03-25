@@ -15,6 +15,7 @@ const client = create('https://ipfs.infura.io:5001/api/v0')
 const StyledCard = styled(Card)`
     width: 100%;
     display: inline-block;
+    margin-bottom: 2em;
 `
 
 const TextArea = styled.textarea`
@@ -46,7 +47,7 @@ const TextArea = styled.textarea`
 `
 
 const Compose = ({ wallet, profile, lensHub }) => {
-    const [name, setName] = useState('')
+    const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
 
@@ -128,13 +129,13 @@ const Compose = ({ wallet, profile, lensHub }) => {
     return (
         <StyledCard>
             <form onSubmit={handleSubmit}>
-                <TextArea
+                {/* <TextArea
                     value={name}
                     placeholder="Title"
                     style={{ overflow: 'hidden' }}
                     height={2}
                     onChange={e => setName(e.target.value)}
-                />
+                /> */}
                 <TextArea
                     value={description}
                     placeholder="What's happening?"

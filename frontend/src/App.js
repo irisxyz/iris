@@ -76,7 +76,7 @@ function App() {
           <Columns>
             <Sidebar>
               <Profile profile={profile}/>
-              <Nav handle={profile.handle} />
+              <Nav handle={profile?.handle} />
             </Sidebar>
             <Content>
               {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}

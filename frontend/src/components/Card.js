@@ -6,7 +6,6 @@ const Card = styled.div`
     border-radius: 18px;
     box-sizing: border-box;
     padding: ${p => p.padding || '1em'};
-    border: #EDDAFD 1px solid;
     width: 100%;
 `
 

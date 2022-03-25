@@ -6,7 +6,6 @@ import Card from '../components/Card'
 import Post from '../components/Post'
 
 const Main = styled.main`
-  margin-top: 2em;
 
 `
 
@@ -55,14 +54,15 @@ function Feed({ profile = {} }) {
     }, [searchData.data])
 
     
-    if (notFound) {
-      return <>
-        <h3>No posts, go follow some profiles!</h3>
-      </>
-    }
+    // if (notFound) {
+    //   return <>
+    //     <h3>No posts, go follow some profiles!</h3>
+    //   </>
+    // }
 
     return (
         <Main>
+          { notFound && <><h3>You don't follow anyone. Here are some posts #LFG</h3><br/></>}
           {
             publications.map((post) => {
               return <Post key={post.id} post={post} />
