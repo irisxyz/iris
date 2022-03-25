@@ -5,9 +5,6 @@ function User() {
     return (
       <>
         <Outlet />
-        <nav>
-          <Link to="/">Home</Link>
-        </nav>
       </>
     );
   }

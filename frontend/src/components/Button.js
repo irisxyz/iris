@@ -16,7 +16,7 @@ const Button = styled.button`
         cursor: pointer;
     }
     :focus {
-        box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #DCD4FF;
+        box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #5D25BC;
         outline: none;
     }
 `

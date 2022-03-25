@@ -18,12 +18,13 @@ const WalletContainer = styled.div`
 `
 
 const Address = styled.code`
-  border: #E2E4E8 2px solid;
+  box-shadow: 0px 3px 6px rgba(112, 58, 202, 0.4);
   border-radius: 100px;
-  height: 30px;
+  height: 34px;
   display: flex;
   align-items: center;
   padding: 0 .6em;
+  background: white;
 `
 
 export const UserIcon = styled.div`
@@ -57,7 +58,7 @@ const AccountPicker = styled.div`
   width: 260px;
   border: ${p=>p.theme.border};
   border-radius: 16px;
-  background: ${p=>p.theme.background};
+  background: #fff;
   z-index: -300;
   transition: all 300ms cubic-bezier(0.455, 0.030, 0.515, 0.955);
   ${p => !p.show && `

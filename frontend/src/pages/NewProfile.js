@@ -1,13 +1,16 @@
-import React, { useState, createRef } from 'react'
+import React, { useState, useEffect, createRef } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import Card from '../components/Card'
+import Button from '../components/Button'
 import avatar from '../assets/avatar.png'
+import rainbow from '../assets/rainbow.png'
 
 const Icon = styled.div`
-  height: 75px;
-  width: 75px;
-  border: #E2E4E8 1px solid;
+  height: 100px;
+  width: 100px;
+  border: #fff 4px solid;
   border-radius: 100px;
   &:hover {
     cursor: pointer;
@@ -40,19 +43,66 @@ const Bio = styled.textarea`
   margin-top: 1em;
 `
 
-
-const Stats = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-`
-
 const StyledCard = styled(Card)`
+  padding: 0;
 `
+
+const CardContent = styled.div`
+  margin-top: -6em;
+  padding: 2em;
+`
+
+const Cover = styled.div`
+  width: 100%;
+  height: 200px;
+  background: url(${rainbow});
+  background-size: cover;
+  border-radius: 16px 15px 0 0 ;
+`
+
+const CREATE_PROFILE = gql`
+  mutation($request: CreateProfileRequest!) { 
+    createProfile(request: $request) {
+      ... on RelayerResult {
+        txHash
+      }
+      ... on RelayError {
+        reason
+      }
+      __typename
+    }
+}
+`;
 
 function NewProfile({ profile = {} }) {
     const [newProfile, setNewProfile] = useState({...profile})
+    const [createProfile, createProfileData] = useMutation(CREATE_PROFILE)
     const handleRef = createRef()
-    const bioRef = createRef()
+    // const bioRef = createRef()
+
+    const handleCreate = async () => {
+      const handle = handleRef.current.value.replace('@','')
+      if (!handle) {
+        console.log('no handle')
+        return
+      }
+      // const bio = bioRef.current.value
+      createProfile({
+        variables: {
+          request: {
+            handle,
+          }
+        }
+      })
+
+    }
+
+    useEffect(() => {
+      if (!createProfileData.data) return;
+
+      console.log(createProfileData.data)
+
+    }, [createProfileData.data])
 
     const handleHandle = (e) => {
         if (e.target.value[0] !== '@')
@@ -67,15 +117,15 @@ function NewProfile({ profile = {} }) {
 
     return (
         <StyledCard>
-            <Link to={`user/${profile.handle}`}>
-                <Icon/>
-            </Link>
+          <Cover />
+          <CardContent>
+            <Icon/>
             <Handle ref={handleRef} onChange={handleHandle} placeholder={'@handle'}/>
-            <Bio ref={bioRef} placeholder={'bio'}/>
-            {/* <Stats>
-                <p>{profile.stats?.totalFollowers} followers</p>
-                <p>{profile.stats?.totalFollowing} following</p>
-            </Stats> */}
+            {/* <Bio ref={bioRef} placeholder={'bio'}/> */}
+            <br/>
+            <br/>
+            <Button onClick={handleCreate}>Create Profile</Button>
+          </CardContent>
         </StyledCard>
     );
 }

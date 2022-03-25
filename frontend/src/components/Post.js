@@ -3,9 +3,14 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
+import Share from '../assets/Share'
+import Heart from '../assets/Heart'
+import Comment from '../assets/Comment'
+import Retweet from '../assets/Retweet'
 
-const StyledLink = styled(Link)`
+export const StyledLink = styled(Link)`
     text-decoration: none;
+    font-weight: 600;
     color: black;
     transition: all 50ms ease-in-out;
     border-bottom: 1px solid transparent;
@@ -26,6 +31,15 @@ const Container = styled.div`
     gap: 10px;
 `
 
+const Actions = styled.div`
+    margin-top: 1em;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    width: 400px;
+`
+
 const Content = styled.div`
     padding-top: 4px;
 `
@@ -39,13 +53,19 @@ function Post({ post }) {
         <StyledCard>
             <Container>
                 <Link to={`/user/${post.profile.handle}`}>
-                    <Icon/>
+                    <Icon link={true} />
                 </Link>
                 <Content>
                     <StyledLink to={`/user/${post.profile.handle}`}>
                         <b>@{post.profile.handle}</b>
                     </StyledLink>
                     <p>{post.metadata.description}</p>
+                    <Actions>
+                        <Comment/>
+                        <Retweet/>
+                        <Heart/>
+                        <Share/>
+                    </Actions>
                 </Content>
             </Container>
         </StyledCard>
