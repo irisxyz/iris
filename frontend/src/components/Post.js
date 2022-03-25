@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom'
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 
-const StyledLink = styled(Link)`
+export const StyledLink = styled(Link)`
     text-decoration: none;
+    font-weight: 600;
     color: black;
     transition: all 50ms ease-in-out;
     border-bottom: 1px solid transparent;

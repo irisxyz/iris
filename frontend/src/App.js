@@ -10,6 +10,7 @@ import User from './pages/User'
 import UserHandle from './pages/UserHandle'
 import NewProfile from './pages/NewProfile'
 import Profile from "./components/Profile"
+import Nav from "./components/Nav"
 import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
 import Login from "./components/Login"
@@ -21,13 +22,10 @@ const Container = styled.div`
   min-height: 90vh;
   box-sizing: border-box;
   margin: auto;
-  border-left: #EDDAFD 1px solid;
-  border-right: #EDDAFD 1px solid;
 `
 
 const Navbar = styled.nav`
   box-sizing: border-box;
-  border-bottom: #EDDAFD 1px solid;
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -68,6 +66,7 @@ function App() {
           <Columns>
             <Sidebar>
               <Profile profile={profile}/>
+              <Nav/>
             </Sidebar>
             <Content>
               {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
