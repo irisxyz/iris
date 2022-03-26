@@ -89,7 +89,7 @@ function Follow({ wallet, lensHub, profileId }) {
 
     return (
         <div>
-            <Button onClick={handleClick}>Follow profile</Button>
+            <Button onClick={handleClick}>Follow</Button>
         </div>
     );
 }

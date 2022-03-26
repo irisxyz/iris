@@ -88,7 +88,7 @@ function Follow({ wallet, profileId }) {
 
     return (
         <div>
-            <Button onClick={handleClick}>Unfollow profile</Button>
+            <Button onClick={handleClick}>Unfollow</Button>
         </div>
     );
 }
