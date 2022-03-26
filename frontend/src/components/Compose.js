@@ -45,29 +45,68 @@ const TextArea = styled.textarea`
         background: #FBF4FF;
     }
 `
+const axios = require('axios');
+
 
 const Compose = ({ wallet, profile, lensHub }) => {
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
 
+    // Uploading Video
+    const [loading, setLoading] = useState(false);
+    const [selectedFile, setSelectedFile] = useState("");
+    const [video, setVideo] = useState("")
+
+
+
+    const videoUpload = async () => {
+        const formData = new FormData();
+        console.log(selectedFile)
+        formData.append(
+            "fileName",
+            selectedFile,
+            selectedFile.name
+        );
+
+        setLoading(true)
+        const response = await fetch('http://localhost:3001/upload', { method: "POST", body: formData, mode: "cors" });
+        const data = await response.json();
+
+        setLoading(false)
+
+        console.log(data);
+
+        // console.log(data);
+        // const ipfs = await fetch(`https://ipfs.io/${data.data.replace(":", "")}`);
+        // const nftMetadata = await ipfs.json()
+        // console.log(nftMetadata);
+        // setVideo(`https://ipfs.io/${nftMetadata.properties.video.replace(":", "")}`)
+
+    }
+
+
 
     const handleSubmit = async () => {
         const id = profile.id.replace('0x', '')
-        console.log({id, name, description})
+        console.log({ id, name, description })
 
-        
+
         const ipfsResult = await client.add(JSON.stringify({
             name,
             description,
             content: description,
             external_url: null,
-            image: null,
+            // image: null,
+            image: "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
             imageMimeType: null,
             version: "1.0.0",
             appId: 'iris',
             attributes: [],
-            media: [],
+            media: [{
+                item: "ipfs://QmPUwFjbapev1rrppANs17APcpj8YmgU5ThT1FzagHBxm7",
+                type: "video/mp4"
+            }],
             metadata_id: uuidv4(),
         }))
 
@@ -96,14 +135,14 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const processPost = async () => {
 
             const typedData = typedPostData.data.createPostTypedData.typedData
-            const {domain, types, value} = typedData
-    
+            const { domain, types, value } = typedData
+
             const signature = await wallet.signer._signTypedData(
                 omitDeep(domain, '__typename'),
                 omitDeep(types, '__typename'),
                 omitDeep(value, '__typename')
             )
-    
+
             const { v, r, s } = utils.splitSignature(signature);
 
             const tx = await lensHub.postWithSig({
@@ -114,13 +153,13 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 referenceModule: typedData.value.referenceModule,
                 referenceModuleData: typedData.value.referenceModuleData,
                 sig: {
-                  v,
-                  r,
-                  s,
-                  deadline: typedData.value.deadline,
+                    v,
+                    r,
+                    s,
+                    deadline: typedData.value.deadline,
                 },
-              });
-              console.log('create post: tx hash', tx.hash);
+            });
+            console.log('create post: tx hash', tx.hash);
         }
         processPost()
 
@@ -144,6 +183,12 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 />
             </form>
             <Button onClick={handleSubmit}>Plant</Button>
+            <input
+                type="file"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
+            <Button onClick={videoUpload}>Upload</Button>
+
         </StyledCard>
     )
 }

@@ -49,6 +49,8 @@ const StyledCard = styled(Card)`
 `
 
 function Post({ post }) {
+
+    console.log("POST DATA", post)
     return (
         <StyledCard>
             <Container>
