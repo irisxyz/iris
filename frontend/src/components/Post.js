@@ -7,6 +7,7 @@ import Share from '../assets/Share'
 import Heart from '../assets/Heart'
 import Retweet from '../assets/Retweet'
 import Comment from './Comment'
+import Mirror from './Mirror'
 
 export const StyledLink = styled(Link)`
     text-decoration: none;
@@ -62,7 +63,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                     <p>{post.metadata.description}</p>
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id}/>
-                        <Retweet/>
+                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id}/>
                         <Heart/>
                         <Share/>
                     </Actions>
