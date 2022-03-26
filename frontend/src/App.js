@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route } from "react-router-dom"
 import styled from 'styled-components'
+import LitJsSdk from 'lit-js-sdk'
 
 import ApolloProvider from './components/Apollo'
 import GlobalStyle from './theme/GlobalStyle'
@@ -60,6 +61,17 @@ function App() {
   const [authToken, setAuthToken] = useState(false)
   const [profile, setProfile] = useState({})
   const [lensHub, setLensHub] = useState()
+
+  useEffect(() => {
+    const initLit = async () => {
+      const client = new LitJsSdk.LitNodeClient({
+        alertWhenUnauthorized: false
+      })
+      await client.connect()
+      window.litNodeClient = client
+    }
+    initLit()
+  }, [])
 
   return (
     <ApolloProvider>

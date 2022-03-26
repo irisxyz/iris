@@ -5,8 +5,11 @@ import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'ipfs-http-client'
+import LitJsSdk from 'lit-js-sdk'
+
 import Button from './Button'
 import Card from './Card'
+import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
 
 
@@ -42,25 +45,160 @@ const TextArea = styled.textarea`
     transition: all 100ms ease-in-out;
 
     &:focus {
-        background: #FBF4FF;
+        background: #ECE8FF;
     }
 `
+const axios = require('axios');
+
+
+const Header = styled.h2`
+    margin: 0;
+    color: ${p => p.theme.primary};
+`
+
+const PostPreview = styled.div`
+    background: #ECE8FF;
+    border-radius: 12px;
+    padding: 1em;
+    margin: 1em 0;
+`
+
+const chain = 'mumbai'
 
 const Compose = ({ wallet, profile, lensHub }) => {
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
+    const [showModal, setShowModal] = useState(false)
+
+    const handlePreview = async () => {
+        if (!description) return;
+        setShowModal(true)
+        console.log({name, description, profile})
+    }
+
+    // Uploading Video
+    const [loading, setLoading] = useState(false);
+    const [selectedFile, setSelectedFile] = useState("");
+    const [video, setVideo] = useState("")
+    const [videoNftMetadata, setVideoNftMetadata] = useState({})
 
 
-    const handleSubmit = async () => {
+
+    const videoUpload = async () => {
+        const formData = new FormData();
+        console.log(selectedFile)
+        formData.append(
+            "fileName",
+            selectedFile,
+            selectedFile.name
+        );
+
+        setLoading(true)
+        const response = await fetch('http://localhost:3001/upload', { method: "POST", body: formData, mode: "cors" });
+        const data = await response.json();
+
+        console.log(data);
+
+        // console.log("The nftmetadataURL ", data["nftMetadataGatewayUrl"])
+
+        // Get metadata from livepeer
+        const responseVidNftMetadata = await fetch(data["nftMetadataGatewayUrl"], { method: "GET" });
+        const vidNftData = await responseVidNftMetadata.json();
+
+        setVideoNftMetadata(vidNftData)
+        console.log("VideoNFTMetaData :", vidNftData)
+
+        setLoading(false)
+
+
+        // console.log(data);
+        // const ipfs = await fetch(`https://ipfs.io/${data.data.replace(":", "")}`);
+        // const nftMetadata = await ipfs.json()
+        // console.log(nftMetadata);
+        // setVideo(`https://ipfs.io/${nftMetadata.properties.video.replace(":", "")}`)
+
+    }
+
+    const handleSubmitGated = async () => {
         const id = profile.id.replace('0x', '')
+        if (!description) return;
         console.log({id, name, description})
 
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
+
+        const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
+            description
+          );
+
+        const accessControlConditions = [
+            {
+                contractAddress: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C',
+                standardContractType: 'ERC721',
+                chain,
+                method: 'balanceOf',
+                parameters: [
+                ':userAddress',
+                ],
+                returnValueTest: {
+                comparator: '>',
+                value: '0'
+                }
+            }
+        ]
+
+        const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
+            accessControlConditions,
+            symmetricKey,
+            authSig,
+            chain,
+          });
+
+
+          const blobString = await encryptedString.text()
+          console.log(JSON.stringify(encryptedString))
+          console.log(encryptedString)
+          const newBlob = new Blob([blobString], {
+            type: encryptedString.type // or whatever your Content-Type is
+          });
+          console.log(newBlob)
+        console.log(LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"))
         
-        const ipfsResult = await client.add(JSON.stringify({
+        const ipfsResult = await client.add(encryptedString)
+        
+        // const isthisblob = client.cat(ipfsResult.path)
+        // let newEcnrypt;
+        // for await (const chunk of isthisblob) {
+        //     newEcnrypt = new Blob([chunk], {
+        //         type: encryptedString.type // or whatever your Content-Type is
+        //       })
+        // }
+
+        // const key = await window.litNodeClient.getEncryptionKey({
+        //     accessControlConditions,
+        //     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+        //     toDecrypt: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+        //     chain,
+        //     authSig
+        //   })
+
+        //   const decryptedString = await LitJsSdk.decryptString(
+        //     newEcnrypt,
+        //     key
+        //   );
+
+        //   console.log(decryptedString)
+
+        const encryptedPost = {
+            key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+            blobPath: ipfsResult.path,
+            contract: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C'
+        }
+
+        const postIpfsRes = await client.add(JSON.stringify({
             name,
-            description,
-            content: description,
+            description: `litcoded}`,
+            content: `${JSON.stringify(encryptedPost)}`,
             external_url: null,
             image: null,
             imageMimeType: null,
@@ -70,6 +208,91 @@ const Compose = ({ wallet, profile, lensHub }) => {
             media: [],
             metadata_id: uuidv4(),
         }))
+
+        const createPostRequest = {
+            profileId: profile.id,
+            contentURI: 'ipfs://' + postIpfsRes.path,
+            collectModule: {
+                revertCollectModule: true,
+            },
+            referenceModule: {
+                followerOnlyReferenceModule: false,
+            },
+        };
+
+        mutatePostTypedData({
+            variables: {
+                request: createPostRequest,
+            }
+        })
+    }
+
+    const handleSubmit = async () => {
+        const id = profile.id.replace('0x', '')
+        if (!description) return;
+        console.log({id, name, description})
+
+        var ipfsResult = "";
+
+        if (videoNftMetadata) {
+
+            // For video
+            ipfsResult = await client.add(JSON.stringify({
+                name: videoNftMetadata["name"],
+                description,
+                content: description,
+                external_url: null,
+                // image: null,
+                image: videoNftMetadata["image"],
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [{
+                    item: videoNftMetadata["animation_url"],
+                    type: "video/mp4"
+                }],
+                metadata_id: uuidv4(),
+            }))
+            // Sample file of a what it should look like
+            // ipfsResult = await client.add(JSON.stringify({
+            //     name,
+            //     description,
+            //     content: description,
+            //     external_url: null,
+            //     // image: null,
+            //     image: "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
+            //     imageMimeType: null,
+            //     version: "1.0.0",
+            //     appId: 'iris',
+            //     attributes: [],
+            //     media: [{
+            //         item: "ipfs://QmPUwFjbapev1rrppANs17APcpj8YmgU5ThT1FzagHBxm7",
+            //         type: "video/mp4"
+            //     }],
+            //     metadata_id: uuidv4(),
+            // }))
+
+        } else {
+
+            // For Only Text Post
+
+            ipfsResult = await client.add(JSON.stringify({
+                name,
+                description,
+                content: description,
+                external_url: null,
+                image: null,
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [],
+                metadata_id: uuidv4(),
+            }))
+
+
+        }
 
         // hard coded to make the code example clear
         const createPostRequest = {
@@ -96,14 +319,14 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const processPost = async () => {
 
             const typedData = typedPostData.data.createPostTypedData.typedData
-            const {domain, types, value} = typedData
-    
+            const { domain, types, value } = typedData
+
             const signature = await wallet.signer._signTypedData(
                 omitDeep(domain, '__typename'),
                 omitDeep(types, '__typename'),
                 omitDeep(value, '__typename')
             )
-    
+
             const { v, r, s } = utils.splitSignature(signature);
 
             const tx = await lensHub.postWithSig({
@@ -114,21 +337,34 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 referenceModule: typedData.value.referenceModule,
                 referenceModuleData: typedData.value.referenceModuleData,
                 sig: {
-                  v,
-                  r,
-                  s,
-                  deadline: typedData.value.deadline,
+                    v,
+                    r,
+                    s,
+                    deadline: typedData.value.deadline,
                 },
-              });
-              console.log('create post: tx hash', tx.hash);
+            });
+            console.log('create post: tx hash', tx.hash);
         }
         processPost()
 
     }, [typedPostData.data])
 
     return (
+        <>
+        { showModal && <Modal onExit={() => setShowModal(false)}>
+
+            <Header>Great plant! 🌱</Header>
+            <PostPreview>
+            { description }
+            </PostPreview>
+            <b>How do you want your post to be viewed?</b>
+            <br/>
+            <Button onClick={handleSubmitGated}>Follower only</Button>
+            <br/>
+            <Button onClick={handleSubmit}>Public</Button>
+            </Modal> }
         <StyledCard>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handlePreview}>
                 {/* <TextArea
                     value={name}
                     placeholder="Title"
@@ -143,8 +379,15 @@ const Compose = ({ wallet, profile, lensHub }) => {
                     onChange={e => setDescription(e.target.value)}
                 />
             </form>
-            <Button onClick={handleSubmit}>Plant</Button>
+            <Button onClick={handlePreview}>Plant</Button>
+            <input
+                type="file"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
+            <Button onClick={videoUpload}>Upload</Button>
+
         </StyledCard>
+        </>
     )
 }
 
