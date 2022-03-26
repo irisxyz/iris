@@ -43,13 +43,20 @@ const TextArea = styled.textarea`
     transition: all 100ms ease-in-out;
 
     &:focus {
-        background: #FBF4FF;
+        background: #ECE8FF;
     }
 `
 
 const Header = styled.h2`
     margin: 0;
     color: ${p => p.theme.primary};
+`
+
+const PostPreview = styled.div`
+    background: #ECE8FF;
+    border-radius: 12px;
+    padding: 1em;
+    margin: 1em 0;
 `
 
 const Compose = ({ wallet, profile, lensHub }) => {
@@ -59,7 +66,47 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [showModal, setShowModal] = useState(false)
 
     const handlePreview = async () => {
+        if (!description) return;
         setShowModal(true)
+        console.log({name, description})
+    }
+
+    const handleSubmitGated = async () => {
+        const id = profile.id.replace('0x', '')
+        if (!description) return;
+        console.log({id, name, description})
+
+        const ipfsResult = await client.add(JSON.stringify({
+            name,
+            description,
+            content: description,
+            external_url: null,
+            image: null,
+            imageMimeType: null,
+            version: "1.0.0",
+            appId: 'iris',
+            attributes: [],
+            media: [],
+            metadata_id: uuidv4(),
+        }))
+
+        // hard coded to make the code example clear
+        const createPostRequest = {
+            profileId: profile.id,
+            contentURI: 'ipfs://' + ipfsResult.path,
+            collectModule: {
+                revertCollectModule: true,
+            },
+            referenceModule: {
+                followerOnlyReferenceModule: false,
+            },
+        };
+
+        mutatePostTypedData({
+            variables: {
+                request: createPostRequest,
+            }
+        })
     }
 
     const handleSubmit = async () => {
@@ -141,7 +188,14 @@ const Compose = ({ wallet, profile, lensHub }) => {
         { showModal && <Modal onExit={() => setShowModal(false)}>
 
             <Header>Great plant! 🌱</Header>
-
+            <PostPreview>
+            { description }
+            </PostPreview>
+            <b>How do you want your post to be viewed?</b>
+            <br/>
+            <Button onClick={handleSubmit}>Follower only</Button>
+            <br/>
+            <Button onClick={handleSubmitGated}>Public</Button>
             </Modal> }
         <StyledCard>
             <form onSubmit={handlePreview}>
