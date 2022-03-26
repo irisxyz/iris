@@ -130,7 +130,7 @@ function User({ wallet, lensHub }) {
 
         {
           publications.map((post) => {
-            return <Post key={post.id} post={post} />
+            return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id}/>
           })
         }
       </>

@@ -9,7 +9,7 @@ const Main = styled.main`
 
 `
 
-function Feed({ profile = {} }) {
+function Feed({ profile = {}, wallet, lensHub }) {
     const [notFound, setNotFound] = useState(false)
     const [publications, setPublications] = useState([])
     const { loading, error, data } = useQuery(GET_TIMELINE, {
@@ -65,7 +65,7 @@ function Feed({ profile = {} }) {
           { notFound && <><h3>You don't follow anyone. Here are some posts #LFG</h3><br/></>}
           {
             publications.map((post) => {
-              return <Post key={post.id} post={post} />
+              return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id}/>
             })
           }
         </Main>

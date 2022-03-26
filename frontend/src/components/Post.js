@@ -48,7 +48,7 @@ const StyledCard = styled(Card)`
     margin-bottom: 1em;
 `
 
-function Post({ post }) {
+function Post({ post, wallet, lensHub, profileId }) {
     return (
         <StyledCard>
             <Container>
@@ -61,7 +61,7 @@ function Post({ post }) {
                     </StyledLink>
                     <p>{post.metadata.description}</p>
                     <Actions>
-                        <Comment></Comment>
+                        <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id}/>
                         <Retweet/>
                         <Heart/>
                         <Share/>

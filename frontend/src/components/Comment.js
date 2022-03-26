@@ -46,8 +46,8 @@ function Comment({ wallet, lensHub, profileId, publicationId }) {
 
     const commentRequest = [
         {
-            profileId: profileId,
-            publicationId: publicationId,
+            profileId: 0x0139,
+            publicationId: 0x0139-0x01,
             contentURI: "ipfs://QmPogtffEF3oAbKERsoR4Ky8aTvLgBF5totp5AuF8YN6vl.json",
             collectModule: {
                 emptyCollectModule: true
