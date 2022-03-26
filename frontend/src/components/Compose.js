@@ -57,6 +57,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [loading, setLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [video, setVideo] = useState("")
+    const [videoNftMetadata, setVideoNftMetadata] = useState({})
 
 
 
@@ -73,9 +74,19 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const response = await fetch('http://localhost:3001/upload', { method: "POST", body: formData, mode: "cors" });
         const data = await response.json();
 
+        console.log(data);
+
+        // console.log("The nftmetadataURL ", data["nftMetadataGatewayUrl"])
+
+        // Get metadata from livepeer
+        const responseVidNftMetadata = await fetch(data["nftMetadataGatewayUrl"], { method: "GET" });
+        const vidNftData = await responseVidNftMetadata.json();
+
+        setVideoNftMetadata(vidNftData)
+        console.log("VideoNFTMetaData :", vidNftData)
+
         setLoading(false)
 
-        console.log(data);
 
         // console.log(data);
         // const ipfs = await fetch(`https://ipfs.io/${data.data.replace(":", "")}`);
@@ -91,24 +102,74 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const id = profile.id.replace('0x', '')
         console.log({ id, name, description })
 
+        var ipfsResult = "";
 
-        const ipfsResult = await client.add(JSON.stringify({
-            name,
-            description,
-            content: description,
-            external_url: null,
-            // image: null,
-            image: "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
-            imageMimeType: null,
-            version: "1.0.0",
-            appId: 'iris',
-            attributes: [],
-            media: [{
-                item: "ipfs://QmPUwFjbapev1rrppANs17APcpj8YmgU5ThT1FzagHBxm7",
-                type: "video/mp4"
-            }],
-            metadata_id: uuidv4(),
-        }))
+
+        if (videoNftMetadata) {
+
+            // For video
+
+            ipfsResult = await client.add(JSON.stringify({
+                name: videoNftMetadata["name"],
+                description,
+                content: description,
+                external_url: null,
+                // image: null,
+                image: videoNftMetadata["image"],
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [{
+                    item: videoNftMetadata["animation_url"],
+                    type: "video/mp4"
+                }],
+                metadata_id: uuidv4(),
+            }))
+// Sample file of a what it should look like
+            // ipfsResult = await client.add(JSON.stringify({
+            //     name,
+            //     description,
+            //     content: description,
+            //     external_url: null,
+            //     // image: null,
+            //     image: "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
+            //     imageMimeType: null,
+            //     version: "1.0.0",
+            //     appId: 'iris',
+            //     attributes: [],
+            //     media: [{
+            //         item: "ipfs://QmPUwFjbapev1rrppANs17APcpj8YmgU5ThT1FzagHBxm7",
+            //         type: "video/mp4"
+            //     }],
+            //     metadata_id: uuidv4(),
+            // }))
+
+        } else {
+
+            // For Only Text Post
+
+            ipfsResult = await client.add(JSON.stringify({
+                name,
+                description,
+                content: description,
+                external_url: null,
+                image: null,
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [],
+                metadata_id: uuidv4(),
+            }))
+
+
+        }
+
+
+
+
+
 
         // hard coded to make the code example clear
         const createPostRequest = {
