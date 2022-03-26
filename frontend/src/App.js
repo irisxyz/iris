@@ -64,7 +64,9 @@ function App() {
 
   useEffect(() => {
     const initLit = async () => {
-      const client = new LitJsSdk.LitNodeClient()
+      const client = new LitJsSdk.LitNodeClient({
+        alertWhenUnauthorized: false
+      })
       await client.connect()
       window.litNodeClient = client
     }
@@ -93,7 +95,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<div>
                   {profile && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
-                  <Feed profile={profile} />
+                  <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                 </div>} />
                 <Route path="new-profile" element={<NewProfile/>} />
                 <Route path="user" element={<User/>} >

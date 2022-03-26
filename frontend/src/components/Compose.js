@@ -48,6 +48,8 @@ const TextArea = styled.textarea`
         background: #ECE8FF;
     }
 `
+const axios = require('axios');
+
 
 const Header = styled.h2`
     margin: 0;
@@ -73,6 +75,49 @@ const Compose = ({ wallet, profile, lensHub }) => {
         if (!description) return;
         setShowModal(true)
         console.log({name, description, profile})
+    }
+
+    // Uploading Video
+    const [loading, setLoading] = useState(false);
+    const [selectedFile, setSelectedFile] = useState("");
+    const [video, setVideo] = useState("")
+    const [videoNftMetadata, setVideoNftMetadata] = useState({})
+
+
+
+    const videoUpload = async () => {
+        const formData = new FormData();
+        console.log(selectedFile)
+        formData.append(
+            "fileName",
+            selectedFile,
+            selectedFile.name
+        );
+
+        setLoading(true)
+        const response = await fetch('http://localhost:3001/upload', { method: "POST", body: formData, mode: "cors" });
+        const data = await response.json();
+
+        console.log(data);
+
+        // console.log("The nftmetadataURL ", data["nftMetadataGatewayUrl"])
+
+        // Get metadata from livepeer
+        const responseVidNftMetadata = await fetch(data["nftMetadataGatewayUrl"], { method: "GET" });
+        const vidNftData = await responseVidNftMetadata.json();
+
+        setVideoNftMetadata(vidNftData)
+        console.log("VideoNFTMetaData :", vidNftData)
+
+        setLoading(false)
+
+
+        // console.log(data);
+        // const ipfs = await fetch(`https://ipfs.io/${data.data.replace(":", "")}`);
+        // const nftMetadata = await ipfs.json()
+        // console.log(nftMetadata);
+        // setVideo(`https://ipfs.io/${nftMetadata.properties.video.replace(":", "")}`)
+
     }
 
     const handleSubmitGated = async () => {
@@ -187,19 +232,67 @@ const Compose = ({ wallet, profile, lensHub }) => {
         if (!description) return;
         console.log({id, name, description})
 
-        const ipfsResult = await client.add(JSON.stringify({
-            name,
-            description,
-            content: description,
-            external_url: null,
-            image: null,
-            imageMimeType: null,
-            version: "1.0.0",
-            appId: 'iris',
-            attributes: [],
-            media: [],
-            metadata_id: uuidv4(),
-        }))
+        var ipfsResult = "";
+
+        if (videoNftMetadata) {
+
+            // For video
+            ipfsResult = await client.add(JSON.stringify({
+                name: videoNftMetadata["name"],
+                description,
+                content: description,
+                external_url: null,
+                // image: null,
+                image: videoNftMetadata["image"],
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [{
+                    item: videoNftMetadata["animation_url"],
+                    type: "video/mp4"
+                }],
+                metadata_id: uuidv4(),
+            }))
+            // Sample file of a what it should look like
+            // ipfsResult = await client.add(JSON.stringify({
+            //     name,
+            //     description,
+            //     content: description,
+            //     external_url: null,
+            //     // image: null,
+            //     image: "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
+            //     imageMimeType: null,
+            //     version: "1.0.0",
+            //     appId: 'iris',
+            //     attributes: [],
+            //     media: [{
+            //         item: "ipfs://QmPUwFjbapev1rrppANs17APcpj8YmgU5ThT1FzagHBxm7",
+            //         type: "video/mp4"
+            //     }],
+            //     metadata_id: uuidv4(),
+            // }))
+
+        } else {
+
+            // For Only Text Post
+
+            ipfsResult = await client.add(JSON.stringify({
+                name,
+                description,
+                content: description,
+                external_url: null,
+                image: null,
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [],
+                metadata_id: uuidv4(),
+            }))
+
+
+        }
 
         // hard coded to make the code example clear
         const createPostRequest = {
@@ -226,14 +319,14 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const processPost = async () => {
 
             const typedData = typedPostData.data.createPostTypedData.typedData
-            const {domain, types, value} = typedData
-    
+            const { domain, types, value } = typedData
+
             const signature = await wallet.signer._signTypedData(
                 omitDeep(domain, '__typename'),
                 omitDeep(types, '__typename'),
                 omitDeep(value, '__typename')
             )
-    
+
             const { v, r, s } = utils.splitSignature(signature);
 
             const tx = await lensHub.postWithSig({
@@ -244,13 +337,13 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 referenceModule: typedData.value.referenceModule,
                 referenceModuleData: typedData.value.referenceModuleData,
                 sig: {
-                  v,
-                  r,
-                  s,
-                  deadline: typedData.value.deadline,
+                    v,
+                    r,
+                    s,
+                    deadline: typedData.value.deadline,
                 },
-              });
-              console.log('create post: tx hash', tx.hash);
+            });
+            console.log('create post: tx hash', tx.hash);
         }
         processPost()
 
@@ -287,6 +380,12 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 />
             </form>
             <Button onClick={handlePreview}>Plant</Button>
+            <input
+                type="file"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
+            <Button onClick={videoUpload}>Upload</Button>
+
         </StyledCard>
         </>
     )
