@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
@@ -55,16 +55,41 @@ const Columns = styled.div`
     justify-content: space-between;
 `;
 
+const DOES_FOLLOW = gql`
+    query ($request: DoesFollowRequest!) {
+        doesFollow(request: $request) {
+            followerAddress
+            profileId
+            follows
+        }
+    }
+`;
+
 function User({ wallet, lensHub }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
     const [profile, setProfile] = useState("");
+    const [following, setFollowing] = useState(false);
     const { data } = useQuery(GET_PROFILES, {
         variables: {
             request: {
                 handles: [params.handle],
                 limit: 1,
+            },
+        },
+    });
+
+    const followInfos = [
+        {
+            followerAddress: wallet.address,
+            profileId: profile.id,
+        },
+    ];
+    const doesFollow = useQuery(DOES_FOLLOW, {
+        variables: {
+            request: {
+                followInfos,
             },
         },
     });
@@ -97,6 +122,18 @@ function User({ wallet, lensHub }) {
         setPublications(publicationsData.data.publications.items);
     }, [publicationsData.data]);
 
+    useEffect(() => {
+        if (!doesFollow.data) return;
+
+        const handleCreate = async () => {
+            console.log(doesFollow.data.doesFollow[0].follows);
+
+            setFollowing(doesFollow.data.doesFollow[0].follows);
+        };
+
+        handleCreate();
+    }, [doesFollow.data]);
+
     if (notFound) {
         return (
             <>
@@ -122,8 +159,11 @@ function User({ wallet, lensHub }) {
                             </Stats>
                         </div>
                         <div>
-                            <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
-                            <Unfollow wallet={wallet} profileId={profile.id} />
+                            {following ? (
+                                <Unfollow wallet={wallet} profileId={profile.id} />
+                            ) : (
+                                <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
+                            )}
                         </div>
                     </Columns>
                 </CardContent>
