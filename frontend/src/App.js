@@ -83,7 +83,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<div>
                   {profile && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
-                  <Feed profile={profile} />
+                  <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                 </div>} />
                 <Route path="new-profile" element={<NewProfile/>} />
                 <Route path="user" element={<User/>} >
