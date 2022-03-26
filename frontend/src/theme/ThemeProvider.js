@@ -4,7 +4,7 @@ import { ThemeProvider } from 'styled-components'
 const theme = {
     primary: '#7329F0',
     primaryHover: '#9458F9',
-    border: '#8247E5 2px solid',
+    border: '#7329F0 2px solid',
     background: 'linear-gradient(90deg, #C3BFF5 12.82%, #C280E7 91.48%)',
     text: '#232323',
     textLight: '#fff',

@@ -19,6 +19,7 @@ p {
     font-weight: 600;
     display: inline;
     color: black;
+    transition: all 100ms ease-in-out;
 }
 
 padding: .5em;

@@ -5,8 +5,11 @@ import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'ipfs-http-client'
+import LitJsSdk from 'lit-js-sdk'
+
 import Button from './Button'
 import Card from './Card'
+import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
 
 
@@ -42,16 +45,37 @@ const TextArea = styled.textarea`
     transition: all 100ms ease-in-out;
 
     &:focus {
-        background: #FBF4FF;
+        background: #ECE8FF;
     }
 `
 const axios = require('axios');
 
 
+const Header = styled.h2`
+    margin: 0;
+    color: ${p => p.theme.primary};
+`
+
+const PostPreview = styled.div`
+    background: #ECE8FF;
+    border-radius: 12px;
+    padding: 1em;
+    margin: 1em 0;
+`
+
+const chain = 'mumbai'
+
 const Compose = ({ wallet, profile, lensHub }) => {
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
+    const [showModal, setShowModal] = useState(false)
+
+    const handlePreview = async () => {
+        if (!description) return;
+        setShowModal(true)
+        console.log({name, description, profile})
+    }
 
     // Uploading Video
     const [loading, setLoading] = useState(false);
@@ -96,19 +120,123 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
     }
 
+    const handleSubmitGated = async () => {
+        const id = profile.id.replace('0x', '')
+        if (!description) return;
+        console.log({id, name, description})
 
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
+
+        const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
+            description
+          );
+
+        const accessControlConditions = [
+            {
+                contractAddress: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C',
+                standardContractType: 'ERC721',
+                chain,
+                method: 'balanceOf',
+                parameters: [
+                ':userAddress',
+                ],
+                returnValueTest: {
+                comparator: '>',
+                value: '0'
+                }
+            }
+        ]
+
+        const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
+            accessControlConditions,
+            symmetricKey,
+            authSig,
+            chain,
+          });
+
+
+          const blobString = await encryptedString.text()
+          console.log(JSON.stringify(encryptedString))
+          console.log(encryptedString)
+          const newBlob = new Blob([blobString], {
+            type: encryptedString.type // or whatever your Content-Type is
+          });
+          console.log(newBlob)
+        console.log(LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"))
+        
+        const ipfsResult = await client.add(encryptedString)
+        
+        // const isthisblob = client.cat(ipfsResult.path)
+        // let newEcnrypt;
+        // for await (const chunk of isthisblob) {
+        //     newEcnrypt = new Blob([chunk], {
+        //         type: encryptedString.type // or whatever your Content-Type is
+        //       })
+        // }
+
+        // const key = await window.litNodeClient.getEncryptionKey({
+        //     accessControlConditions,
+        //     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+        //     toDecrypt: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+        //     chain,
+        //     authSig
+        //   })
+
+        //   const decryptedString = await LitJsSdk.decryptString(
+        //     newEcnrypt,
+        //     key
+        //   );
+
+        //   console.log(decryptedString)
+
+        const encryptedPost = {
+            key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+            blobPath: ipfsResult.path,
+            contract: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C'
+        }
+
+        const postIpfsRes = await client.add(JSON.stringify({
+            name,
+            description: `litcoded}`,
+            content: `${JSON.stringify(encryptedPost)}`,
+            external_url: null,
+            image: null,
+            imageMimeType: null,
+            version: "1.0.0",
+            appId: 'iris',
+            attributes: [],
+            media: [],
+            metadata_id: uuidv4(),
+        }))
+
+        const createPostRequest = {
+            profileId: profile.id,
+            contentURI: 'ipfs://' + postIpfsRes.path,
+            collectModule: {
+                revertCollectModule: true,
+            },
+            referenceModule: {
+                followerOnlyReferenceModule: false,
+            },
+        };
+
+        mutatePostTypedData({
+            variables: {
+                request: createPostRequest,
+            }
+        })
+    }
 
     const handleSubmit = async () => {
         const id = profile.id.replace('0x', '')
-        console.log({ id, name, description })
+        if (!description) return;
+        console.log({id, name, description})
 
         var ipfsResult = "";
-
 
         if (videoNftMetadata) {
 
             // For video
-
             ipfsResult = await client.add(JSON.stringify({
                 name: videoNftMetadata["name"],
                 description,
@@ -126,7 +254,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 }],
                 metadata_id: uuidv4(),
             }))
-// Sample file of a what it should look like
+            // Sample file of a what it should look like
             // ipfsResult = await client.add(JSON.stringify({
             //     name,
             //     description,
@@ -165,11 +293,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
 
         }
-
-
-
-
-
 
         // hard coded to make the code example clear
         const createPostRequest = {
@@ -227,8 +350,21 @@ const Compose = ({ wallet, profile, lensHub }) => {
     }, [typedPostData.data])
 
     return (
+        <>
+        { showModal && <Modal onExit={() => setShowModal(false)}>
+
+            <Header>Great plant! 🌱</Header>
+            <PostPreview>
+            { description }
+            </PostPreview>
+            <b>How do you want your post to be viewed?</b>
+            <br/>
+            <Button onClick={handleSubmitGated}>Follower only</Button>
+            <br/>
+            <Button onClick={handleSubmit}>Public</Button>
+            </Modal> }
         <StyledCard>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handlePreview}>
                 {/* <TextArea
                     value={name}
                     placeholder="Title"
@@ -243,7 +379,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
                     onChange={e => setDescription(e.target.value)}
                 />
             </form>
-            <Button onClick={handleSubmit}>Plant</Button>
+            <Button onClick={handlePreview}>Plant</Button>
             <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
@@ -251,6 +387,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             <Button onClick={videoUpload}>Upload</Button>
 
         </StyledCard>
+        </>
     )
 }
 
