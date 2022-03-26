@@ -3,11 +3,13 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_PROFILES, GET_PUBLICATIONS } from '../utils/queries'
+import { hexToDec } from '../utils'
 import Follow from "../components/Follow"
 import Post from "../components/Post"
 import Card from "../components/Card"
 import avatar from '../assets/avatar.png'
 import rainbow from '../assets/rainbow.png'
+import opensea from '../assets/opensea.svg'
 
 const Icon = styled.div`
   height: 100px;
@@ -71,6 +73,18 @@ const UserInfo = styled.div`
   gap: 1em;
 `
 
+const Opensea = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  border-radius: 100px;  
+  box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
+  transition: all 100ms ease-in-out;
+  &:hover {    
+  box-shadow: 0px 2px 7px rgba(112, 58, 202, 1);
+  }
+`
+
 function User({ wallet, lensHub }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false)
@@ -96,9 +110,13 @@ function User({ wallet, lensHub }) {
       }
       
       const ownedBy = data.profiles.items[0].ownedBy
+      const id = data.profiles.items[0].id
+      const decId = hexToDec(id.replace('0x',''))
+
       setProfile({
         ...data.profiles.items[0],
         address: `${ownedBy.substring(0, 6)}...${ownedBy.substring(37, ownedBy.length-1)}`,
+        decId,
       })
 
       getPublications({
@@ -138,6 +156,9 @@ function User({ wallet, lensHub }) {
               <Address>
                 {profile?.address}
               </Address>
+              <Opensea target="_blank" rel="noopener noreferrer" href={`https://testnets.opensea.io/assets/mumbai/0xd7b3481de00995046c7850bce9a5196b7605c367/${profile.decId}`}>
+                <img src={opensea} alt="Opensea" />
+              </Opensea>
             </UserInfo>
             <Stats>
                 <p>{profile.stats?.totalFollowers} followers</p>

@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { create } from 'ipfs-http-client'
 import Button from './Button'
 import Card from './Card'
+import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
 
 
@@ -46,17 +47,26 @@ const TextArea = styled.textarea`
     }
 `
 
+const Header = styled.h2`
+    margin: 0;
+    color: ${p => p.theme.primary};
+`
+
 const Compose = ({ wallet, profile, lensHub }) => {
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
+    const [showModal, setShowModal] = useState(false)
 
+    const handlePreview = async () => {
+        setShowModal(true)
+    }
 
     const handleSubmit = async () => {
         const id = profile.id.replace('0x', '')
+        if (!description) return;
         console.log({id, name, description})
 
-        
         const ipfsResult = await client.add(JSON.stringify({
             name,
             description,
@@ -127,8 +137,14 @@ const Compose = ({ wallet, profile, lensHub }) => {
     }, [typedPostData.data])
 
     return (
+        <>
+        { showModal && <Modal onExit={() => setShowModal(false)}>
+
+            <Header>Great plant! 🌱</Header>
+
+            </Modal> }
         <StyledCard>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handlePreview}>
                 {/* <TextArea
                     value={name}
                     placeholder="Title"
@@ -143,8 +159,9 @@ const Compose = ({ wallet, profile, lensHub }) => {
                     onChange={e => setDescription(e.target.value)}
                 />
             </form>
-            <Button onClick={handleSubmit}>Plant</Button>
+            <Button onClick={handlePreview}>Plant</Button>
         </StyledCard>
+        </>
     )
 }
 
