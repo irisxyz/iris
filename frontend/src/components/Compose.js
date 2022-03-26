@@ -4,14 +4,13 @@ import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
 import { v4 as uuidv4 } from 'uuid';
-import { create, CID } from 'ipfs-http-client'
+import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 
 import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
-import { blobToBase64 } from '../utils'
 
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -154,7 +153,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const postIpfsRes = await client.add(JSON.stringify({
             name,
             description: `litcoded}`,
-            content: `litcoded: ${JSON.stringify(encryptedPost)}`,
+            content: `${JSON.stringify(encryptedPost)}`,
             external_url: null,
             image: null,
             imageMimeType: null,
