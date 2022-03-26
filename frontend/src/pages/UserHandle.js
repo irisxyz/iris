@@ -203,7 +203,7 @@ function User({ wallet, lensHub }) {
                             <Stats>
                                 <p>{profile.stats?.totalFollowers} followers</p>
                                 <p>{profile.stats?.totalFollowing} following</p>
-                                <p>{profile.stats?.totalPosts} posts</p>
+                                <p>{profile.stats?.totalPublications} posts</p>
                                 <p>{profile.stats?.totalCollects} collects</p>
                             </Stats>
                         </div>
