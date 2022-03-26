@@ -4,11 +4,14 @@ import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
 import { v4 as uuidv4 } from 'uuid';
-import { create } from 'ipfs-http-client'
+import { create, CID } from 'ipfs-http-client'
+import LitJsSdk from 'lit-js-sdk'
+
 import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
+import { blobToBase64 } from '../utils'
 
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -59,6 +62,8 @@ const PostPreview = styled.div`
     margin: 1em 0;
 `
 
+const chain = 'mumbai'
+
 const Compose = ({ wallet, profile, lensHub }) => {
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
@@ -68,7 +73,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handlePreview = async () => {
         if (!description) return;
         setShowModal(true)
-        console.log({name, description})
+        console.log({name, description, profile})
     }
 
     const handleSubmitGated = async () => {
@@ -76,10 +81,80 @@ const Compose = ({ wallet, profile, lensHub }) => {
         if (!description) return;
         console.log({id, name, description})
 
-        const ipfsResult = await client.add(JSON.stringify({
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
+
+        const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
+            description
+          );
+
+        const accessControlConditions = [
+            {
+                contractAddress: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C',
+                standardContractType: 'ERC721',
+                chain,
+                method: 'balanceOf',
+                parameters: [
+                ':userAddress',
+                ],
+                returnValueTest: {
+                comparator: '>',
+                value: '0'
+                }
+            }
+        ]
+
+        const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
+            accessControlConditions,
+            symmetricKey,
+            authSig,
+            chain,
+          });
+
+
+          const blobString = await encryptedString.text()
+          console.log(JSON.stringify(encryptedString))
+          console.log(encryptedString)
+          const newBlob = new Blob([blobString], {
+            type: encryptedString.type // or whatever your Content-Type is
+          });
+          console.log(newBlob)
+        console.log(LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"))
+        
+        const ipfsResult = await client.add(encryptedString)
+        
+        // const isthisblob = client.cat(ipfsResult.path)
+        // let newEcnrypt;
+        // for await (const chunk of isthisblob) {
+        //     newEcnrypt = new Blob([chunk], {
+        //         type: encryptedString.type // or whatever your Content-Type is
+        //       })
+        // }
+
+        // const key = await window.litNodeClient.getEncryptionKey({
+        //     accessControlConditions,
+        //     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+        //     toDecrypt: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+        //     chain,
+        //     authSig
+        //   })
+
+        //   const decryptedString = await LitJsSdk.decryptString(
+        //     newEcnrypt,
+        //     key
+        //   );
+
+        //   console.log(decryptedString)
+
+        const encryptedPost = {
+            key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+            blobPath: ipfsResult.path,
+            contract: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C'
+        }
+
+        const postIpfsRes = await client.add(JSON.stringify({
             name,
-            description,
-            content: description,
+            description: `litcoded}`,
+            content: `litcoded: ${JSON.stringify(encryptedPost)}`,
             external_url: null,
             image: null,
             imageMimeType: null,
@@ -90,10 +165,9 @@ const Compose = ({ wallet, profile, lensHub }) => {
             metadata_id: uuidv4(),
         }))
 
-        // hard coded to make the code example clear
         const createPostRequest = {
             profileId: profile.id,
-            contentURI: 'ipfs://' + ipfsResult.path,
+            contentURI: 'ipfs://' + postIpfsRes.path,
             collectModule: {
                 revertCollectModule: true,
             },
@@ -193,9 +267,9 @@ const Compose = ({ wallet, profile, lensHub }) => {
             </PostPreview>
             <b>How do you want your post to be viewed?</b>
             <br/>
-            <Button onClick={handleSubmit}>Follower only</Button>
+            <Button onClick={handleSubmitGated}>Follower only</Button>
             <br/>
-            <Button onClick={handleSubmitGated}>Public</Button>
+            <Button onClick={handleSubmit}>Public</Button>
             </Modal> }
         <StyledCard>
             <form onSubmit={handlePreview}>

@@ -59,7 +59,7 @@ function Post({ post }) {
                     <StyledLink to={`/user/${post.profile.handle}`}>
                         <b>@{post.profile.handle}</b>
                     </StyledLink>
-                    <p>{post.metadata.description}</p>
+                    <p>{post.metadata.content}</p>
                     <Actions>
                         <Comment/>
                         <Retweet/>
