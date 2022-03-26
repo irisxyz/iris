@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
 import Follow from "../components/Follow";
+import Unfollow from "../components/Unfollow";
 import Post from "../components/Post";
 import Card from "../components/Card";
 import avatar from "../assets/avatar.png";
@@ -122,6 +123,7 @@ function User({ wallet, lensHub }) {
                         </div>
                         <div>
                             <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
+                            <Unfollow wallet={wallet} profileId={profile.id} />
                         </div>
                     </Columns>
                 </CardContent>
