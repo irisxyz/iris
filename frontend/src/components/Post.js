@@ -5,8 +5,8 @@ import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 import Share from '../assets/Share'
 import Heart from '../assets/Heart'
-import Comment from '../assets/Comment'
 import Retweet from '../assets/Retweet'
+import Comment from './Comment'
 
 export const StyledLink = styled(Link)`
     text-decoration: none;
@@ -61,7 +61,7 @@ function Post({ post }) {
                     </StyledLink>
                     <p>{post.metadata.description}</p>
                     <Actions>
-                        <Comment/>
+                        <Comment></Comment>
                         <Retweet/>
                         <Heart/>
                         <Share/>
