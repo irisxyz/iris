@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createRef } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import avatar from "../assets/avatar.png";
@@ -83,11 +83,23 @@ const CREATE_PROFILE = gql`
     }
 `;
 
-function NewProfile({ profile = {}, wallet }) {
+const MODULE_APPROVAL_DATA = gql`
+    query ($request: GenerateModuleCurrencyApprovalDataRequest!) {
+        generateModuleCurrencyApprovalData(request: $request) {
+            to
+            from
+            data
+        }
+    }
+`;
+
+function NewProfile({ profile = {}, wallet, lensHub }) {
     const [newProfile, setNewProfile] = useState({ ...profile });
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
     const handleRef = createRef();
     const costRef = createRef();
+    const cost = costRef.current.value;
+
     // const bioRef = createRef()
 
     const handleCreate = async () => {
@@ -107,7 +119,7 @@ function NewProfile({ profile = {}, wallet }) {
             followModule: {
                 feeFollowModule: {
                     amount: {
-                        currency: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+                        currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
                         value: cost,
                     },
                     recipient: wallet.address,
@@ -128,6 +140,39 @@ function NewProfile({ profile = {}, wallet }) {
 
         console.log(createProfileData.data);
     }, [createProfileData.data]);
+
+    const moduleApprovalRequest = {
+        currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
+        value: cost,
+        collectModule: "FeeFollowModule",
+    };
+
+    const approveModule = useQuery(MODULE_APPROVAL_DATA, {
+        variables: {
+            request: moduleApprovalRequest,
+        },
+    });
+
+    useEffect(() => {
+        if (!approveModule.data) return;
+        if (!cost) return;
+
+        const handleCreate = async () => {
+            console.log(approveModule.data);
+
+            const typedData = approveModule.data.moduleApprovalData.typedData;
+
+            const tx = await lensHub.sendTx({
+                gasPrice: 0.001,
+                to: typedData.to,
+                from: typedData.from,
+                data: typedData.data,
+            });
+            console.log(tx.hash);
+        };
+
+        handleCreate();
+    }, [approveModule.data]);
 
     const handleHandle = (e) => {
         if (e.target.value[0] !== "@") {

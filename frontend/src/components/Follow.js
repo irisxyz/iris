@@ -50,7 +50,7 @@ function Follow({ wallet, lensHub, profile = {} }) {
                     followModule: {
                         feeFollowModule: {
                             amount: {
-                                currency: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+                                currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
                                 value: profile.followModule.amount.value,
                             },
                         },

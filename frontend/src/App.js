@@ -109,7 +109,7 @@ function App() {
                                         </div>
                                     }
                                 />
-                                <Route path="new-profile" element={<NewProfile wallet={wallet} />} />
+                                <Route path="new-profile" element={<NewProfile wallet={wallet} lensHub={lensHub} />} />
                                 <Route path="user" element={<User />}>
                                     <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
                                 </Route>
