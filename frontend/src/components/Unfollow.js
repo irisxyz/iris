@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { utils, ethers } from "ethers";
 import { LENS_FOLLOW_NFT_ABI } from "../config.ts";
 import omitDeep from "omit-deep";
-import Button from "./Button";
+import FollowButton from "./FollowButton";
 
 const CREATE_UNFOLLOW_TYPED_DATA = gql`
     mutation ($request: UnfollowRequest!) {
@@ -88,7 +88,9 @@ function Follow({ wallet, profileId }) {
 
     return (
         <div>
-            <Button onClick={handleClick}>Unfollow</Button>
+            <FollowButton onClick={handleClick}>
+                <span>Following</span>
+            </FollowButton>
         </div>
     );
 }
