@@ -101,7 +101,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
     const [showModal, setShowModal] = useState(false)
-    const [liveStreamModal, setLiveStreamModal] = useState(false)
 
     const handlePreview = async () => {
         if (!description) return;
@@ -115,38 +114,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [video, setVideo] = useState("")
     const [videoNftMetadata, setVideoNftMetadata] = useState({})
 
-    // Streaming
-    const [streamId, setStreamId] = useState("")
-    const [streamKey, setStreamKey] = useState("")
-    const [playbackId, setPlaybackId] = useState("")
-
-
-    const goLiveStream = async () => {
-
-        console.log(wallet.address)
-        const response = await fetch("http://localhost:3001/new-stream", 
-        {
-            method: "POST",
-            'headers': {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ wallet: wallet.address }), mode: "cors"
-        });
-        const data = await response.json();
-
-        console.log(data)
-
-
-        setStreamId(data["id"])
-
-        setStreamKey(data["streamKey"])
-        setPlaybackId(data["playbackId"])
-
-
-        setLiveStreamModal(true)
-
-
-    }
 
     const videoUpload = async () => {
         const formData = new FormData();
@@ -186,13 +153,13 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handleSubmitGated = async () => {
         const id = profile.id.replace('0x', '')
         if (!description) return;
-        console.log({id, name, description})
+        console.log({ id, name, description })
 
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
 
         const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
             description
-          );
+        );
 
         const accessControlConditions = [
             {
@@ -201,11 +168,11 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 chain,
                 method: 'balanceOf',
                 parameters: [
-                ':userAddress',
+                    ':userAddress',
                 ],
                 returnValueTest: {
-                comparator: '>',
-                value: '0'
+                    comparator: '>',
+                    value: '0'
                 }
             }
         ]
@@ -215,20 +182,20 @@ const Compose = ({ wallet, profile, lensHub }) => {
             symmetricKey,
             authSig,
             chain,
-          });
+        });
 
 
-          const blobString = await encryptedString.text()
-          console.log(JSON.stringify(encryptedString))
-          console.log(encryptedString)
-          const newBlob = new Blob([blobString], {
+        const blobString = await encryptedString.text()
+        console.log(JSON.stringify(encryptedString))
+        console.log(encryptedString)
+        const newBlob = new Blob([blobString], {
             type: encryptedString.type // or whatever your Content-Type is
-          });
-          console.log(newBlob)
+        });
+        console.log(newBlob)
         console.log(LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"))
-        
+
         const ipfsResult = await client.add(encryptedString)
-        
+
         // const isthisblob = client.cat(ipfsResult.path)
         // let newEcnrypt;
         // for await (const chunk of isthisblob) {
@@ -293,7 +260,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handleSubmit = async () => {
         const id = profile.id.replace('0x', '')
         if (!description) return;
-        console.log({id, name, description})
+        console.log({ id, name, description })
 
         var ipfsResult = "";
 
@@ -416,75 +383,51 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
     return (
         <>
-        { showModal && <Modal onExit={() => setShowModal(false)}>
+            {showModal && <Modal onExit={() => setShowModal(false)}>
 
-            <Header>Great plant! 🌱</Header>
-            <PostPreview>
-            { description }
-            </PostPreview>
-            <b>How do you want your post to be viewed?</b>
-            <br/>
-            <Button onClick={handleSubmitGated}>Follower only</Button>
-            <br/>
-            <Button onClick={handleSubmit}>Public</Button>
-            </Modal> }
-            
-        {liveStreamModal && <Modal onExit={() => setLiveStreamModal(false)}>
-
-            <Header>Live Stream 🌱</Header>
-            
-            <b>Stream ID </b>{streamId}
-            <br />
-            <br />
-            <b>Stream key </b>{streamKey}
-            <br />
-            <br />
-            <b>RTMP ingest URL </b> rtmp://rtmp.livepeer.com/live
-            <br />
-            <br />
-            <b>SRT ingest URL </b> srt://rtmp.livepeer.com:2935?streamid={streamKey}
-            <br />
-            <br />
-            <b>Playback URL </b> https://cdn.livepeer.com/hls/{playbackId}/index.m3u8
-            <br />
-            <br />
-            <b>Stream From Browser</b> https://justcast.it/to/{streamKey}
-            <br />
-
+                <Header>Great plant! 🌱</Header>
+                <PostPreview>
+                    {description}
+                </PostPreview>
+                <b>How do you want your post to be viewed?</b>
+                <br />
+                <Button onClick={handleSubmitGated}>Follower only</Button>
+                <br />
+                <Button onClick={handleSubmit}>Public</Button>
             </Modal>}
-        <StyledCard>
-            <form onSubmit={handlePreview}>
-                {/* <TextArea
+
+            <StyledCard>
+                <form onSubmit={handlePreview}>
+                    {/* <TextArea
                     value={name}
                     placeholder="Title"
                     style={{ overflow: 'hidden' }}
                     height={2}
                     onChange={e => setName(e.target.value)}
                 /> */}
-                <TextArea
-                    value={description}
-                    placeholder="What's happening?"
-                    height={5}
-                    onChange={e => setDescription(e.target.value)}
-                />
-            </form>
-            <Button onClick={handlePreview}>Plant</Button>
-            <Button onClick={goLiveStream}>Start LiveStream</Button>
-            {/* <input
+                    <TextArea
+                        value={description}
+                        placeholder="What's happening?"
+                        height={5}
+                        onChange={e => setDescription(e.target.value)}
+                    />
+                </form>
+                <Button onClick={handlePreview}>Plant</Button>
+                {/* <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
             /> */}
-            <InputWrapper>
-            {selectedFile ? <>
-                {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
-            </>
-            : <div class="file-input">
-                <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-                <CustomLabel for="file">Select File</CustomLabel>
-            </div> }
-            </InputWrapper>
+                <InputWrapper>
+                    {selectedFile ? <>
+                        {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
+                    </>
+                        : <div class="file-input">
+                            <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <CustomLabel for="file">Select File</CustomLabel>
+                        </div>}
+                </InputWrapper>
 
-        </StyledCard>
+            </StyledCard>
         </>
     )
 }

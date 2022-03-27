@@ -87,7 +87,7 @@ function App() {
           </Navbar>
           <Columns>
             <Sidebar>
-              <Profile profile={profile}/>
+              <Profile profile={profile}  wallet={wallet}/>
               <Nav handle={profile?.handle} />
             </Sidebar>
             <Content>
