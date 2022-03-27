@@ -48,8 +48,6 @@ const TextArea = styled.textarea`
         background: #ECE8FF;
     }
 `
-const axios = require('axios');
-
 
 const Header = styled.h2`
     margin: 0;
@@ -61,6 +59,39 @@ const PostPreview = styled.div`
     border-radius: 12px;
     padding: 1em;
     margin: 1em 0;
+`
+
+const FileInput = styled.input`
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+`
+
+const CustomLabel = styled.label`
+    border: none;
+    border-radius: 6px;
+    padding: 0.6em 2em;
+    display: inline-block;
+    font-family: ${p => p.theme.font};
+    font-weight: 500;
+    font-size: 0.8em;
+    color: ${p => p.theme.textLight};
+    background: ${p => p.theme.primary};
+    letter-spacing: 0.02em;
+    transition: all 100ms;
+    :hover {
+        background: ${p => p.theme.primaryHover};
+        cursor: pointer;
+    }
+    :focus {
+        box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #5D25BC;
+        outline: none;
+    }
+`
+
+const InputWrapper = styled.div`
+    float: right;
 `
 
 const chain = 'mumbai'
@@ -82,8 +113,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [selectedFile, setSelectedFile] = useState("");
     const [video, setVideo] = useState("")
     const [videoNftMetadata, setVideoNftMetadata] = useState({})
-
-
 
     const videoUpload = async () => {
         const formData = new FormData();
@@ -234,7 +263,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
         var ipfsResult = "";
 
-        if (videoNftMetadata) {
+        if (videoNftMetadata.videoFileUrl) {
 
             // For video
             ipfsResult = await client.add(JSON.stringify({
@@ -293,6 +322,8 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
 
         }
+
+        console.log(ipfsResult.path)
 
         // hard coded to make the code example clear
         const createPostRequest = {
@@ -380,11 +411,19 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 />
             </form>
             <Button onClick={handlePreview}>Plant</Button>
-            <input
+            {/* <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
-            />
-            <Button onClick={videoUpload}>Upload</Button>
+            /> */}
+            <InputWrapper>
+            {selectedFile ? <>
+                {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
+            </>
+            : <div class="file-input">
+                <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                <CustomLabel for="file">Select File</CustomLabel>
+            </div> }
+            </InputWrapper>
 
         </StyledCard>
         </>
