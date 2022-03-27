@@ -269,7 +269,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
         var ipfsResult = "";
 
-        if (videoNftMetadata.videoFileUrl) {
+        if (videoNftMetadata.animation_url) {
 
             // For video
             ipfsResult = await client.add(JSON.stringify({
