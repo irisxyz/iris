@@ -119,6 +119,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [video, setVideo] = useState("")
     const [videoNftMetadata, setVideoNftMetadata] = useState({})
 
+
     const videoUpload = async () => {
         const formData = new FormData();
         console.log(selectedFile)
@@ -157,13 +158,13 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handleSubmitGated = async () => {
         const id = profile.id.replace('0x', '')
         if (!description) return;
-        console.log({id, name, description})
+        console.log({ id, name, description })
 
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
 
         const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
             description
-          );
+        );
 
         const accessControlConditions = [
             {
@@ -172,11 +173,11 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 chain,
                 method: 'balanceOf',
                 parameters: [
-                ':userAddress',
+                    ':userAddress',
                 ],
                 returnValueTest: {
-                comparator: '>',
-                value: '0'
+                    comparator: '>',
+                    value: '0'
                 }
             }
         ]
@@ -186,20 +187,20 @@ const Compose = ({ wallet, profile, lensHub }) => {
             symmetricKey,
             authSig,
             chain,
-          });
+        });
 
 
-          const blobString = await encryptedString.text()
-          console.log(JSON.stringify(encryptedString))
-          console.log(encryptedString)
-          const newBlob = new Blob([blobString], {
+        const blobString = await encryptedString.text()
+        console.log(JSON.stringify(encryptedString))
+        console.log(encryptedString)
+        const newBlob = new Blob([blobString], {
             type: encryptedString.type // or whatever your Content-Type is
-          });
-          console.log(newBlob)
+        });
+        console.log(newBlob)
         console.log(LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"))
-        
+
         const ipfsResult = await client.add(encryptedString)
-        
+
         // const isthisblob = client.cat(ipfsResult.path)
         // let newEcnrypt;
         // for await (const chunk of isthisblob) {
@@ -264,7 +265,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handleSubmit = async () => {
         const id = profile.id.replace('0x', '')
         if (!description) return;
-        console.log({id, name, description})
+        console.log({ id, name, description })
 
         var ipfsResult = "";
 
@@ -412,17 +413,17 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
             /> */}
-            <InputWrapper>
-            {selectedFile ? <>
-                {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
-            </>
-            : <div class="file-input">
-                <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-                <CustomLabel for="file">Select File</CustomLabel>
-            </div> }
-            </InputWrapper>
+                <InputWrapper>
+                    {selectedFile ? <>
+                        {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
+                    </>
+                        : <div class="file-input">
+                            <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <CustomLabel for="file">Select File</CustomLabel>
+                        </div>}
+                </InputWrapper>
 
-        </StyledCard>
+            </StyledCard>
         </>
     )
 }

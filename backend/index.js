@@ -3,9 +3,15 @@ const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
 const fs = require("fs");
+const bodyParser = require('body-parser')
 const { VideoNFT } = require("@livepeer/video-nft/dist/index.cjs.js");
 require("dotenv").config();
 const PORT = 3001;
+
+const jsonParser = bodyParser.json()
+const axios = require("axios");
+const request = require("request");
+
 
 const sdk = new VideoNFT({
   auth: { apiKey: process.env.LIVEPEER_API_KEY },
@@ -37,8 +43,8 @@ async function maybeTranscode(sdk, asset) {
     if (!possible) {
       console.error(
         `Warning: Asset is larger than OpenSea file limit and can't be transcoded down since it's too large. ` +
-          `It will still be stored in IPFS and referenced in the NFT metadata, so a proper application is still able to play it back. ` +
-          `For more information check http://bit.ly/opensea-file-limit`
+        `It will still be stored in IPFS and referenced in the NFT metadata, so a proper application is still able to play it back. ` +
+        `For more information check http://bit.ly/opensea-file-limit`
       );
     }
     return asset;
@@ -55,6 +61,53 @@ async function maybeTranscode(sdk, asset) {
   );
   return await sdk.nftNormalize(asset, printProgress);
 }
+
+app.post('/new-stream', jsonParser, (req, res) => {
+
+  console.log(req.body.wallet)
+
+
+  var options = {
+    'method': 'POST',
+    'url': 'https://livepeer.com/api/stream',
+    'headers': {
+      'content-type': 'application/json',
+      'authorization': `Bearer ${process.env.LIVEPEER_API_KEY}`
+    },
+    body: JSON.stringify({
+      "name": req.body.wallet,
+      "profiles": [
+        {
+          "name": "720p",
+          "bitrate": 2000000,
+          "fps": 30,
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "480p",
+          "bitrate": 1000000,
+          "fps": 30,
+          "width": 854,
+          "height": 480
+        },
+        {
+          "name": "360p",
+          "bitrate": 500000,
+          "fps": 30,
+          "width": 640,
+          "height": 360
+        }
+      ]
+    })
+
+  };
+
+  request(options, function (error, response, body) {
+    res.send(body)
+  });
+
+});
 
 app.post("/upload", upload.array("fileName"), async (req, res) => {
   console.log("Testing");
@@ -96,7 +149,7 @@ app.post("/upload", upload.array("fileName"), async (req, res) => {
 
   console.log(
     `Mint your NFT at:\n` +
-      `https://livepeer.com/mint-nft?tokenUri=${ipfs?.nftMetadataUrl}`
+    `https://livepeer.com/mint-nft?tokenUri=${ipfs?.nftMetadataUrl}`
   );
   return res.send({ status: "OK", data: ipfs?.nftMetadataUrl, ...ipfs });
 });

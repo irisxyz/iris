@@ -88,7 +88,7 @@ function App() {
           </Navbar>
           <Columns>
             <Sidebar>
-              <Profile profile={profile}>
+              <Profile profile={profile} wallet={wallet}>
                 {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
               </Profile>
               <Nav handle={profile?.handle} />
