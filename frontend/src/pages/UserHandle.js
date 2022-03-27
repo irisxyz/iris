@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { GET_PROFILES, GET_PUBLICATIONS } from '../utils/queries'
-import { hexToDec } from '../utils'
-import Follow from "../components/Follow"
-import Post from "../components/Post"
-import Card from "../components/Card"
-import avatar from '../assets/avatar.png'
-import rainbow from '../assets/rainbow.png'
-import opensea from '../assets/opensea.svg'
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
+import { hexToDec } from "../utils";
+import Follow from "../components/Follow";
+import Unfollow from "../components/Unfollow";
+import Post from "../components/Post";
+import Card from "../components/Card";
+import avatar from "../assets/avatar.png";
+import rainbow from "../assets/rainbow.png";
+import opensea from "../assets/opensea.svg";
 
 const Icon = styled.div`
     height: 100px;
@@ -52,44 +53,55 @@ const Stats = styled.div`
 `;
 
 const Columns = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
+    display: flex;
+    justify-content: space-between;
+`;
 
 const Handle = styled.h1`
-  display: inline-block;
-`
+    display: inline-block;
+`;
 
 const Address = styled.code`
-  box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
-  border-radius: 100px;
-  padding: 0.6em;
-  background: white;
-`
+    box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
+    border-radius: 100px;
+    padding: 0.6em;
+    background: white;
+`;
 
 const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1em;
-`
+    display: flex;
+    align-items: center;
+    gap: 1em;
+`;
 
 const Opensea = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  border-radius: 100px;  
-  box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
-  transition: all 100ms ease-in-out;
-  &:hover {    
-  box-shadow: 0px 2px 7px rgba(112, 58, 202, 1);
-  }
-`
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    border-radius: 100px;
+    box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
+    transition: all 100ms ease-in-out;
+    &:hover {
+        box-shadow: 0px 2px 7px rgba(112, 58, 202, 1);
+    }
+`;
+
+const DOES_FOLLOW = gql`
+    query ($request: DoesFollowRequest!) {
+        doesFollow(request: $request) {
+            followerAddress
+            profileId
+            follows
+        }
+    }
+`;
 
 function User({ wallet, lensHub }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
     const [profile, setProfile] = useState("");
+    const [following, setFollowing] = useState(false);
     const { data } = useQuery(GET_PROFILES, {
         variables: {
             request: {
@@ -99,25 +111,39 @@ function User({ wallet, lensHub }) {
         },
     });
 
+    const followInfos = [
+        {
+            followerAddress: wallet.address,
+            profileId: profile.id,
+        },
+    ];
+    const doesFollow = useQuery(DOES_FOLLOW, {
+        variables: {
+            request: {
+                followInfos,
+            },
+        },
+    });
+
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
         if (!data) return;
 
-      if (data.profiles.items.length < 1) {
-        setNotFound(true)
-        return
-      }
-      
-      const ownedBy = data.profiles.items[0].ownedBy
-      const id = data.profiles.items[0].id
-      const decId = hexToDec(id.replace('0x',''))
+        if (data.profiles.items.length < 1) {
+            setNotFound(true);
+            return;
+        }
 
-      setProfile({
-        ...data.profiles.items[0],
-        address: `${ownedBy.substring(0, 6)}...${ownedBy.substring(37, ownedBy.length-1)}`,
-        decId,
-      })
+        const ownedBy = data.profiles.items[0].ownedBy;
+        const id = data.profiles.items[0].id;
+        const decId = hexToDec(id.replace("0x", ""));
+
+        setProfile({
+            ...data.profiles.items[0],
+            address: `${ownedBy.substring(0, 6)}...${ownedBy.substring(37, ownedBy.length - 1)}`,
+            decId,
+        });
 
         getPublications({
             variables: {
@@ -135,6 +161,18 @@ function User({ wallet, lensHub }) {
         setPublications(publicationsData.data.publications.items);
     }, [publicationsData.data]);
 
+    useEffect(() => {
+        if (!doesFollow.data) return;
+
+        const handleCreate = async () => {
+            console.log(doesFollow.data.doesFollow[0].follows);
+
+            setFollowing(doesFollow.data.doesFollow[0].follows);
+        };
+
+        handleCreate();
+    }, [doesFollow.data]);
+
     if (notFound) {
         return (
             <>
@@ -142,44 +180,48 @@ function User({ wallet, lensHub }) {
             </>
         );
     }
-    console.log(profile)
+    console.log(profile);
     return (
-      <>
-        <StyledCard>
-          <Cover />
-        <CardContent>
-          <Icon/>
-          <Columns>
-          <div>            
-            <UserInfo>
-              <Handle>@{params.handle}</Handle>
-              <Address>
-                {profile?.address}
-              </Address>
-              <Opensea target="_blank" rel="noopener noreferrer" href={`https://testnets.opensea.io/assets/mumbai/0xd7b3481de00995046c7850bce9a5196b7605c367/${profile.decId}`}>
-                <img src={opensea} alt="Opensea" />
-              </Opensea>
-            </UserInfo>
-            <Stats>
-                <p>{profile.stats?.totalFollowers} followers</p>
-                <p>{profile.stats?.totalFollowing} following</p>
-                <p>{profile.stats?.totalPosts} posts</p>
-                <p>{profile.stats?.totalCollects} collects</p>
-            </Stats>
-          </div>
-          <div>
-            <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id}/>
-          </div>
-          </Columns>
-        </CardContent>
-        </StyledCard>
+        <>
+            <StyledCard>
+                <Cover />
+                <CardContent>
+                    <Icon />
+                    <Columns>
+                        <div>
+                            <UserInfo>
+                                <Handle>@{params.handle}</Handle>
+                                <Address>{profile?.address}</Address>
+                                <Opensea
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={`https://testnets.opensea.io/assets/mumbai/0xd7b3481de00995046c7850bce9a5196b7605c367/${profile.decId}`}
+                                >
+                                    <img src={opensea} alt="Opensea" />
+                                </Opensea>
+                            </UserInfo>
+                            <Stats>
+                                <p>{profile.stats?.totalFollowers} followers</p>
+                                <p>{profile.stats?.totalFollowing} following</p>
+                                <p>{profile.stats?.totalPublications} posts</p>
+                                <p>{profile.stats?.totalCollects} collects</p>
+                            </Stats>
+                        </div>
+                        <div>
+                            {following ? (
+                                <Unfollow wallet={wallet} profileId={profile.id} />
+                            ) : (
+                                <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
+                            )}
+                        </div>
+                    </Columns>
+                </CardContent>
+            </StyledCard>
 
-        {
-          publications.map((post) => {
-            return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
-          })
-        }
-      </>
+            {publications.map((post) => {
+                return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
+            })}
+        </>
     );
 }
 
