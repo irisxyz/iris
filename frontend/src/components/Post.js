@@ -122,7 +122,13 @@ function Post({ post, wallet, lensHub, profileId }) {
                     <StyledLink to={`/user/${post.profile.handle}`}>
                         <b>@{post.profile.handle}</b>
                     </StyledLink>
-                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code> }</p> : <p>{post.metadata.content}</p>}
+                    {/* {post.metadata.media} */}
+                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <p>{post.metadata.content} </p>}
+                    {post.metadata.media.length ? <video width="500px" controls>
+                        <source src={`https://ipfs.io/ipfs/${post.metadata.media[0].original.url.replace("ipfs://", "")}`} type="video/mp4" />
+
+                    </video> : <p></p>}
+
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
