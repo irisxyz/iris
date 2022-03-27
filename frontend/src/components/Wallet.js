@@ -62,6 +62,7 @@ const AccountPicker = styled.div`
   transition: all 300ms cubic-bezier(0.455, 0.030, 0.515, 0.955);
   ${p => !p.show && `
     opacity: 0;
+    display: none;
   `}
 `
 
