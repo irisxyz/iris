@@ -68,6 +68,9 @@ function Profile({ profile = {}, wallet }) {
 
     setLiveStreamModal(true)
   }
+  if (!profile.id) return (
+    <>{children}</>
+  )
 
   return (
     <Card>

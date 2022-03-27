@@ -16,7 +16,8 @@ import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
 import Login from "./components/Login"
 import Feed from "./components/Feed"
-import logo from "./assets/logo-open.png"
+import Livelinks from "./components/Livelinks"
+import logo from "./assets/logo.svg"
 
 const Container = styled.div`
   max-width: 1000px;
@@ -87,13 +88,15 @@ function App() {
           </Navbar>
           <Columns>
             <Sidebar>
-              <Profile profile={profile}  wallet={wallet}/>
+              <Profile profile={profile} wallet={wallet}>
+                {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
+              </Profile>
               <Nav handle={profile?.handle} />
             </Sidebar>
             <Content>
-              {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
               <Routes>
                 <Route path="/" element={<div>
+                  <Livelinks/>
                   {profile && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
                   <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                 </div>} />

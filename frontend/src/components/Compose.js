@@ -94,6 +94,11 @@ const InputWrapper = styled.div`
     float: right;
 `
 
+const StyledButton = styled(Button)`
+    display: block;
+    margin: 1em 0;
+`
+
 const chain = 'mumbai'
 
 const Compose = ({ wallet, profile, lensHub }) => {
@@ -243,7 +248,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             profileId: profile.id,
             contentURI: 'ipfs://' + postIpfsRes.path,
             collectModule: {
-                revertCollectModule: true,
+                emptyCollectModule: true,
             },
             referenceModule: {
                 followerOnlyReferenceModule: false,
@@ -331,7 +336,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             profileId: profile.id,
             contentURI: 'ipfs://' + ipfsResult.path,
             collectModule: {
-                revertCollectModule: true,
+                emptyCollectModule: true,
             },
             referenceModule: {
                 followerOnlyReferenceModule: false,
@@ -383,37 +388,28 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
     return (
         <>
-            {showModal && <Modal onExit={() => setShowModal(false)}>
+        { showModal && <Modal onExit={() => setShowModal(false)}>
 
-                <Header>Great plant! 🌱</Header>
-                <PostPreview>
-                    {description}
-                </PostPreview>
-                <b>How do you want your post to be viewed?</b>
-                <br />
-                <Button onClick={handleSubmitGated}>Follower only</Button>
-                <br />
-                <Button onClick={handleSubmit}>Public</Button>
-            </Modal>}
-
-            <StyledCard>
-                <form onSubmit={handlePreview}>
-                    {/* <TextArea
-                    value={name}
-                    placeholder="Title"
-                    style={{ overflow: 'hidden' }}
-                    height={2}
-                    onChange={e => setName(e.target.value)}
-                /> */}
-                    <TextArea
-                        value={description}
-                        placeholder="What's happening?"
-                        height={5}
-                        onChange={e => setDescription(e.target.value)}
-                    />
-                </form>
-                <Button onClick={handlePreview}>Plant</Button>
-                {/* <input
+            <Header>Great plant! 🌱</Header>
+            <PostPreview>
+            { description }
+            </PostPreview>
+            <b>How do you want your post to be viewed?</b>
+            <br/>
+            <StyledButton onClick={handleSubmitGated}>Follower only</StyledButton>
+            <StyledButton onClick={handleSubmit}>Public</StyledButton>
+            </Modal> }
+        <StyledCard>
+            <form onSubmit={handlePreview}>
+                <TextArea
+                    value={description}
+                    placeholder="What's happening?"
+                    height={5}
+                    onChange={e => setDescription(e.target.value)}
+                />
+            </form>
+            <Button onClick={handlePreview}>Plant</Button>
+            {/* <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
             /> */}
