@@ -18,6 +18,7 @@ import Login from "./components/Login";
 import Feed from "./components/Feed";
 import Livelinks from "./components/Livelinks";
 import logo from "./assets/logo.svg";
+import LandingPage from './pages/LandingPage'
 
 const Container = styled.div`
     max-width: 1000px;
@@ -78,7 +79,7 @@ function App() {
         <ApolloProvider>
             <ThemeProvider>
                 <GlobalStyle />
-                <Container>
+                { wallet.address ? <Container>
                     <Navbar>
                         <LogoContainer>
                             <img src={logo} alt="iris logo" width="50px" height="50px" />
@@ -120,7 +121,7 @@ function App() {
                             </Routes>
                         </Content>
                     </Columns>
-                </Container>
+                    </Container> : <LandingPage wallet={wallet} setWallet={setWallet} authToken={authToken} currProfile={profile} setProfile={setProfile} setLensHub={setLensHub}/>}
             </ThemeProvider>
         </ApolloProvider>
     );

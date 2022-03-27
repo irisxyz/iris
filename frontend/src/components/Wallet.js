@@ -6,7 +6,7 @@ import { useLazyQuery } from '@apollo/client'
 import Button from './Button'
 import { GET_PROFILES } from '../utils/queries'
 import avatar from '../assets/avatar.png'
-
+import WalletButton from './WalletButton'
 import LensHub from '../artifacts/contracts/core/LensHub.sol/LensHub.json'
 
 const WalletContainer = styled.div`
@@ -183,7 +183,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
       <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} />
     </>
-    : <Button onClick={connectWallet} >Connect Wallet</Button>
+    : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }
   </WalletContainer>
   );
