@@ -34,7 +34,7 @@ const CREATE_COLLECT_TYPED_DATA = gql`
  }
 `;
 
-function Collect({ wallet, lensHub, profileId, publicationId, collected }) {
+function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }) {
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [apiError, setApiError] = useState('')
 
@@ -92,9 +92,10 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected }) {
 
         handleCreate();
     }, [createCollectTypedData.data]);
-    
+    console.log(stats)
     return (
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
+            <p>{ stats.totalAmountOfCollects }</p>
             <Heart onClick={handleClick} filled={collected} />
         </div>
     );

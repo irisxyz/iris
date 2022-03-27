@@ -110,7 +110,7 @@ function Post({ post, wallet, lensHub, profileId }) {
             })();
         }
     }, []);
-    
+
     return (
         <StyledCard>
             <Container>
@@ -124,9 +124,9 @@ function Post({ post, wallet, lensHub, profileId }) {
                     </StyledLink>
                     {post.metadata.description === "litcoded}" ? <p>{decryptedMsg}</p> : <p>{post.metadata.content}</p>}
                     <Actions>
-                        <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
-                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} collected={post.collected} />
+                        <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
+                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} />
                         <Share />
                     </Actions>
                 </Content>

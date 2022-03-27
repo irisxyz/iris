@@ -44,7 +44,7 @@ const CREATE_COMMENT_TYPED_DATA = gql`
     }
 `;
 
-function Comment({ wallet, lensHub, profileId, publicationId }) {
+function Comment({ wallet, lensHub, profileId, publicationId, stats }) {
     const [createCommentTyped, createCommentTypedData] = useMutation(CREATE_COMMENT_TYPED_DATA);
 
     const handleClick = async () => {
@@ -129,7 +129,8 @@ function Comment({ wallet, lensHub, profileId, publicationId }) {
     }, [createCommentTypedData.data]);
 
     return (
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
+            <p>{ stats.totalAmountOfComments }</p>
             <CommentIcon onClick={handleClick} />
         </div>
     );
