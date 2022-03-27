@@ -94,8 +94,8 @@ function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
-            <p>{ stats.totalAmountOfMirrors }</p>
             <Retweet onClick={handleClick} />
+            <p>{ stats.totalAmountOfMirrors }</p>
         </div>
     );
 }

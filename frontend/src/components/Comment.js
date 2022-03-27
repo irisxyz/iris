@@ -130,8 +130,8 @@ function Comment({ wallet, lensHub, profileId, publicationId, stats }) {
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
-            <p>{ stats.totalAmountOfComments }</p>
             <CommentIcon onClick={handleClick} />
+            <p>{ stats.totalAmountOfComments }</p>
         </div>
     );
 }

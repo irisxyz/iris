@@ -95,8 +95,8 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }
     console.log(stats)
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
-            <p>{ stats.totalAmountOfCollects }</p>
             <Heart onClick={handleClick} filled={collected} />
+            <p>{ stats.totalAmountOfCollects }</p>
         </div>
     );
 }

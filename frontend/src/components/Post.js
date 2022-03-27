@@ -122,7 +122,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                     <StyledLink to={`/user/${post.profile.handle}`}>
                         <b>@{post.profile.handle}</b>
                     </StyledLink>
-                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg}</p> : <p>{post.metadata.content}</p>}
+                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code> }</p> : <p>{post.metadata.content}</p>}
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
