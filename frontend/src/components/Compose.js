@@ -101,6 +101,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
     const [showModal, setShowModal] = useState(false)
+    const [liveStreamModal, setLiveStreamModal] = useState(false)
 
     const handlePreview = async () => {
         if (!description) return;
@@ -113,6 +114,39 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [selectedFile, setSelectedFile] = useState("");
     const [video, setVideo] = useState("")
     const [videoNftMetadata, setVideoNftMetadata] = useState({})
+
+    // Streaming
+    const [streamId, setStreamId] = useState("")
+    const [streamKey, setStreamKey] = useState("")
+    const [playbackId, setPlaybackId] = useState("")
+
+
+    const goLiveStream = async () => {
+
+        console.log(wallet.address)
+        const response = await fetch("http://localhost:3001/new-stream", 
+        {
+            method: "POST",
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ wallet: wallet.address }), mode: "cors"
+        });
+        const data = await response.json();
+
+        console.log(data)
+
+
+        setStreamId(data["id"])
+
+        setStreamKey(data["streamKey"])
+        setPlaybackId(data["playbackId"])
+
+
+        setLiveStreamModal(true)
+
+
+    }
 
     const videoUpload = async () => {
         const formData = new FormData();
@@ -394,6 +428,30 @@ const Compose = ({ wallet, profile, lensHub }) => {
             <br/>
             <Button onClick={handleSubmit}>Public</Button>
             </Modal> }
+            
+        {liveStreamModal && <Modal onExit={() => setLiveStreamModal(false)}>
+
+            <Header>Live Stream 🌱</Header>
+            
+            <b>Stream ID </b>{streamId}
+            <br />
+            <br />
+            <b>Stream key </b>{streamKey}
+            <br />
+            <br />
+            <b>RTMP ingest URL </b> rtmp://rtmp.livepeer.com/live
+            <br />
+            <br />
+            <b>SRT ingest URL </b> srt://rtmp.livepeer.com:2935?streamid={streamKey}
+            <br />
+            <br />
+            <b>Playback URL </b> https://cdn.livepeer.com/hls/{playbackId}/index.m3u8
+            <br />
+            <br />
+            <b>Stream From Browser</b> https://justcast.it/to/{streamKey}
+            <br />
+
+            </Modal>}
         <StyledCard>
             <form onSubmit={handlePreview}>
                 {/* <TextArea
@@ -411,6 +469,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 />
             </form>
             <Button onClick={handlePreview}>Plant</Button>
+            <Button onClick={goLiveStream}>Start LiveStream</Button>
             {/* <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
