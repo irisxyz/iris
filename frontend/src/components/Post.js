@@ -6,9 +6,9 @@ import LitJsSdk from "lit-js-sdk";
 import Card from "../components/Card";
 import { UserIcon } from "../components/Wallet";
 import Share from "../assets/Share";
-import Heart from "../assets/Heart";
-import Comment from "../components/Comment";
+import Comment from "./Comment";
 import Mirror from "./Mirror";
+import Collect from "./Collect";
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
@@ -124,9 +124,9 @@ function Post({ post, wallet, lensHub, profileId }) {
                     </StyledLink>
                     {post.metadata.description === "litcoded}" ? <p>{decryptedMsg}</p> : <p>{post.metadata.content}</p>}
                     <Actions>
-                        <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
-                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
-                        <Heart />
+                        <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
+                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} />
                         <Share />
                     </Actions>
                 </Content>

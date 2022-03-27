@@ -242,7 +242,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             profileId: profile.id,
             contentURI: 'ipfs://' + postIpfsRes.path,
             collectModule: {
-                revertCollectModule: true,
+                emptyCollectModule: true,
             },
             referenceModule: {
                 followerOnlyReferenceModule: false,
@@ -330,7 +330,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             profileId: profile.id,
             contentURI: 'ipfs://' + ipfsResult.path,
             collectModule: {
-                revertCollectModule: true,
+                emptyCollectModule: true,
             },
             referenceModule: {
                 followerOnlyReferenceModule: false,
