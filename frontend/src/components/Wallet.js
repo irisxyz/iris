@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
-import { useLazyQuery, useQuery, useMutation } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import Button from './Button'
 import { GET_PROFILES } from '../utils/queries'
-import gradient from '../utils/gradients'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import LensHub from '../artifacts/contracts/core/LensHub.sol/LensHub.json'
@@ -63,6 +62,7 @@ const AccountPicker = styled.div`
   transition: all 300ms cubic-bezier(0.455, 0.030, 0.515, 0.955);
   ${p => !p.show && `
     opacity: 0;
+    display: none;
   `}
 `
 
@@ -159,6 +159,10 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
+
+  useEffect(() => {
+    connectWallet()
+  }, [])
   
   return (
     
