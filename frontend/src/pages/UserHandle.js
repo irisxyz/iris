@@ -14,16 +14,16 @@ import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
 
 const HAS_COLLECTED = gql`
-  query($request: HasCollectedRequest!) {
-    hasCollected(request: $request) {
-      walletAddress
-      results {
-        collected
-        publicationId
-        collectedTimes
-      }
+    query ($request: HasCollectedRequest!) {
+        hasCollected(request: $request) {
+            walletAddress
+            results {
+                collected
+                publicationId
+                collectedTimes
+            }
+        }
     }
-  }
 `;
 
 const Icon = styled.div`
@@ -155,7 +155,6 @@ function User({ wallet, lensHub }) {
             },
         },
     });
-
     const followInfos = [
         {
             followerAddress: wallet.address,
@@ -205,45 +204,43 @@ function User({ wallet, lensHub }) {
         if (!publicationsData.data) return;
 
         setPublications(publicationsData.data.publications.items);
-        
+
         const publications = publicationsData.data.publications.items.map((thing) => {
-            return thing.id
-        })
+            return thing.id;
+        });
 
         hasCollected({
             variables: {
                 request: {
                     collectRequests: [
                         {
-                          walletAddress: wallet.address,
-                          publicationIds: publications,
+                            walletAddress: wallet.address,
+                            publicationIds: publications,
                         },
                     ],
                 },
             },
-        })
-
+        });
     }, [publicationsData.data]);
 
     useEffect(() => {
         if (!hasCollectedData.data) return;
 
-        const collectedIds = {}
+        const collectedIds = {};
 
         hasCollectedData.data.hasCollected[0].results.forEach((result) => {
-            if(result.collected) {
-                collectedIds[result.publicationId] = true
+            if (result.collected) {
+                collectedIds[result.publicationId] = true;
             }
-        })
+        });
 
-        console.log(collectedIds)
+        console.log(collectedIds);
 
         const newPubs = publications.map((post) => {
-            return {...post, collected: collectedIds[post.id]}
-        })
+            return { ...post, collected: collectedIds[post.id] };
+        });
 
-        setPublications([...newPubs])
-
+        setPublications([...newPubs]);
     }, [hasCollectedData.data]);
 
     useEffect(() => {
@@ -340,7 +337,7 @@ function User({ wallet, lensHub }) {
                             {following ? (
                                 <Unfollow wallet={wallet} profileId={profile.id} />
                             ) : (
-                                <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
+                                <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
                             )}
                         </div>
                     </Columns>
