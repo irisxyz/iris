@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import avatar from "../assets/avatar.png";
 
@@ -23,6 +24,19 @@ const UserContainer = styled.div`
     align-items: center;
     gap: 1em;
     font-weight: 500;
+    &:hover {
+        div {
+            cursor: pointer;
+            box-shadow: 0px 4px 12px rgba(112, 58, 202, 0.5);
+        }
+    }
+`
+
+const Text = styled(Link)`
+    text-decoration: none;
+    underline: none;
+    color: black;
+
 `
 
 const Container = styled.div`
@@ -39,14 +53,18 @@ const LiveLinks = () => {
 
         return (
             <Container>
-                <UserContainer>
-                    <Icon/>
-                    @lapierre
-                </UserContainer>
-                <UserContainer>
-                <Icon/>
-                    @player1
-                </UserContainer>
+                <Text to='user/lepierre'>
+                    <UserContainer>
+                        <Icon/>
+                        <p>@lepierre</p>
+                    </UserContainer>
+                </Text>
+                <Text to='user/player1'>
+                    <UserContainer>
+                        <Icon/>
+                        <p>@player1</p>
+                    </UserContainer>
+                </Text>
             </Container>
         )
     }
