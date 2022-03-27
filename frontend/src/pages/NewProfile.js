@@ -93,12 +93,11 @@ const MODULE_APPROVAL_DATA = gql`
     }
 `;
 
-function NewProfile({ profile = {}, wallet, lensHub }) {
+function NewProfile({ profile = {}, wallet }) {
     const [newProfile, setNewProfile] = useState({ ...profile });
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
     const handleRef = createRef();
     const costRef = createRef();
-    const cost = costRef.current.value;
 
     // const bioRef = createRef()
 
@@ -143,8 +142,8 @@ function NewProfile({ profile = {}, wallet, lensHub }) {
 
     const moduleApprovalRequest = {
         currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
-        value: cost,
-        collectModule: "FeeFollowModule",
+        value: "1",
+        followModule: "FeeFollowModule",
     };
 
     const approveModule = useQuery(MODULE_APPROVAL_DATA, {
@@ -155,18 +154,16 @@ function NewProfile({ profile = {}, wallet, lensHub }) {
 
     useEffect(() => {
         if (!approveModule.data) return;
-        if (!cost) return;
 
         const handleCreate = async () => {
             console.log(approveModule.data);
 
-            const typedData = approveModule.data.moduleApprovalData.typedData;
+            const generateModuleCurrencyApprovalData = approveModule.data.generateModuleCurrencyApprovalData;
 
-            const tx = await lensHub.sendTx({
-                gasPrice: 0.001,
-                to: typedData.to,
-                from: typedData.from,
-                data: typedData.data,
+            const tx = await wallet.signer.sendTransaction({
+                to: generateModuleCurrencyApprovalData.to,
+                from: generateModuleCurrencyApprovalData.from,
+                data: generateModuleCurrencyApprovalData.data,
             });
             console.log(tx.hash);
         };
