@@ -36,6 +36,9 @@ const Header = styled.h2`
     color: ${p => p.theme.primary};
 `
 
+const Centered = styled.div`
+  text-align: center;
+`
 
 function Profile({ profile = {}, wallet, children }) {
 
@@ -105,9 +108,11 @@ function Profile({ profile = {}, wallet, children }) {
         <p>{profile.stats?.totalFollowers} followers</p>
         <p>{profile.stats?.totalFollowing} following</p>
       </Stats>
+      <Centered>
       <Button onClick={goLiveStream}>
         Go Live
       </Button>
+      </Centered>
     </Card>
   );
 }
