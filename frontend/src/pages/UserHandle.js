@@ -264,7 +264,7 @@ function User({ wallet, lensHub }) {
         );
     }
 
-    if (params.handle === 'lepierre') {
+    if (params.handle === 'lepierre' || params.handle === 'player1' ) {
         return (
             <>
                 <StyledCard>
