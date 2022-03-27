@@ -8,6 +8,7 @@ import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
 import Post from "../components/Post";
 import Card from "../components/Card";
+import Livestream from "../components/Livestream";
 import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
@@ -41,6 +42,19 @@ const Icon = styled.div`
     margin-bottom: -0.8em;
 `;
 
+const LiveIcon = styled.div`
+    height: 50px;
+    width: 50px;
+    border: ${p=>p.theme.primary} 4px solid;
+    border-radius: 100px;
+    &:hover {
+        cursor: pointer;
+    }
+    background: url(${avatar});
+    background-size: cover;
+    margin-bottom: -0.6em;
+`;
+
 const StyledCard = styled(Card)`
     padding: 0;
     margin-bottom: 2em;
@@ -50,6 +64,23 @@ const CardContent = styled.div`
     margin-top: -6em;
     padding: 2em;
 `;
+
+const LiveCardContent = styled.div`
+    padding: 2em;
+`;
+
+const Live = styled.span`
+    position: absolute;
+    margin-top: 60px;
+    margin-left: 13px;
+    background: red;
+    color: white;
+    font-weight: 500;
+    font-size: 12px;
+    border-radius: 6px;
+    padding: 0.1em 0.4em;
+`;
+
 
 const Cover = styled.div`
     width: 100%;
@@ -85,6 +116,7 @@ const UserInfo = styled.div`
     display: flex;
     align-items: center;
     gap: 1em;
+    margin-bottom: 1em;
 `;
 
 const Opensea = styled.a`
@@ -231,11 +263,58 @@ function User({ wallet, lensHub }) {
             </>
         );
     }
+
+    if (params.handle === 'lepierre' || params.handle === 'player1' ) {
+        return (
+            <>
+                <StyledCard>
+                    <LiveCardContent>
+                    <Livestream />      
+                        <Columns>
+                            <div>
+                                <UserInfo>
+                                    <LiveIcon />
+                                    <Live>Live</Live>
+                                    <Handle>@{params.handle}</Handle>
+                                    <Address>{profile?.address}</Address>
+                                    <Opensea
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        href={`https://testnets.opensea.io/assets/mumbai/0xd7b3481de00995046c7850bce9a5196b7605c367/${profile.decId}`}
+                                    >
+                                        <img src={opensea} alt="Opensea" />
+                                    </Opensea>
+                                    <div>
+                                    {following ? (
+                                        <Unfollow wallet={wallet} profileId={profile.id} />
+                                    ) : (
+                                        <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
+                                    )}
+                                    </div>
+                                </UserInfo>
+                                <Stats>
+                                    <p>{profile.stats?.totalFollowers} followers</p>
+                                    <p>{profile.stats?.totalFollowing} following</p>
+                                    <p>{profile.stats?.totalPublications} posts</p>
+                                    <p>{profile.stats?.totalCollects} collects</p>
+                                </Stats>
+                            </div>
+                        </Columns>
+                    </LiveCardContent>
+                </StyledCard>
+
+                {publications.map((post) => {
+                    return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
+                })}
+            </>
+        );
+    }
+
     return (
         <>
             <StyledCard>
                 <Cover />
-                <CardContent>
+                <CardContent>                
                     <Icon />
                     <Columns>
                         <div>

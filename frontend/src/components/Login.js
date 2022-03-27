@@ -101,7 +101,7 @@ function Login({ wallet, auth }) {
     }
 
     return (
-        <div>
+        <div style={{ marginTop:'1em'}}>
             {
               authToken
               ? <div>

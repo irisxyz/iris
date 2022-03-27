@@ -92,7 +92,7 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }
 
         handleCreate();
     }, [createCollectTypedData.data]);
-    console.log(stats)
+    
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             <Heart onClick={handleClick} filled={collected} />
