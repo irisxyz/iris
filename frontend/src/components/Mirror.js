@@ -37,7 +37,7 @@ const CREATE_MIRROR_TYPED_DATA = gql`
     }
 `;
 
-function Mirror({ wallet, lensHub, profileId, publicationId }) {
+function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
     const [createMirrorTyped, createMirrorTypedData] = useMutation(CREATE_MIRROR_TYPED_DATA);
 
     const handleClick = async () => {
@@ -93,8 +93,9 @@ function Mirror({ wallet, lensHub, profileId, publicationId }) {
     }, [createMirrorTypedData.data]);
 
     return (
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             <Retweet onClick={handleClick} />
+            <p>{ stats.totalAmountOfMirrors }</p>
         </div>
     );
 }

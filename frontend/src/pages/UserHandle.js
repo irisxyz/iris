@@ -12,6 +12,19 @@ import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
 
+const HAS_COLLECTED = gql`
+  query($request: HasCollectedRequest!) {
+    hasCollected(request: $request) {
+      walletAddress
+      results {
+        collected
+        publicationId
+        collectedTimes
+      }
+    }
+  }
+`;
+
 const Icon = styled.div`
     height: 100px;
     width: 100px;
@@ -125,6 +138,7 @@ function User({ wallet, lensHub }) {
         },
     });
 
+    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
@@ -159,14 +173,51 @@ function User({ wallet, lensHub }) {
         if (!publicationsData.data) return;
 
         setPublications(publicationsData.data.publications.items);
+        
+        const publications = publicationsData.data.publications.items.map((thing) => {
+            return thing.id
+        })
+
+        hasCollected({
+            variables: {
+                request: {
+                    collectRequests: [
+                        {
+                          walletAddress: wallet.address,
+                          publicationIds: publications,
+                        },
+                    ],
+                },
+            },
+        })
+
     }, [publicationsData.data]);
+
+    useEffect(() => {
+        if (!hasCollectedData.data) return;
+
+        const collectedIds = {}
+
+        hasCollectedData.data.hasCollected[0].results.forEach((result) => {
+            if(result.collected) {
+                collectedIds[result.publicationId] = true
+            }
+        })
+
+        console.log(collectedIds)
+
+        const newPubs = publications.map((post) => {
+            return {...post, collected: collectedIds[post.id]}
+        })
+
+        setPublications([...newPubs])
+
+    }, [hasCollectedData.data]);
 
     useEffect(() => {
         if (!doesFollow.data) return;
 
         const handleCreate = async () => {
-            console.log(doesFollow.data.doesFollow[0].follows);
-
             setFollowing(doesFollow.data.doesFollow[0].follows);
         };
 
@@ -180,7 +231,6 @@ function User({ wallet, lensHub }) {
             </>
         );
     }
-    console.log(profile);
     return (
         <>
             <StyledCard>

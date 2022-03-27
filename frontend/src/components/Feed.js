@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery, gql } from "@apollo/client";
 import styled from "styled-components";
 import { GET_TIMELINE, SEARCH } from "../utils/queries";
 import Card from "../components/Card";
 import Post from "../components/Post";
+
+const HAS_COLLECTED = gql`
+  query($request: HasCollectedRequest!) {
+    hasCollected(request: $request) {
+      walletAddress
+      results {
+        collected
+        publicationId
+        collectedTimes
+      }
+    }
+  }
+`;
 
 const Main = styled.main``;
 
@@ -17,6 +30,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
             },
         },
     });
+    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
 
     useEffect(() => {
         if (!data) return;
@@ -26,8 +40,57 @@ function Feed({ profile = {}, wallet, lensHub }) {
             return;
         }
 
-        setPublications(data.timeline.items);
+        const pubIds = {}
+        const pubs = []
+
+        data.timeline.items.forEach((post) => {
+            if (pubIds[post.id]) return;
+            else {
+                pubIds[post.id] = true
+                pubs.push(post)
+            }
+        })
+
+        setPublications(pubs);
+
+        const publications = data.timeline.items.map((thing) => {
+            return thing.id
+        })
+
+        hasCollected({
+            variables: {
+                request: {
+                    collectRequests: [
+                        {
+                          walletAddress: wallet.address,
+                          publicationIds: publications,
+                        },
+                    ],
+                },
+            },
+        })
     }, [data]);
+
+    useEffect(() => {
+        if (!hasCollectedData.data) return;
+
+        const collectedIds = {}
+
+        hasCollectedData.data.hasCollected[0].results.forEach((result) => {
+            if(result.collected) {
+                collectedIds[result.publicationId] = true
+            }
+        })
+
+        console.log(collectedIds)
+
+        const newPubs = publications.map((post) => {
+            return {...post, collected: collectedIds[post.id]}
+        })
+
+        setPublications([...newPubs])
+
+    }, [hasCollectedData.data]);
 
     const searchData = useQuery(SEARCH, {
         variables: {
