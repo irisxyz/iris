@@ -264,8 +264,7 @@ function User({ wallet, lensHub }) {
         );
     }
 
-    const live = true;
-    if (live) {
+    if (params.handle === 'lepierre') {
         return (
             <>
                 <StyledCard>

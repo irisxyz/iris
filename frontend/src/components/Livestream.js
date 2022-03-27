@@ -15,6 +15,11 @@ const PlyrComponent = () => {
         hls.attachMedia(video.current);
         window.hls = hls;
         playerInstance.current.speed = 1
+        video.current.addEventListener('ended',myHandler,false);
+        function myHandler(e) {
+            // What you want to do after the event
+            console.log('done')
+        }
         return () => {
             playerInstance.current.destroy();
         };
