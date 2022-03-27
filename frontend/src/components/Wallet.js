@@ -159,6 +159,10 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
+
+  useEffect(() => {
+    connectWallet()
+  }, [])
   
   return (
     
