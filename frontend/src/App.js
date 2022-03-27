@@ -16,7 +16,7 @@ import Wallet from "./components/Wallet"
 import Compose from "./components/Compose"
 import Login from "./components/Login"
 import Feed from "./components/Feed"
-import logo from "./assets/logo-open.png"
+import logo from "./assets/logo.svg"
 
 const Container = styled.div`
   max-width: 1000px;
