@@ -37,7 +37,7 @@ const Header = styled.h2`
 `
 
 
-function Profile({ profile = {}, wallet }) {
+function Profile({ profile = {}, wallet, children }) {
 
   // Streaming
   const [liveStreamModal, setLiveStreamModal] = useState(false)
