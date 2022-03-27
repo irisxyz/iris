@@ -33,23 +33,46 @@ const CREATE_FOLLOW_TYPED_DATA = gql`
     }
 `;
 
-function Follow({ wallet, lensHub, profileId }) {
+function Follow({ wallet, lensHub, profile = {} }) {
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA);
 
     const followRequest = [
         {
-            profile: profileId,
+            profile: profile.id,
         },
     ];
 
     const handleClick = async () => {
-        createFollowTyped({
-            variables: {
-                request: {
-                    follow: followRequest,
+        if (profile.followModule !== null) {
+            const followSubscriptionRequest = [
+                {
+                    profile: profile.id,
+                    followModule: {
+                        feeFollowModule: {
+                            amount: {
+                                currency: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+                                value: profile.followModule.amount.value,
+                            },
+                        },
+                    },
                 },
-            },
-        });
+            ];
+            createFollowTyped({
+                variables: {
+                    request: {
+                        follow: followSubscriptionRequest,
+                    },
+                },
+            });
+        } else {
+            createFollowTyped({
+                variables: {
+                    request: {
+                        follow: followRequest,
+                    },
+                },
+            });
+        }
     };
 
     useEffect(() => {
@@ -69,17 +92,20 @@ function Follow({ wallet, lensHub, profileId }) {
 
             const { v, r, s } = utils.splitSignature(signature);
 
-            const tx = await lensHub.followWithSig({
-                follower: wallet.address,
-                profileIds: typedData.value.profileIds,
-                datas: typedData.value.datas,
-                sig: {
-                    v,
-                    r,
-                    s,
-                    deadline: typedData.value.deadline,
+            const tx = await lensHub.followWithSig(
+                {
+                    follower: wallet.address,
+                    profileIds: typedData.value.profileIds,
+                    datas: typedData.value.datas,
+                    sig: {
+                        v,
+                        r,
+                        s,
+                        deadline: typedData.value.deadline,
+                    },
                 },
-            });
+                { gasLimit: 1000000 }
+            );
 
             console.log("Following:", tx.hash);
         };
