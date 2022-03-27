@@ -6,7 +6,6 @@ import LitJsSdk from "lit-js-sdk";
 import Card from "../components/Card";
 import { UserIcon } from "../components/Wallet";
 import Share from "../assets/Share";
-import Heart from "../assets/Heart";
 import Comment from "./Comment";
 import Mirror from "./Mirror";
 import Collect from "./Collect";
@@ -111,7 +110,7 @@ function Post({ post, wallet, lensHub, profileId }) {
             })();
         }
     }, []);
-
+    
     return (
         <StyledCard>
             <Container>
@@ -127,7 +126,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} collected={post.collected} />
                         <Share />
                     </Actions>
                 </Content>

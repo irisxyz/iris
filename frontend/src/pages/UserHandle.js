@@ -165,8 +165,6 @@ function User({ wallet, lensHub }) {
         if (!doesFollow.data) return;
 
         const handleCreate = async () => {
-            console.log(doesFollow.data.doesFollow[0].follows);
-
             setFollowing(doesFollow.data.doesFollow[0].follows);
         };
 
@@ -180,7 +178,6 @@ function User({ wallet, lensHub }) {
             </>
         );
     }
-    console.log(profile);
     return (
         <>
             <StyledCard>

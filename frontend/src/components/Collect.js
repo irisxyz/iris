@@ -34,7 +34,7 @@ const CREATE_COLLECT_TYPED_DATA = gql`
  }
 `;
 
-function Mirror({ wallet, lensHub, profileId, publicationId }) {
+function Collect({ wallet, lensHub, profileId, publicationId, collected }) {
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [apiError, setApiError] = useState('')
 
@@ -72,30 +72,32 @@ function Mirror({ wallet, lensHub, profileId, publicationId }) {
 
             const { v, r, s } = utils.splitSignature(signature);
 
-            const tx = await lensHub.mirrorWithSig({
-                profileId: typedData.value.profileId,
-                profileIdPointed: typedData.value.profileIdPointed,
-                pubIdPointed: typedData.value.pubIdPointed,
-                referenceModule: typedData.value.referenceModule,
-                referenceModuleData: typedData.value.referenceModuleData,
-                sig: {
-                    v,
-                    r,
-                    s,
-                    deadline: typedData.value.deadline,
-                },
-            });
+            const tx = await lensHub.collectWithSig({
+              collector: wallet.address,
+              profileId: typedData.value.profileId,
+              pubId: typedData.value.pubId,
+              data: typedData.value.data,
+              sig: {
+                v,
+                r,
+                s,
+                deadline: typedData.value.deadline,
+              },
+            },
+            { gasLimit: 1000000 }
+            );
+            
             console.log("collect: tx hash", tx.hash);
         };
 
         handleCreate();
     }, [createCollectTypedData.data]);
-
+    
     return (
         <div>
-            <Heart onClick={handleClick} />
+            <Heart onClick={handleClick} filled={collected} />
         </div>
     );
 }
 
-export default Mirror;
+export default Collect;
