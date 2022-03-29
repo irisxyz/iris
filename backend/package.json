@@ -1,15 +1,13 @@
 {
   "name": "video-nft-server",
   "version": "1.0.0",
+  "engines": {
+    "node": "16.x"
+  },
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "prepare": "yarn clean && yarn format && yarn build",
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
     "start": "node index.js",
-    "format": "prettier --write \"./**/*.{ts,js,json}\"",
-    "clean": "rm -rf ./dist"
   },
   "dependencies": {
     "@livepeer/video-nft": "^0.2.0",
