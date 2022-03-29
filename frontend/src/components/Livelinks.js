@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import avatar from "../assets/avatar.png";
+import { useLazyQuery, useQuery, gql } from "@apollo/client";
+import { Wallet } from "ethers";
+import { GET_FOLLOWING } from "../utils/queries";
 
 const Icon = styled.div`
     height: 60px;
     width: 60px;
-    border: ${p=>p.theme.primary} 3px solid;
+    border: ${p => p.theme.primary} 3px solid;
     border-radius: 100px;
     &:hover {
         cursor: pointer;
@@ -47,24 +50,96 @@ const Container = styled.div`
 
 const LIVE_OR_NAH = true;
 
-const LiveLinks = () => {
+
+
+
+
+function LiveLinks({ wallet }) {
+
+    const { data } = useQuery(GET_FOLLOWING, {
+        variables: {
+            request: {
+                address: wallet.address,
+                limit: 10,
+            },
+        },
+    });
+
+    const [activeFollowersLive, setActiveFollowersLive] = useState([]);
+
+
+    useEffect(() => {
+        if (!data) return;
+        console.log("Data from GET FOLLOWING", data.following.items)
+
+        const walletAndHandleList = data.following.items.map((item) => {
+            console.log("GET FOLLOWING item frick", item)
+
+            const walletAndHandle = `${item.profile.ownedBy},${item.profile.handle}`
+
+
+            return walletAndHandle
+        })
+
+        //   // Remove duplicates from owned by list
+        //   const uniqueOwnedByListAndHandle = [...new Set(ownedByListAndHandle)]
+
+
+        // console.log("GET FOLLOWING uniqueOwnedByList", uniqueOwnedByListAndHandle)
+        console.log("GET FOLLOWING walletAndHandleList", walletAndHandleList)
+
+
+        const getUsersWithActiveLivestream = async () => {
+
+            const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
+                {
+                    headers: {
+                        // TODO: Remove API KEY in the future
+                        "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+                    }
+                },
+            );
+            const responseData = await response.json();
+
+            let livestreamers = []
+
+            // 0x14F42C6E200C7c70dB00B065FcE73Be3a73f191A,lepierre
+
+            responseData.map((streamInfo) => {
+                if (streamInfo.isActive & walletAndHandleList.includes(streamInfo.name)) {
+                    console.log("GET FOLLOWING IT IS ACTIVE BRUHH")
+                    // console.log(streamInfo)
+                    console.log("GET FOLLOWING STERAM INFO", streamInfo)
+                    streamInfo["handle"] = streamInfo.name.split(",")[1]
+                    streamInfo["ownedBy"] = streamInfo.name.split(",")[0]
+
+                    livestreamers.push(streamInfo)
+                }
+            })
+
+            setActiveFollowersLive(livestreamers)
+
+            console.log("GET FOLLOWING activeFollowersLive", activeFollowersLive)
+
+
+        }
+        getUsersWithActiveLivestream()
+
+    }, [data])
 
     if (LIVE_OR_NAH) {
 
         return (
             <Container>
-                <Text to='user/lepierre'>
-                    <UserContainer>
-                        <Icon/>
-                        <p>@lepierre</p>
-                    </UserContainer>
-                </Text>
-                <Text to='user/player1'>
-                    <UserContainer>
-                        <Icon/>
-                        <p>@player1</p>
-                    </UserContainer>
-                </Text>
+                {activeFollowersLive.map((streamInfo) => {
+
+                    return <Text to={`user/${streamInfo.handle}`}>
+                        <UserContainer>
+                            <Icon />
+                            <p>@{streamInfo.handle}</p>
+                        </UserContainer>
+                    </Text>
+                })}
             </Container>
         )
     }

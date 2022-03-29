@@ -65,6 +65,7 @@ async function maybeTranscode(sdk, asset) {
 app.post('/new-stream', jsonParser, (req, res) => {
 
   console.log(req.body.wallet)
+  console.log(req.body.handle)
 
 
   var options = {
@@ -75,7 +76,7 @@ app.post('/new-stream', jsonParser, (req, res) => {
       'authorization': `Bearer ${process.env.LIVEPEER_API_KEY}`
     },
     body: JSON.stringify({
-      "name": req.body.wallet,
+      "name": `${req.body.wallet},${req.body.handle}`,
       "profiles": [
         {
           "name": "720p",

@@ -56,7 +56,7 @@ function Profile({ profile = {}, wallet, children }) {
         'headers': {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ wallet: wallet.address }), mode: "cors"
+        body: JSON.stringify({ wallet: wallet.address, handle: profile.handle }), mode: "cors"
       });
     const data = await response.json();
 
