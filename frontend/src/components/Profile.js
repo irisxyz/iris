@@ -49,7 +49,7 @@ function Profile({ profile = {}, wallet, children }) {
 
   const goLiveStream = async () => {
     console.log(wallet.address)
-    const response = await fetch("http://localhost:3001/new-stream",
+    const response = await fetch("https://irisxyz.herokuapp.com/new-stream",
       {
         method: "POST",
         'headers': {

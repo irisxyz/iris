@@ -130,7 +130,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         );
 
         setLoading(true)
-        const response = await fetch('http://localhost:3001/upload', { method: "POST", body: formData, mode: "cors" });
+        const response = await fetch('https://irisxyz.herokuapp.com/upload', { method: "POST", body: formData, mode: "cors" });
         const data = await response.json();
 
         console.log(data);
