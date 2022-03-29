@@ -2,12 +2,12 @@
   "name": "video-nft-server",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "prepare": "yarn clean && yarn format && yarn build",
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "yarn build && ./node_modules/.bin/video-nft",
+    "start": "node index.js",
     "format": "prettier --write \"./**/*.{ts,js,json}\"",
     "clean": "rm -rf ./dist"
   },
