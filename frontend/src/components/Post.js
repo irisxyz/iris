@@ -69,46 +69,54 @@ function Post({ post, wallet, lensHub, profileId }) {
     const [decryptedMsg, setDecryptedMsg] = useState("");
 
     useEffect(() => {
-        if (post.metadata.description === "litcoded}") {
-            const encryptedPost = JSON.parse(post.metadata.content.replace("litcoded: ", ""));
 
-            const accessControlConditions = [
-                {
-                    contractAddress: encryptedPost.contract,
-                    standardContractType: "ERC721",
-                    chain,
-                    method: "balanceOf",
-                    parameters: [":userAddress"],
-                    returnValueTest: {
-                        comparator: ">",
-                        value: "0",
+        const decode = async () => {
+            await new Promise(r => setTimeout(r, 500));
+            
+            if (post.metadata.description === "litcoded}") {
+                const encryptedPost = JSON.parse(post.metadata.content.replace("litcoded: ", ""));
+    
+                const accessControlConditions = [
+                    {
+                        contractAddress: encryptedPost.contract,
+                        standardContractType: "ERC721",
+                        chain,
+                        method: "balanceOf",
+                        parameters: [":userAddress"],
+                        returnValueTest: {
+                            comparator: ">",
+                            value: "0",
+                        },
                     },
-                },
-            ];
-
-            const isthisblob = client.cat(encryptedPost.blobPath);
-            let newEcnrypt;
-            (async () => {
-                const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
-
-                for await (const chunk of isthisblob) {
-                    newEcnrypt = new Blob([chunk], {
-                        type: "encryptedString.type", // or whatever your Content-Type is
+                ];
+    
+                const isthisblob = client.cat(encryptedPost.blobPath);
+                let newEcnrypt;
+                (async () => {
+                    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    
+                    for await (const chunk of isthisblob) {
+                        newEcnrypt = new Blob([chunk], {
+                            type: "encryptedString.type", // or whatever your Content-Type is
+                        });
+                    }
+                    const key = await window.litNodeClient.getEncryptionKey({
+                        accessControlConditions,
+                        // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+                        toDecrypt: encryptedPost.key,
+                        chain,
+                        authSig,
                     });
-                }
-                const key = await window.litNodeClient.getEncryptionKey({
-                    accessControlConditions,
-                    // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
-                    toDecrypt: encryptedPost.key,
-                    chain,
-                    authSig,
-                });
+    
+                    const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
+    
+                    setDecryptedMsg(decryptedString);
+                })();
+            }
 
-                const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
-
-                setDecryptedMsg(decryptedString);
-            })();
         }
+
+        decode()
     }, []);
 
     return (
