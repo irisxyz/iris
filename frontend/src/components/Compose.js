@@ -168,7 +168,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
         const accessControlConditions = [
             {
-                contractAddress: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C',
+                contractAddress: '0xdde7691b609fC36A59Bef8957B5A1F9164cB24d2',
                 standardContractType: 'ERC721',
                 chain,
                 method: 'balanceOf',
@@ -227,7 +227,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const encryptedPost = {
             key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
             blobPath: ipfsResult.path,
-            contract: '0x1C3d0e12950883b884ca3cc5a8a26C710B1C543C'
+            contract: '0xdde7691b609fC36A59Bef8957B5A1F9164cB24d2'
         }
 
         const postIpfsRes = await client.add(JSON.stringify({
