@@ -6,7 +6,7 @@ const fs = require("fs");
 const bodyParser = require('body-parser')
 const { VideoNFT } = require("@livepeer/video-nft/dist/index.cjs.js");
 require("dotenv").config();
-const PORT = 3001;
+const PORT = 3000;
 
 const jsonParser = bodyParser.json()
 const axios = require("axios");
