@@ -103,8 +103,6 @@ function LiveLinks({ wallet }) {
 
             let livestreamers = []
 
-            // 0x14F42C6E200C7c70dB00B065FcE73Be3a73f191A,lepierre
-
             responseData.map((streamInfo) => {
                 if (streamInfo.isActive & walletAndHandleList.includes(streamInfo.name)) {
                     console.log("GET FOLLOWING IT IS ACTIVE BRUHH")
