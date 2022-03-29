@@ -283,9 +283,9 @@ function User({ wallet, lensHub }) {
                                     </Opensea>
                                     <div>
                                     {following ? (
-                                        <Unfollow wallet={wallet} profileId={profile.id} />
+                                        <Unfollow wallet={wallet} profile={profile} />
                                     ) : (
-                                        <Follow wallet={wallet} lensHub={lensHub} profileId={profile.id} />
+                                        <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
                                     )}
                                     </div>
                                 </UserInfo>

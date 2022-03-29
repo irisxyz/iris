@@ -79,7 +79,7 @@ function App() {
         <ApolloProvider>
             <ThemeProvider>
                 <GlobalStyle />
-                { wallet.address ? <Container>
+                <Container>
                     <Navbar>
                         <LogoContainer>
                             <img src={logo} alt="iris logo" width="50px" height="50px" />
@@ -121,7 +121,7 @@ function App() {
                             </Routes>
                         </Content>
                     </Columns>
-                    </Container> : <LandingPage wallet={wallet} setWallet={setWallet} authToken={authToken} currProfile={profile} setProfile={setProfile} setLensHub={setLensHub}/>}
+                </Container>
             </ThemeProvider>
         </ApolloProvider>
     );

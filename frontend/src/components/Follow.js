@@ -43,28 +43,28 @@ function Follow({ wallet, lensHub, profile = {} }) {
     ];
 
     const handleClick = async () => {
-        if (profile.followModule !== null) {
-            const followSubscriptionRequest = [
-                {
-                    profile: profile.id,
-                    followModule: {
-                        feeFollowModule: {
-                            amount: {
-                                currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
-                                value: profile.followModule.amount.value,
-                            },
-                        },
-                    },
-                },
-            ];
-            createFollowTyped({
-                variables: {
-                    request: {
-                        follow: followSubscriptionRequest,
-                    },
-                },
-            });
-        } else {
+        // if (profile.followModule !== null) {
+        //     const followSubscriptionRequest = [
+        //         {
+        //             profile: profile.id,
+        //             followModule: {
+        //                 feeFollowModule: {
+        //                     amount: {
+        //                         currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
+        //                         value: profile.followModule.amount.value,
+        //                     },
+        //                 },
+        //             },
+        //         },
+        //     ];
+        //     createFollowTyped({
+        //         variables: {
+        //             request: {
+        //                 follow: followSubscriptionRequest,
+        //             },
+        //         },
+        //     });
+        // } else {
             createFollowTyped({
                 variables: {
                     request: {
@@ -72,7 +72,7 @@ function Follow({ wallet, lensHub, profile = {} }) {
                     },
                 },
             });
-        }
+        // }
     };
 
     useEffect(() => {
