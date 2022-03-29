@@ -140,36 +140,36 @@ function NewProfile({ profile = {}, wallet }) {
         console.log(createProfileData.data);
     }, [createProfileData.data]);
 
-    const moduleApprovalRequest = {
-        currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
-        value: "1",
-        followModule: "FeeFollowModule",
-    };
+    // const moduleApprovalRequest = {
+    //     currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
+    //     value: "1",
+    //     followModule: "FeeFollowModule",
+    // };
 
-    const approveModule = useQuery(MODULE_APPROVAL_DATA, {
-        variables: {
-            request: moduleApprovalRequest,
-        },
-    });
+    // const approveModule = useQuery(MODULE_APPROVAL_DATA, {
+    //     variables: {
+    //         request: moduleApprovalRequest,
+    //     },
+    // });
 
-    useEffect(() => {
-        if (!approveModule.data) return;
+    // useEffect(() => {
+    //     if (!approveModule.data) return;
 
-        const handleCreate = async () => {
-            console.log(approveModule.data);
+    //     const handleCreate = async () => {
+    //         console.log(approveModule.data);
 
-            const generateModuleCurrencyApprovalData = approveModule.data.generateModuleCurrencyApprovalData;
+    //         const generateModuleCurrencyApprovalData = approveModule.data.generateModuleCurrencyApprovalData;
 
-            const tx = await wallet.signer.sendTransaction({
-                to: generateModuleCurrencyApprovalData.to,
-                from: generateModuleCurrencyApprovalData.from,
-                data: generateModuleCurrencyApprovalData.data,
-            });
-            console.log(tx.hash);
-        };
+    //         const tx = await wallet.signer.sendTransaction({
+    //             to: generateModuleCurrencyApprovalData.to,
+    //             from: generateModuleCurrencyApprovalData.from,
+    //             data: generateModuleCurrencyApprovalData.data,
+    //         });
+    //         console.log(tx.hash);
+    //     };
 
-        handleCreate();
-    }, [approveModule.data]);
+    //     handleCreate();
+    // }, [approveModule.data]);
 
     const handleHandle = (e) => {
         if (e.target.value[0] !== "@") {
