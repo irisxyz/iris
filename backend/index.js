@@ -6,7 +6,7 @@ const fs = require("fs");
 const bodyParser = require('body-parser')
 const { VideoNFT } = require("@livepeer/video-nft/dist/index.cjs.js");
 require("dotenv").config();
-const PORT = 3000;
+const PORT = 3001;
 
 const jsonParser = bodyParser.json()
 const axios = require("axios");
@@ -155,6 +155,6 @@ app.post("/upload", upload.array("fileName"), async (req, res) => {
   return res.send({ status: "OK", data: ipfs?.nftMetadataUrl, ...ipfs });
 });
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 3001, () => {
   console.log(`gm! localhost:${PORT}`);
 });
