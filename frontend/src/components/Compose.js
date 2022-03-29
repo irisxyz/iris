@@ -110,17 +110,18 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handlePreview = async () => {
         if (!description) return;
         setShowModal(true)
-        console.log({name, description, profile})
+        console.log({ name, description, profile })
     }
 
     // Uploading Video
-    const [loading, setLoading] = useState(false);
+    const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [video, setVideo] = useState("")
     const [videoNftMetadata, setVideoNftMetadata] = useState({})
 
 
     const videoUpload = async () => {
+        setVideoUploading(true)
         const formData = new FormData();
         console.log(selectedFile)
         formData.append(
@@ -129,7 +130,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
             selectedFile.name
         );
 
-        setLoading(true)
         const response = await fetch('https://irisxyz.herokuapp.com/upload', { method: "POST", body: formData, mode: "cors" });
         const data = await response.json();
 
@@ -144,7 +144,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         setVideoNftMetadata(vidNftData)
         console.log("VideoNFTMetaData :", vidNftData)
 
-        setLoading(false)
+        setVideoUploading(false)
 
 
         // console.log(data);
@@ -388,28 +388,29 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
     return (
         <>
-        { showModal && <Modal onExit={() => setShowModal(false)}>
+            {showModal && <Modal onExit={() => setShowModal(false)}>
 
-            <Header>Great plant! 🌱</Header>
-            <PostPreview>
-            { description }
-            </PostPreview>
-            <b>How do you want your post to be viewed?</b>
-            <br/>
-            <StyledButton onClick={handleSubmitGated}>Follower only</StyledButton>
-            <StyledButton onClick={handleSubmit}>Public</StyledButton>
-            </Modal> }
-        <StyledCard>
-            <form onSubmit={handlePreview}>
-                <TextArea
-                    value={description}
-                    placeholder="What's happening?"
-                    height={5}
-                    onChange={e => setDescription(e.target.value)}
-                />
-            </form>
-            <Button onClick={handlePreview}>Plant</Button>
-            {/* <input
+                <Header>Great plant! 🌱</Header>
+                <PostPreview>
+                    {description}
+                </PostPreview>
+                <b>How do you want your post to be viewed?</b>
+                <br />
+                <StyledButton onClick={handleSubmitGated}>Follower only</StyledButton>
+                <StyledButton onClick={handleSubmit}>Public</StyledButton>
+            </Modal>}
+            <StyledCard>
+                <form onSubmit={handlePreview}>
+                    <TextArea
+                        value={description}
+                        placeholder="What's happening?"
+                        height={5}
+                        onChange={e => setDescription(e.target.value)}
+                    />
+                </form>
+                {videoUploading ? <Button>Video Uploading...</Button> : <Button onClick={handlePreview}>Plant</Button>}
+
+                {/* <input
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
             /> */}
