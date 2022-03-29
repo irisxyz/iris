@@ -45,7 +45,7 @@ const Icon = styled.div`
 const LiveIcon = styled.div`
     height: 50px;
     width: 50px;
-    border: ${p=>p.theme.primary} 4px solid;
+    border: ${p => p.theme.primary} 4px solid;
     border-radius: 100px;
     &:hover {
         cursor: pointer;
@@ -147,6 +147,9 @@ function User({ wallet, lensHub }) {
     const [publications, setPublications] = useState([]);
     const [profile, setProfile] = useState("");
     const [following, setFollowing] = useState(false);
+
+    const [streamInfo, setStreamInfo] = useState({});
+
     const { data } = useQuery(GET_PROFILES, {
         variables: {
             request: {
@@ -181,6 +184,7 @@ function User({ wallet, lensHub }) {
         }
 
         const ownedBy = data.profiles.items[0].ownedBy;
+        const handle = data.profiles.items[0].handle;
         const id = data.profiles.items[0].id;
         const decId = hexToDec(id.replace("0x", ""));
 
@@ -198,6 +202,32 @@ function User({ wallet, lensHub }) {
                 },
             },
         });
+
+        const isUserLivestreaming = async () => {
+
+            const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
+                {
+                    headers: {
+                        // TODO: Remove API KEY in the future
+                        "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+                    }
+                },
+            );
+            const responseData = await response.json();
+
+            responseData.map((streamInfo) => {
+                if (streamInfo.isActive & streamInfo.name === `${ownedBy},${handle}`) {
+                    setStreamInfo(streamInfo)
+                }
+            })
+
+
+
+        }
+
+        isUserLivestreaming()
+
+
     }, [data, getPublications]);
 
     useEffect(() => {
@@ -261,12 +291,12 @@ function User({ wallet, lensHub }) {
         );
     }
 
-    if (params.handle === 'lepierre' || params.handle === 'player1' ) {
+    if (streamInfo.playbackId) {
         return (
             <>
                 <StyledCard>
                     <LiveCardContent>
-                    <Livestream />      
+                        <Livestream playbackId={streamInfo.playbackId} />
                         <Columns>
                             <div>
                                 <UserInfo>
@@ -282,11 +312,11 @@ function User({ wallet, lensHub }) {
                                         <img src={opensea} alt="Opensea" />
                                     </Opensea>
                                     <div>
-                                    {following ? (
-                                        <Unfollow wallet={wallet} profile={profile} />
-                                    ) : (
-                                        <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
-                                    )}
+                                        {following ? (
+                                            <Unfollow wallet={wallet} profile={profile} />
+                                        ) : (
+                                            <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
+                                        )}
                                     </div>
                                 </UserInfo>
                                 <Stats>
@@ -311,7 +341,7 @@ function User({ wallet, lensHub }) {
         <>
             <StyledCard>
                 <Cover />
-                <CardContent>                
+                <CardContent>
                     <Icon />
                     <Columns>
                         <div>
