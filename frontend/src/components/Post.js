@@ -96,7 +96,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                         type: "encryptedString.type", // or whatever your Content-Type is
                     });
                 }
-                const key = await window.litNodeClient?.getEncryptionKey({
+                const key = await window.litNodeClient.getEncryptionKey({
                     accessControlConditions,
                     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
                     toDecrypt: encryptedPost.key,
