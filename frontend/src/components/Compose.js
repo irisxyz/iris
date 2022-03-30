@@ -420,7 +420,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
                     </>
                         : <div class="file-input">
                             <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-                            <CustomLabel for="file">Select File</CustomLabel>
+                            <CustomLabel for="file">Select Video</CustomLabel>
                         </div>}
                 </InputWrapper>
 
