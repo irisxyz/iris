@@ -91,33 +91,39 @@ function LiveLinks({ wallet }) {
 
         const getUsersWithActiveLivestream = async () => {
 
-            const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
-                {
-                    headers: {
-                        // TODO: Remove API KEY in the future
-                        "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+            try {
+                const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
+                    {
+                        headers: {
+                            // TODO: Remove API KEY in the future
+                            "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+                        }
+                    },
+                );
+                const responseData = await response.json();
+    
+                let livestreamers = []
+    
+                responseData.map((streamInfo) => {
+                    if (streamInfo.isActive & walletAndHandleList.includes(streamInfo.name)) {
+                        console.log("GET FOLLOWING IT IS ACTIVE BRUHH")
+                        // console.log(streamInfo)
+                        console.log("GET FOLLOWING STERAM INFO", streamInfo)
+                        streamInfo["handle"] = streamInfo.name.split(",")[1]
+                        streamInfo["ownedBy"] = streamInfo.name.split(",")[0]
+    
+                        livestreamers.push(streamInfo)
                     }
-                },
-            );
-            const responseData = await response.json();
+                })
+    
+                setActiveFollowersLive(livestreamers)
+    
+                console.log("GET FOLLOWING activeFollowersLive", activeFollowersLive)
 
-            let livestreamers = []
+            } catch (err) {
+                console.log(err)
+            }
 
-            responseData.map((streamInfo) => {
-                if (streamInfo.isActive & walletAndHandleList.includes(streamInfo.name)) {
-                    console.log("GET FOLLOWING IT IS ACTIVE BRUHH")
-                    // console.log(streamInfo)
-                    console.log("GET FOLLOWING STERAM INFO", streamInfo)
-                    streamInfo["handle"] = streamInfo.name.split(",")[1]
-                    streamInfo["ownedBy"] = streamInfo.name.split(",")[0]
-
-                    livestreamers.push(streamInfo)
-                }
-            })
-
-            setActiveFollowersLive(livestreamers)
-
-            console.log("GET FOLLOWING activeFollowersLive", activeFollowersLive)
 
 
         }
