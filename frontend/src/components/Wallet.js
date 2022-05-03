@@ -7,7 +7,7 @@ import Button from './Button'
 import { GET_PROFILES } from '../utils/queries'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
-import LensHub from '../artifacts/contracts/core/LensHub.sol/LensHub.json'
+import LensHub from '../abi/LensHub.json'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -148,7 +148,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const signer = provider.getSigner()
     const address = await signer.getAddress()
 
-    const contract = new ethers.Contract('0xd7B3481De00995046C7850bCe9a5196B7605c367', LensHub.abi, signer)
+    const contract = new ethers.Contract('0x4BF0c7AD32Fd2d32089790a54485e23f5C7736C0', LensHub, signer)
     // console.log({contract})
     setLensHub(contract)
   

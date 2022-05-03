@@ -70,7 +70,7 @@ fragment ProfileFields on Profile {
   bio
   location
   website
-  twitterUrl
+  twitter
   handle
   picture {
     ... on NftImage {
@@ -295,118 +295,59 @@ fragment CommentMirrorOfFields on Comment {
 `
 
 export const GET_TIMELINE = gql`
-  query($request: TimelineRequest!) {
-    timeline(request: $request) {
-      items {
-        __typename 
-        ... on Post {
-          ...PostFields
-        }
-        ... on Comment {
-          ...CommentFields
-        }
-        ... on Mirror {
-          ...MirrorFields
-        }
+query($request: TimelineRequest!) {
+  timeline(request: $request) {
+    items {
+      __typename 
+      ... on Post {
+        ...PostFields
       }
-      pageInfo {
-        prev
-        next
-        totalCount
+      ... on Comment {
+        ...CommentFields
       }
+      ... on Mirror {
+        ...MirrorFields
+      }
+    }
+    pageInfo {
+      prev
+      next
+      totalCount
     }
   }
-  fragment MediaFields on Media {
-    url
-    width
-    height
-    mimeType
+}
+
+fragment MediaFields on Media {
+  url
+  width
+  height
+  mimeType
+}
+
+fragment ProfileFields on Profile {
+  id
+  name
+  bio
+  location
+  website
+  twitter
+  attributes {
+    displayType
+    traitType
+    key
+    value
   }
-  fragment ProfileFields on Profile {
-    id
-    name
-    bio
-    location
-    website
-    twitterUrl
-    handle
-    picture {
-      ... on NftImage {
-        contractAddress
-        tokenId
-        uri
-        verified
-      }
-      ... on MediaSet {
-        original {
-          ...MediaFields
-        }
-        small {
-          ...MediaFields
-        }
-        medium {
-          ...MediaFields
-        }
-      }
+  metadata
+  isDefault
+  handle
+  picture {
+    ... on NftImage {
+      contractAddress
+      tokenId
+      uri
+      verified
     }
-    coverPicture {
-      ... on NftImage {
-        contractAddress
-        tokenId
-        uri
-        verified
-      }
-      ... on MediaSet {
-        original {
-          ...MediaFields
-        }
-        small {
-         ...MediaFields
-        }
-        medium {
-          ...MediaFields
-        }
-      }
-    }
-    ownedBy
-    depatcher {
-      address
-    }
-    stats {
-      totalFollowers
-      totalFollowing
-      totalPosts
-      totalComments
-      totalMirrors
-      totalPublications
-      totalCollects
-    }
-    followModule {
-      ... on FeeFollowModuleSettings {
-        type
-        amount {
-          asset {
-            name
-            symbol
-            decimals
-            address
-          }
-          value
-        }
-        recipient
-      }
-    }
-  }
-  fragment PublicationStatsFields on PublicationStats { 
-    totalAmountOfMirrors
-    totalAmountOfCollects
-    totalAmountOfComments
-  }
-  fragment MetadataOutputFields on MetadataOutput {
-    name
-    description
-    content
-    media {
+    ... on MediaSet {
       original {
         ...MediaFields
       }
@@ -417,194 +358,276 @@ export const GET_TIMELINE = gql`
         ...MediaFields
       }
     }
-    attributes {
-      displayType
-      traitType
-      value
+  }
+  coverPicture {
+    ... on NftImage {
+      contractAddress
+      tokenId
+      uri
+      verified
+    }
+    ... on MediaSet {
+      original {
+        ...MediaFields
+      }
+      small {
+       ...MediaFields
+      }
+      medium {
+        ...MediaFields
+      }
     }
   }
-  fragment Erc20Fields on Erc20 {
-    name
-    symbol
-    decimals
+  ownedBy
+  depatcher {
     address
   }
-  fragment CollectModuleFields on CollectModule {
-    __typename
-    ... on EmptyCollectModuleSettings {
-      type
-    }
-    ... on FeeCollectModuleSettings {
+  stats {
+    totalFollowers
+    totalFollowing
+    totalPosts
+    totalComments
+    totalMirrors
+    totalPublications
+    totalCollects
+  }
+  followModule {
+    ... on FeeFollowModuleSettings {
       type
       amount {
         asset {
-          ...Erc20Fields
+          name
+          symbol
+          decimals
+          address
         }
         value
       }
       recipient
-      referralFee
-    }
-    ... on LimitedFeeCollectModuleSettings {
-      type
-      collectLimit
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-    }
-    ... on LimitedTimedFeeCollectModuleSettings {
-      type
-      collectLimit
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-      endTimestamp
-    }
-    ... on RevertCollectModuleSettings {
-      type
-    }
-    ... on TimedFeeCollectModuleSettings {
-      type
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-      endTimestamp
     }
   }
-  fragment PostFields on Post {
-    id
-    profile {
-      ...ProfileFields
+}
+
+fragment PublicationStatsFields on PublicationStats { 
+  totalAmountOfMirrors
+  totalAmountOfCollects
+  totalAmountOfComments
+}
+
+fragment MetadataOutputFields on MetadataOutput {
+  name
+  description
+  content
+  media {
+    original {
+      ...MediaFields
     }
-    stats {
-      ...PublicationStatsFields
+    small {
+      ...MediaFields
     }
-    metadata {
-      ...MetadataOutputFields
-    }
-    createdAt
-    collectModule {
-      ...CollectModuleFields
-    }
-    referenceModule {
-      ... on FollowOnlyReferenceModuleSettings {
-        type
-      }
-    }
-    appId
-    collectedBy {
-      ...WalletFields
+    medium {
+      ...MediaFields
     }
   }
-  fragment MirrorBaseFields on Mirror {
-    id
-    profile {
-      ...ProfileFields
-    }
-    stats {
-      ...PublicationStatsFields
-    }
-    metadata {
-      ...MetadataOutputFields
-    }
-    createdAt
-    collectModule {
-      ...CollectModuleFields
-    }
-    referenceModule {
-      ... on FollowOnlyReferenceModuleSettings {
-        type
-      }
-    }
-    appId
+  attributes {
+    displayType
+    traitType
+    value
   }
-  fragment MirrorFields on Mirror {
-    ...MirrorBaseFields
-    mirrorOf {
-     ... on Post {
-        ...PostFields          
-     }
-     ... on Comment {
-        ...CommentFields          
-     }
-    }
+}
+
+fragment Erc20Fields on Erc20 {
+  name
+  symbol
+  decimals
+  address
+}
+
+fragment CollectModuleFields on CollectModule {
+  __typename
+  ... on FreeCollectModuleSettings {
+    type
+    followerOnly
+    contractAddress
   }
-  fragment CommentBaseFields on Comment {
-    id
-    profile {
-      ...ProfileFields
-    }
-    stats {
-      ...PublicationStatsFields
-    }
-    metadata {
-      ...MetadataOutputFields
-    }
-    createdAt
-    collectModule {
-      ...CollectModuleFields
-    }
-    referenceModule {
-      ... on FollowOnlyReferenceModuleSettings {
-        type
+  ... on FeeCollectModuleSettings {
+    type
+    amount {
+      asset {
+        ...Erc20Fields
       }
+      value
     }
-    appId
-    collectedBy {
-      ...WalletFields
-    }
+    recipient
+    referralFee
   }
-  fragment CommentFields on Comment {
-    ...CommentBaseFields
-    mainPost {
-      ... on Post {
-        ...PostFields
+  ... on LimitedFeeCollectModuleSettings {
+    type
+    collectLimit
+    amount {
+      asset {
+        ...Erc20Fields
       }
-      ... on Mirror {
-        ...MirrorBaseFields
-        mirrorOf {
-          ... on Post {
-             ...PostFields          
-          }
-          ... on Comment {
-             ...CommentMirrorOfFields        
-          }
-        }
-      }
+      value
     }
+    recipient
+    referralFee
   }
-  fragment CommentMirrorOfFields on Comment {
-    ...CommentBaseFields
-    mainPost {
-      ... on Post {
-        ...PostFields
+  ... on LimitedTimedFeeCollectModuleSettings {
+    type
+    collectLimit
+    amount {
+      asset {
+        ...Erc20Fields
       }
-      ... on Mirror {
-         ...MirrorBaseFields
-      }
+      value
     }
+    recipient
+    referralFee
+    endTimestamp
   }
-	fragment WalletFields on Wallet {
-   address,
-   defaultProfile {
+  ... on RevertCollectModuleSettings {
+    type
+  }
+  ... on TimedFeeCollectModuleSettings {
+    type
+    amount {
+      asset {
+        ...Erc20Fields
+      }
+      value
+    }
+    recipient
+    referralFee
+    endTimestamp
+  }
+}
+
+fragment PostFields on Post {
+  id
+  profile {
     ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ... on FollowOnlyReferenceModuleSettings {
+      type
+    }
+  }
+  appId
+  collectedBy {
+    ...WalletFields
+  }
+}
+
+fragment MirrorBaseFields on Mirror {
+  id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ... on FollowOnlyReferenceModuleSettings {
+      type
+    }
+  }
+  appId
+}
+
+fragment MirrorFields on Mirror {
+  ...MirrorBaseFields
+  mirrorOf {
+   ... on Post {
+      ...PostFields          
    }
-	}
+   ... on Comment {
+      ...CommentFields          
+   }
+  }
+}
+
+fragment CommentBaseFields on Comment {
+  id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ... on FollowOnlyReferenceModuleSettings {
+      type
+    }
+  }
+  appId
+  collectedBy {
+    ...WalletFields
+  }
+}
+
+fragment CommentFields on Comment {
+  ...CommentBaseFields
+  mainPost {
+    ... on Post {
+      ...PostFields
+    }
+    ... on Mirror {
+      ...MirrorBaseFields
+      mirrorOf {
+        ... on Post {
+           ...PostFields          
+        }
+        ... on Comment {
+           ...CommentMirrorOfFields        
+        }
+      }
+    }
+  }
+}
+
+fragment CommentMirrorOfFields on Comment {
+  ...CommentBaseFields
+  mainPost {
+    ... on Post {
+      ...PostFields
+    }
+    ... on Mirror {
+       ...MirrorBaseFields
+    }
+  }
+}
+
+fragment WalletFields on Wallet {
+ address,
+ defaultProfile {
+  ...ProfileFields
+ }
+}
 `;
 
 export const GET_PROFILES = gql`
@@ -616,7 +639,7 @@ query($request: ProfileQueryRequest!) {
       bio
       location
       website
-      twitterUrl
+      twitter
       picture {
         ... on NftImage {
           contractAddress
@@ -753,7 +776,7 @@ export const GET_PUBLICATIONS = gql`
     bio
     location
     website
-    twitterUrl
+    twitter
     handle
     picture {
       ... on NftImage {
@@ -1013,7 +1036,7 @@ export const GET_FOLLOWING = gql`
               bio
               location
               website
-              twitterUrl
+              twitter
               handle
               picture {
                 ... on NftImage {

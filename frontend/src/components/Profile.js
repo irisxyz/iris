@@ -68,24 +68,29 @@ function Profile({ profile = {}, wallet, children }) {
 
     const isUserLivestreaming = async () => {
 
-      const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
-        {
-          headers: {
-            // TODO: Remove API KEY in the future
-            "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+      try {
+        const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
+          {
+            headers: {
+              // TODO: Remove API KEY in the future
+              "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+            }
+          },
+        );
+        const responseData = await response.json();
+  
+        responseData.map((streamInfo) => {
+          if (streamInfo.isActive & streamInfo.name === `${wallet.address},${profile.handle}`) {
+  
+            console.log("PROFILE Woooo")
+            setStreamInfo(streamInfo)
+  
           }
-        },
-      );
-      const responseData = await response.json();
+        })
 
-      responseData.map((streamInfo) => {
-        if (streamInfo.isActive & streamInfo.name === `${wallet.address},${profile.handle}`) {
-
-          console.log("PROFILE Woooo")
-          setStreamInfo(streamInfo)
-
-        }
-      })
+      } catch (err) {
+        console.log(err)
+      }
 
 
 
