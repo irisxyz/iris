@@ -640,7 +640,7 @@ fragment WalletFields on Wallet {
 }
 `;
 
-export const GET_PROFILES = `
+export const GET_PROFILES = gql`
   query($request: ProfileQueryRequest!) {
     profiles(request: $request) {
       items {
@@ -729,7 +729,7 @@ export const GET_PROFILES = `
   }
 `;
 
-export const CREATE_POST_TYPED_DATA = `
+export const CREATE_POST_TYPED_DATA = gql`
   mutation($request: CreatePublicPostRequest!) { 
     createPostTypedData(request: $request) {
       id
@@ -762,7 +762,7 @@ export const CREATE_POST_TYPED_DATA = `
 }
 `;
 
-export const GET_PUBLICATIONS = `
+export const GET_PUBLICATIONS = gql`
   query($request: PublicationsQueryRequest!) {
     publications(request: $request) {
       items {
@@ -1054,7 +1054,7 @@ export const GET_PUBLICATIONS = `
 `;
 
 
-export const GET_FOLLOWING = `
+export const GET_FOLLOWING = gql`
 query($request: FollowingRequest!) {
   following(request: $request) { 
         items {
