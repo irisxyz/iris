@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'
 export const SEARCH = gql`
   query($request: SearchQueryRequest!) {
     search(request: $request) {
-            ... on PublicationSearchResult {
+			... on PublicationSearchResult {
        __typename 
       items {
         __typename 
@@ -35,7 +35,7 @@ export const SEARCH = gql`
      }
     }
   }
-
+  
 fragment MediaFields on Media {
   url
   mimeType
@@ -71,6 +71,14 @@ fragment ProfileFields on Profile {
   location
   website
   twitter
+  attributes {
+    displayType
+    traitType
+    key
+    value
+  }
+  metadata
+  isDefault
   handle
   picture {
     ... on NftImage {
@@ -159,8 +167,10 @@ fragment Erc20Fields on Erc20 {
 
 fragment CollectModuleFields on CollectModule {
   __typename
-  ... on EmptyCollectModuleSettings {
+  ... on FreeCollectModuleSettings {
     type
+    followerOnly
+    contractAddress
   }
   ... on FeeCollectModuleSettings {
     type
@@ -292,7 +302,7 @@ fragment CommentMirrorOfFields on Comment {
     }
   }
 }
-`
+`;
 
 export const GET_TIMELINE = gql`
 query($request: TimelineRequest!) {
