@@ -640,88 +640,96 @@ fragment WalletFields on Wallet {
 }
 `;
 
-export const GET_PROFILES = gql`
-query($request: ProfileQueryRequest!) {
-  profiles(request: $request) {
-    items {
-      id
-      name
-      bio
-      location
-      website
-      twitter
-      picture {
-        ... on NftImage {
-          contractAddress
-          tokenId
-          uri
-          verified
+export const GET_PROFILES = `
+  query($request: ProfileQueryRequest!) {
+    profiles(request: $request) {
+      items {
+        id
+        name
+        bio
+        location
+        website
+        twitter
+        attributes {
+          displayType
+          traitType
+          key
+          value
         }
-        ... on MediaSet {
-          original {
-            url
-            mimeType
+        metadata
+        isDefault
+        picture {
+          ... on NftImage {
+            contractAddress
+            tokenId
+            uri
+            verified
           }
-        }
-        __typename
-      }
-      handle
-      coverPicture {
-        ... on NftImage {
-          contractAddress
-          tokenId
-          uri
-          verified
-        }
-        ... on MediaSet {
-          original {
-            url
-            mimeType
-          }
-        }
-        __typename
-      }
-      ownedBy
-      depatcher {
-        address
-        canUseRelay
-      }
-      stats {
-        totalFollowers
-        totalFollowing
-        totalPosts
-        totalComments
-        totalMirrors
-        totalPublications
-        totalCollects
-      }
-      followModule {
-        ... on FeeFollowModuleSettings {
-          type
-          amount {
-            asset {
-              symbol
-              name
-              decimals
-              address
+          ... on MediaSet {
+            original {
+              url
+              mimeType
             }
-            value
           }
-          recipient
+          __typename
         }
-        __typename
+        handle
+        coverPicture {
+          ... on NftImage {
+            contractAddress
+            tokenId
+            uri
+            verified
+          }
+          ... on MediaSet {
+            original {
+              url
+              mimeType
+            }
+          }
+          __typename
+        }
+        ownedBy
+        depatcher {
+          address
+          canUseRelay
+        }
+        stats {
+          totalFollowers
+          totalFollowing
+          totalPosts
+          totalComments
+          totalMirrors
+          totalPublications
+          totalCollects
+        }
+        followModule {
+          ... on FeeFollowModuleSettings {
+            type
+            amount {
+              asset {
+                symbol
+                name
+                decimals
+                address
+              }
+              value
+            }
+            recipient
+          }
+          __typename
+        }
       }
-    }
-    pageInfo {
-      prev
-      next
-      totalCount
+      pageInfo {
+        prev
+        next
+        totalCount
+      }
     }
   }
-}
 `;
 
-export const CREATE_POST_TYPED_DATA = gql`
+export const CREATE_POST_TYPED_DATA = `
   mutation($request: CreatePublicPostRequest!) { 
     createPostTypedData(request: $request) {
       id
@@ -754,7 +762,7 @@ export const CREATE_POST_TYPED_DATA = gql`
 }
 `;
 
-export const GET_PUBLICATIONS = gql`
+export const GET_PUBLICATIONS = `
   query($request: PublicationsQueryRequest!) {
     publications(request: $request) {
       items {
@@ -787,6 +795,14 @@ export const GET_PUBLICATIONS = gql`
     location
     website
     twitter
+    attributes {
+      displayType
+      traitType
+      key
+      value
+    }
+    metadata
+    isDefault
     handle
     picture {
       ... on NftImage {
@@ -871,8 +887,10 @@ export const GET_PUBLICATIONS = gql`
   }
   fragment CollectModuleFields on CollectModule {
     __typename
-    ... on EmptyCollectModuleSettings {
+    ... on FreeCollectModuleSettings {
       type
+      followerOnly
+      contractAddress
     }
     ... on FeeCollectModuleSettings {
       type
@@ -1036,111 +1054,119 @@ export const GET_PUBLICATIONS = gql`
 `;
 
 
-export const GET_FOLLOWING = gql`
-  query($request: FollowingRequest!) {
-    following(request: $request) { 
-			    items {
-            profile {
-              id
-              name
-              bio
-              location
-              website
-              twitter
-              handle
-              picture {
-                ... on NftImage {
-                  contractAddress
-                  tokenId
-                  uri
-                  verified
-                }
-                ... on MediaSet {
-                  original {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                  medium {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                  small {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                }
-              }
-              coverPicture {
-                ... on NftImage {
-                  contractAddress
-                  tokenId
-                  uri
-                  verified
-                }
-                ... on MediaSet {
-                  original {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                  small {
-                    width
-                    url
-                    height
-                    mimeType
-                  }
-                  medium {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                }
-              }
-              ownedBy
-              depatcher {
-                address
-                canUseRelay
-              }
-              stats {
-                totalFollowers
-                totalFollowing
-                totalPosts
-                totalComments
-                totalMirrors
-                totalPublications
-                totalCollects
-              }
-              followModule {
-                ... on FeeFollowModuleSettings {
-                  type
-                  amount {
-                    asset {
-                      name
-                      symbol
-                      decimals
-                      address
-                    }
-                    value
-                  }
-                  recipient
-                }
+export const GET_FOLLOWING = `
+query($request: FollowingRequest!) {
+  following(request: $request) { 
+        items {
+          profile {
+            id
+            name
+            bio
+            location
+            website
+            twitter
+            attributes {
+              displayType
+              traitType
+              key
+              value
             }
+            metadata
+            isDefault
+            handle
+            picture {
+              ... on NftImage {
+                contractAddress
+                tokenId
+                uri
+                verified
+              }
+              ... on MediaSet {
+                original {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+                medium {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+                small {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+              }
+            }
+            coverPicture {
+              ... on NftImage {
+                contractAddress
+                tokenId
+                uri
+                verified
+              }
+              ... on MediaSet {
+                original {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+                small {
+                  width
+                  url
+                  height
+                  mimeType
+                }
+                medium {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+              }
+            }
+            ownedBy
+            depatcher {
+              address
+              canUseRelay
+            }
+            stats {
+              totalFollowers
+              totalFollowing
+              totalPosts
+              totalComments
+              totalMirrors
+              totalPublications
+              totalCollects
+            }
+            followModule {
+              ... on FeeFollowModuleSettings {
+                type
+                amount {
+                  asset {
+                    name
+                    symbol
+                    decimals
+                    address
+                  }
+                  value
+                }
+                recipient
+              }
           }
-          totalAmountOfTimesFollowing
         }
-       pageInfo {
-          prev
-          next
-          totalCount
-       }
-		}
+        totalAmountOfTimesFollowing
+      }
+     pageInfo {
+        prev
+        next
+        totalCount
+     }
   }
+}
 `;
