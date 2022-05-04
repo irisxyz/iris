@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
+import { GET_PROFILES, GET_PUBLICATIONS, HAS_COLLECTED } from "../utils/queries";
 import { hexToDec } from "../utils";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
@@ -12,19 +12,6 @@ import Livestream from "../components/Livestream";
 import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
-
-const HAS_COLLECTED = gql`
-    query ($request: HasCollectedRequest!) {
-        hasCollected(request: $request) {
-            walletAddress
-            results {
-                collected
-                publicationId
-                collectedTimes
-            }
-        }
-    }
-`;
 
 const Icon = styled.div`
     height: 100px;
