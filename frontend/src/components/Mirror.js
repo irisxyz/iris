@@ -1,41 +1,10 @@
 import { useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { utils } from "ethers";
+import { CREATE_MIRROR_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import Retweet from "../assets/Retweet";
 import Button from "./Button";
-
-const CREATE_MIRROR_TYPED_DATA = gql`
-    mutation ($request: CreateMirrorRequest!) {
-        createMirrorTypedData(request: $request) {
-            id
-            expiresAt
-            typedData {
-                types {
-                    MirrorWithSig {
-                        name
-                        type
-                    }
-                }
-                domain {
-                    name
-                    chainId
-                    version
-                    verifyingContract
-                }
-                value {
-                    nonce
-                    deadline
-                    profileId
-                    profileIdPointed
-                    pubIdPointed
-                    referenceModule
-                    referenceModuleData
-                }
-            }
-        }
-    }
-`;
 
 function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
     const [createMirrorTyped, createMirrorTypedData] = useMutation(CREATE_MIRROR_TYPED_DATA);

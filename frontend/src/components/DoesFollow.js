@@ -1,15 +1,6 @@
 import { useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
-
-const DOES_FOLLOW = gql`
-    query ($request: DoesFollowRequest!) {
-        doesFollow(request: $request) {
-            followerAddress
-            profileId
-            follows
-        }
-    }
-`;
+import { DOES_FOLLOW } from "../utils/queries";
 
 function DoesFollow({ wallet, profileId }) {
     const doesFollow = useQuery(DOES_FOLLOW, {

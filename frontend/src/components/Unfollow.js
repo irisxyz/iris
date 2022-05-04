@@ -2,36 +2,9 @@ import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { utils, ethers } from "ethers";
 import { LENS_FOLLOW_NFT_ABI } from "../config.ts";
+import { CREATE_UNFOLLOW_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import FollowButton from "./FollowButton";
-
-const CREATE_UNFOLLOW_TYPED_DATA = gql`
-    mutation ($request: UnfollowRequest!) {
-        createUnfollowTypedData(request: $request) {
-            id
-            expiresAt
-            typedData {
-                domain {
-                    name
-                    chainId
-                    version
-                    verifyingContract
-                }
-                types {
-                    BurnWithSig {
-                        name
-                        type
-                    }
-                }
-                value {
-                    nonce
-                    deadline
-                    tokenId
-                }
-            }
-        }
-    }
-`;
 
 function Follow({ wallet, profileId }) {
     const [createUnfollowTyped, createUnfollowTypedData] = useMutation(CREATE_UNFOLLOW_TYPED_DATA);

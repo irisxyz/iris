@@ -1,35 +1,7 @@
 import { useEffect } from 'react'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import { GET_CHALLENGE, AUTHENTICATION, CREATE_PROFILE } from "../utils/queries";
 import Button from './Button'
-
-const GET_CHALLENGE = gql`
-  query($request: ChallengeRequest!) {
-    challenge(request: $request) { text }
-  }
-`;
-
-const AUTHENTICATION = gql`
-  mutation($request: SignedAuthChallenge!) { 
-    authenticate(request: $request) {
-      accessToken
-      refreshToken
-    }
-  }
-`;
-
-const CREATE_PROFILE = gql`
-  mutation($request: CreateProfileRequest!) { 
-    createProfile(request: $request) {
-      ... on RelayerResult {
-        txHash
-      }
-      ... on RelayError {
-        reason
-      }
-      __typename
-    }
-}
-`;
 
 function Login({ wallet, auth }) {
     const [authToken, setAuthToken] = auth

@@ -1208,3 +1208,182 @@ export const MODULE_APPROVAL_DATA = gql`
   }
 `
 
+export const CREATE_FOLLOW_TYPED_DATA = gql`
+  mutation($request: FollowRequest!) { 
+    createFollowTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        domain {
+          name
+          chainId
+          version
+          verifyingContract
+        }
+        types {
+          FollowWithSig {
+            name
+            type
+          }
+        }
+        value {
+          nonce
+          deadline
+          profileIds
+          datas
+        }
+      }
+    }
+ }
+`;
+
+export const CREATE_UNFOLLOW_TYPED_DATA = gql`
+  mutation($request: UnfollowRequest!) { 
+    createUnfollowTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        domain {
+          name
+          chainId
+          version
+          verifyingContract
+        }
+        types {
+          BurnWithSig {
+            name
+            type
+          }
+        }
+        value {
+          nonce
+          deadline
+          tokenId
+        }
+      }
+    }
+ }
+`;
+
+export const DOES_FOLLOW = gql`
+  query($request: DoesFollowRequest!) {
+    doesFollow(request: $request) { 
+			followerAddress
+    	profileId
+    	follows
+		}
+  }
+`;
+
+
+export const CREATE_MIRROR_TYPED_DATA = gql`
+  mutation($request: CreateMirrorRequest!) { 
+    createMirrorTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        types {
+          MirrorWithSig {
+            name
+            type
+          }
+        }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        profileIdPointed
+        pubIdPointed
+        referenceModule
+        referenceModuleData
+      }
+     }
+   }
+ }
+`;
+
+export const CREATE_COLLECT_TYPED_DATA = gql`
+  mutation($request: CreateCollectRequest!) { 
+    createCollectTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        types {
+          CollectWithSig {
+            name
+            type
+          }
+        }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        pubId
+        data
+      }
+     }
+   }
+ }
+`;
+
+export const CREATE_COMMENT_TYPED_DATA = gql`
+  mutation($request: CreatePublicCommentRequest!) { 
+    createCommentTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        types {
+          CommentWithSig {
+            name
+            type
+          }
+        }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        profileIdPointed
+        pubIdPointed
+        contentURI
+        collectModule
+        collectModuleData
+        referenceModule
+        referenceModuleData
+      }
+     }
+   }
+ }
+`;
+
+export const GET_CHALLENGE = gql`
+  query($request: ChallengeRequest!) {
+    challenge(request: $request) { text }
+  }
+`;
+
+export const AUTHENTICATION = gql`
+  mutation($request: SignedAuthChallenge!) { 
+    authenticate(request: $request) {
+      accessToken
+      refreshToken
+    }
+ }
+`;
