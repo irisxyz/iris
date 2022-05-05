@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { utils } from "ethers";
 import { CREATE_COLLECT_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import avatar from "../assets/avatar.png";
-import { useLazyQuery, useQuery, gql } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { Wallet } from "ethers";
 import { GET_FOLLOWING } from "../utils/queries";
 

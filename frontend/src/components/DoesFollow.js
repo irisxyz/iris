@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { DOES_FOLLOW } from "../utils/queries";
 
 function DoesFollow({ wallet, profileId }) {

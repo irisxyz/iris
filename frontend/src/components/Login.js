@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { GET_CHALLENGE, AUTHENTICATION, CREATE_PROFILE } from "../utils/queries";
 import Button from './Button'
 

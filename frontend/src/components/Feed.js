@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery, gql } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import styled from "styled-components";
 import { GET_TIMELINE, SEARCH, HAS_COLLECTED } from "../utils/queries";
 import Card from "../components/Card";

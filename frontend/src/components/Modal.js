@@ -1,4 +1,4 @@
-import React, { createRef } from 'react'
+import { createRef } from 'react'
 import styled from "styled-components"
 import Card from "./Card"
 

@@ -1,7 +1,5 @@
-import React, { useState, useEffect, createRef } from 'react'
 import styled, { withTheme } from 'styled-components'
 import bg from '../assets/bg.png'
-import Button from '../components/Button'
 import logo from '../assets/logo-open.png'
 import Wallet from '../components/Wallet'
 

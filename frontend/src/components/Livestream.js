@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import Plyr from 'plyr';
 import Hls from 'hls.js';
 import 'plyr/dist/plyr.css';

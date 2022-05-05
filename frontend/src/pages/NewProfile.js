@@ -1,7 +1,7 @@
-import React, { useState, useEffect, createRef } from "react";
+import { useState, useEffect, createRef } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { CREATE_PROFILE, MODULE_APPROVAL_DATA } from "../utils/queries";
 import Card from "../components/Card";
 import Button from "../components/Button";

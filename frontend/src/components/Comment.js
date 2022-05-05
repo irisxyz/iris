@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { utils } from "ethers";
 import { create } from "ipfs-http-client";
 import { v4 as uuidv4 } from "uuid";
