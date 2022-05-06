@@ -326,7 +326,7 @@ function User({ wallet, lensHub }) {
                                 <Opensea
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    href={`https://testnets.opensea.io/assets/mumbai/0xd7b3481de00995046c7850bce9a5196b7605c367/${profile.decId}`}
+                                    href={`https://testnets.opensea.io/${wallet.address}`}
                                 >
                                     <img src={opensea} alt="Opensea" />
                                 </Opensea>
