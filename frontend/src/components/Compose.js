@@ -248,7 +248,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             profileId: profile.id,
             contentURI: 'ipfs://' + postIpfsRes.path,
             collectModule: {
-                emptyCollectModule: true,
+                freeCollectModule: { followerOnly: true },
             },
             referenceModule: {
                 followerOnlyReferenceModule: false,
