@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { GET_PROFILES, GET_PUBLICATIONS, HAS_COLLECTED, DOES_FOLLOW } from "../utils/queries";
 import { hexToDec } from "../utils";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
@@ -12,19 +12,6 @@ import Livestream from "../components/Livestream";
 import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
-
-const HAS_COLLECTED = gql`
-    query ($request: HasCollectedRequest!) {
-        hasCollected(request: $request) {
-            walletAddress
-            results {
-                collected
-                publicationId
-                collectedTimes
-            }
-        }
-    }
-`;
 
 const Icon = styled.div`
     height: 100px;
@@ -131,16 +118,6 @@ const Opensea = styled.a`
     }
 `;
 
-const DOES_FOLLOW = gql`
-    query ($request: DoesFollowRequest!) {
-        doesFollow(request: $request) {
-            followerAddress
-            profileId
-            follows
-        }
-    }
-`;
-
 function User({ wallet, lensHub }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
@@ -220,8 +197,6 @@ function User({ wallet, lensHub }) {
                     setStreamInfo(streamInfo)
                 }
             })
-
-
 
         }
 

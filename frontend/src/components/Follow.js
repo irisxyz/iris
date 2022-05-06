@@ -1,37 +1,9 @@
 import { useEffect } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { utils } from "ethers";
+import { CREATE_FOLLOW_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import Button from "./Button";
-
-const CREATE_FOLLOW_TYPED_DATA = gql`
-    mutation ($request: FollowRequest!) {
-        createFollowTypedData(request: $request) {
-            id
-            expiresAt
-            typedData {
-                domain {
-                    name
-                    chainId
-                    version
-                    verifyingContract
-                }
-                types {
-                    FollowWithSig {
-                        name
-                        type
-                    }
-                }
-                value {
-                    nonce
-                    deadline
-                    profileIds
-                    datas
-                }
-            }
-        }
-    }
-`;
 
 function Follow({ wallet, lensHub, profile = {} }) {
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA);

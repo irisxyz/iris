@@ -1,7 +1,8 @@
-import React, { useState, useEffect, createRef } from "react";
+import { useState, useEffect, createRef } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+import { CREATE_PROFILE, MODULE_APPROVAL_DATA } from "../utils/queries";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import avatar from "../assets/avatar.png";
@@ -67,30 +68,6 @@ const Cover = styled.div`
     background: url(${rainbow});
     background-size: cover;
     border-radius: 16px 15px 0 0;
-`;
-
-const CREATE_PROFILE = gql`
-    mutation ($request: CreateProfileRequest!) {
-        createProfile(request: $request) {
-            ... on RelayerResult {
-                txHash
-            }
-            ... on RelayError {
-                reason
-            }
-            __typename
-        }
-    }
-`;
-
-const MODULE_APPROVAL_DATA = gql`
-    query ($request: GenerateModuleCurrencyApprovalDataRequest!) {
-        generateModuleCurrencyApprovalData(request: $request) {
-            to
-            from
-            data
-        }
-    }
 `;
 
 function NewProfile({ profile = {}, wallet }) {

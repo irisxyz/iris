@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'
 export const SEARCH = gql`
   query($request: SearchQueryRequest!) {
     search(request: $request) {
-            ... on PublicationSearchResult {
+			... on PublicationSearchResult {
        __typename 
       items {
         __typename 
@@ -35,7 +35,7 @@ export const SEARCH = gql`
      }
     }
   }
-
+  
 fragment MediaFields on Media {
   url
   mimeType
@@ -71,6 +71,14 @@ fragment ProfileFields on Profile {
   location
   website
   twitter
+  attributes {
+    displayType
+    traitType
+    key
+    value
+  }
+  metadata
+  isDefault
   handle
   picture {
     ... on NftImage {
@@ -159,8 +167,10 @@ fragment Erc20Fields on Erc20 {
 
 fragment CollectModuleFields on CollectModule {
   __typename
-  ... on EmptyCollectModuleSettings {
+  ... on FreeCollectModuleSettings {
     type
+    followerOnly
+    contractAddress
   }
   ... on FeeCollectModuleSettings {
     type
@@ -292,7 +302,7 @@ fragment CommentMirrorOfFields on Comment {
     }
   }
 }
-`
+`;
 
 export const GET_TIMELINE = gql`
 query($request: TimelineRequest!) {
@@ -631,84 +641,92 @@ fragment WalletFields on Wallet {
 `;
 
 export const GET_PROFILES = gql`
-query($request: ProfileQueryRequest!) {
-  profiles(request: $request) {
-    items {
-      id
-      name
-      bio
-      location
-      website
-      twitter
-      picture {
-        ... on NftImage {
-          contractAddress
-          tokenId
-          uri
-          verified
+  query($request: ProfileQueryRequest!) {
+    profiles(request: $request) {
+      items {
+        id
+        name
+        bio
+        location
+        website
+        twitter
+        attributes {
+          displayType
+          traitType
+          key
+          value
         }
-        ... on MediaSet {
-          original {
-            url
-            mimeType
+        metadata
+        isDefault
+        picture {
+          ... on NftImage {
+            contractAddress
+            tokenId
+            uri
+            verified
           }
-        }
-        __typename
-      }
-      handle
-      coverPicture {
-        ... on NftImage {
-          contractAddress
-          tokenId
-          uri
-          verified
-        }
-        ... on MediaSet {
-          original {
-            url
-            mimeType
-          }
-        }
-        __typename
-      }
-      ownedBy
-      depatcher {
-        address
-        canUseRelay
-      }
-      stats {
-        totalFollowers
-        totalFollowing
-        totalPosts
-        totalComments
-        totalMirrors
-        totalPublications
-        totalCollects
-      }
-      followModule {
-        ... on FeeFollowModuleSettings {
-          type
-          amount {
-            asset {
-              symbol
-              name
-              decimals
-              address
+          ... on MediaSet {
+            original {
+              url
+              mimeType
             }
-            value
           }
-          recipient
+          __typename
         }
-        __typename
+        handle
+        coverPicture {
+          ... on NftImage {
+            contractAddress
+            tokenId
+            uri
+            verified
+          }
+          ... on MediaSet {
+            original {
+              url
+              mimeType
+            }
+          }
+          __typename
+        }
+        ownedBy
+        depatcher {
+          address
+          canUseRelay
+        }
+        stats {
+          totalFollowers
+          totalFollowing
+          totalPosts
+          totalComments
+          totalMirrors
+          totalPublications
+          totalCollects
+        }
+        followModule {
+          ... on FeeFollowModuleSettings {
+            type
+            amount {
+              asset {
+                symbol
+                name
+                decimals
+                address
+              }
+              value
+            }
+            recipient
+          }
+          __typename
+        }
       }
-    }
-    pageInfo {
-      prev
-      next
-      totalCount
+      pageInfo {
+        prev
+        next
+        totalCount
+      }
     }
   }
-}
 `;
 
 export const CREATE_POST_TYPED_DATA = gql`
@@ -777,6 +795,14 @@ export const GET_PUBLICATIONS = gql`
     location
     website
     twitter
+    attributes {
+      displayType
+      traitType
+      key
+      value
+    }
+    metadata
+    isDefault
     handle
     picture {
       ... on NftImage {
@@ -861,8 +887,10 @@ export const GET_PUBLICATIONS = gql`
   }
   fragment CollectModuleFields on CollectModule {
     __typename
-    ... on EmptyCollectModuleSettings {
+    ... on FreeCollectModuleSettings {
       type
+      followerOnly
+      contractAddress
     }
     ... on FeeCollectModuleSettings {
       type
@@ -1027,110 +1055,335 @@ export const GET_PUBLICATIONS = gql`
 
 
 export const GET_FOLLOWING = gql`
-  query($request: FollowingRequest!) {
-    following(request: $request) { 
-			    items {
-            profile {
-              id
-              name
-              bio
-              location
-              website
-              twitter
-              handle
-              picture {
-                ... on NftImage {
-                  contractAddress
-                  tokenId
-                  uri
-                  verified
-                }
-                ... on MediaSet {
-                  original {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                  medium {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                  small {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                }
-              }
-              coverPicture {
-                ... on NftImage {
-                  contractAddress
-                  tokenId
-                  uri
-                  verified
-                }
-                ... on MediaSet {
-                  original {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                  small {
-                    width
-                    url
-                    height
-                    mimeType
-                  }
-                  medium {
-                    url
-                    width
-                    height
-                    mimeType
-                  }
-                }
-              }
-              ownedBy
-              depatcher {
-                address
-                canUseRelay
-              }
-              stats {
-                totalFollowers
-                totalFollowing
-                totalPosts
-                totalComments
-                totalMirrors
-                totalPublications
-                totalCollects
-              }
-              followModule {
-                ... on FeeFollowModuleSettings {
-                  type
-                  amount {
-                    asset {
-                      name
-                      symbol
-                      decimals
-                      address
-                    }
-                    value
-                  }
-                  recipient
-                }
+query($request: FollowingRequest!) {
+  following(request: $request) { 
+        items {
+          profile {
+            id
+            name
+            bio
+            location
+            website
+            twitter
+            attributes {
+              displayType
+              traitType
+              key
+              value
             }
+            metadata
+            isDefault
+            handle
+            picture {
+              ... on NftImage {
+                contractAddress
+                tokenId
+                uri
+                verified
+              }
+              ... on MediaSet {
+                original {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+                medium {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+                small {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+              }
+            }
+            coverPicture {
+              ... on NftImage {
+                contractAddress
+                tokenId
+                uri
+                verified
+              }
+              ... on MediaSet {
+                original {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+                small {
+                  width
+                  url
+                  height
+                  mimeType
+                }
+                medium {
+                  url
+                  width
+                  height
+                  mimeType
+                }
+              }
+            }
+            ownedBy
+            depatcher {
+              address
+              canUseRelay
+            }
+            stats {
+              totalFollowers
+              totalFollowing
+              totalPosts
+              totalComments
+              totalMirrors
+              totalPublications
+              totalCollects
+            }
+            followModule {
+              ... on FeeFollowModuleSettings {
+                type
+                amount {
+                  asset {
+                    name
+                    symbol
+                    decimals
+                    address
+                  }
+                  value
+                }
+                recipient
+              }
           }
-          totalAmountOfTimesFollowing
         }
-       pageInfo {
-          prev
-          next
-          totalCount
-       }
+        totalAmountOfTimesFollowing
+      }
+     pageInfo {
+        prev
+        next
+        totalCount
+     }
+  }
+}
+`;
+
+export const HAS_COLLECTED = gql`
+  query($request: HasCollectedRequest!) {
+    hasCollected(request: $request) {
+      walletAddress
+      results {
+        collected
+        publicationId
+        collectedTimes
+      }
+    }
+  }
+`;
+
+export const CREATE_PROFILE = gql`
+  mutation($request: CreateProfileRequest!) { 
+    createProfile(request: $request) {
+      ... on RelayerResult {
+        txHash
+      }
+      ... on RelayError {
+        reason
+      }
+			__typename
+    }
+ }
+`;
+
+export const MODULE_APPROVAL_DATA = gql`
+  query($request: GenerateModuleCurrencyApprovalDataRequest!) {
+    generateModuleCurrencyApprovalData(request: $request) {
+      to
+      from
+      data
+    }
+  }
+`
+
+export const CREATE_FOLLOW_TYPED_DATA = gql`
+  mutation($request: FollowRequest!) { 
+    createFollowTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        domain {
+          name
+          chainId
+          version
+          verifyingContract
+        }
+        types {
+          FollowWithSig {
+            name
+            type
+          }
+        }
+        value {
+          nonce
+          deadline
+          profileIds
+          datas
+        }
+      }
+    }
+ }
+`;
+
+export const CREATE_UNFOLLOW_TYPED_DATA = gql`
+  mutation($request: UnfollowRequest!) { 
+    createUnfollowTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        domain {
+          name
+          chainId
+          version
+          verifyingContract
+        }
+        types {
+          BurnWithSig {
+            name
+            type
+          }
+        }
+        value {
+          nonce
+          deadline
+          tokenId
+        }
+      }
+    }
+ }
+`;
+
+export const DOES_FOLLOW = gql`
+  query($request: DoesFollowRequest!) {
+    doesFollow(request: $request) { 
+			followerAddress
+    	profileId
+    	follows
 		}
   }
+`;
+
+
+export const CREATE_MIRROR_TYPED_DATA = gql`
+  mutation($request: CreateMirrorRequest!) { 
+    createMirrorTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        types {
+          MirrorWithSig {
+            name
+            type
+          }
+        }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        profileIdPointed
+        pubIdPointed
+        referenceModule
+        referenceModuleData
+      }
+     }
+   }
+ }
+`;
+
+export const CREATE_COLLECT_TYPED_DATA = gql`
+  mutation($request: CreateCollectRequest!) { 
+    createCollectTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        types {
+          CollectWithSig {
+            name
+            type
+          }
+        }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        pubId
+        data
+      }
+     }
+   }
+ }
+`;
+
+export const CREATE_COMMENT_TYPED_DATA = gql`
+  mutation($request: CreatePublicCommentRequest!) { 
+    createCommentTypedData(request: $request) {
+      id
+      expiresAt
+      typedData {
+        types {
+          CommentWithSig {
+            name
+            type
+          }
+        }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        profileIdPointed
+        pubIdPointed
+        contentURI
+        collectModule
+        collectModuleData
+        referenceModule
+        referenceModuleData
+      }
+     }
+   }
+ }
+`;
+
+export const GET_CHALLENGE = gql`
+  query($request: ChallengeRequest!) {
+    challenge(request: $request) { text }
+  }
+`;
+
+export const AUTHENTICATION = gql`
+  mutation($request: SignedAuthChallenge!) { 
+    authenticate(request: $request) {
+      accessToken
+      refreshToken
+    }
+ }
 `;

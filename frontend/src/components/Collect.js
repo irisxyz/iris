@@ -1,38 +1,9 @@
 import { useEffect, useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { utils } from "ethers";
+import { CREATE_COLLECT_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import Heart from "../assets/Heart";
-
-const CREATE_COLLECT_TYPED_DATA = gql`
-  mutation($request: CreateCollectRequest!) { 
-    createCollectTypedData(request: $request) {
-      id
-      expiresAt
-      typedData {
-        types {
-          CollectWithSig {
-            name
-            type
-          }
-        }
-      domain {
-        name
-        chainId
-        version
-        verifyingContract
-      }
-      value {
-        nonce
-        deadline
-        profileId
-        pubId
-        data
-      }
-     }
-   }
- }
-`;
 
 function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }) {
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)

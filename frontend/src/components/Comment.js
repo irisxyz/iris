@@ -1,48 +1,14 @@
 import { useEffect } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { utils } from "ethers";
 import { create } from "ipfs-http-client";
 import { v4 as uuidv4 } from "uuid";
+import { CREATE_COMMENT_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import Button from "./Button";
 import CommentIcon from "../assets/Comment";
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
-
-const CREATE_COMMENT_TYPED_DATA = gql`
-    mutation ($request: CreatePublicCommentRequest!) {
-        createCommentTypedData(request: $request) {
-            id
-            expiresAt
-            typedData {
-                types {
-                    CommentWithSig {
-                        name
-                        type
-                    }
-                }
-                domain {
-                    name
-                    chainId
-                    version
-                    verifyingContract
-                }
-                value {
-                    nonce
-                    deadline
-                    profileId
-                    profileIdPointed
-                    pubIdPointed
-                    contentURI
-                    collectModule
-                    collectModuleData
-                    referenceModule
-                    referenceModuleData
-                }
-            }
-        }
-    }
-`;
 
 function Comment({ wallet, lensHub, profileId, publicationId, stats }) {
     const [createCommentTyped, createCommentTypedData] = useMutation(CREATE_COMMENT_TYPED_DATA);
