@@ -174,10 +174,10 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
           profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
         <StyledLink to='new-profile'>
-        <StyledProfile onClick={() => handleNew()}>
-          <b>+ Create Profile</b>
-          <UserIcon/>
-        </StyledProfile>
+          <StyledProfile onClick={() => handleNew()}>
+            <b>+ Create Profile</b>
+            <UserIcon/>
+          </StyledProfile>
         </StyledLink>
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
