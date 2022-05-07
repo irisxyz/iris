@@ -89,27 +89,10 @@ function NewProfile({ profile = {}, wallet }) {
             console.log("no cost");
             return;
         }
-        
-        var profileRequest
-        
-        // if (cost) {
-        //     profileRequest = {
-        //         handle: handle,
-        //         followModule: {
-        //             feeFollowModule: {
-        //                 amount: {
-        //                     currency: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
-        //                     value: cost
-        //                 },
-        //                 recipient: wallet.address
-        //             }
-        //         }
-        //     };
-        // } else {
-            profileRequest = {
-                handle: handle,
-            };
-        // }
+
+        const profileRequest = {
+            handle: handle,
+        };
 
         // const bio = bioRef.current.value
         createProfile({
