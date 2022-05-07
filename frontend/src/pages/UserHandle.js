@@ -179,28 +179,30 @@ function User({ wallet, lensHub }) {
                 },
             },
         });
+        
+        console.log("profile:", profile)
 
-        const isUserLivestreaming = async () => {
+        // const isUserLivestreaming = async () => {
 
-            const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
-                {
-                    headers: {
-                        // TODO: Remove API KEY in the future
-                        "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
-                    }
-                },
-            );
-            const responseData = await response.json();
+        //     const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
+        //         {
+        //             headers: {
+        //                 // TODO: Remove API KEY in the future
+        //                 "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+        //             }
+        //         },
+        //     );
+        //     const responseData = await response.json();
 
-            responseData.map((streamInfo) => {
-                if (streamInfo.isActive & streamInfo.name === `${ownedBy},${handle}`) {
-                    setStreamInfo(streamInfo)
-                }
-            })
+        //     responseData.map((streamInfo) => {
+        //         if (streamInfo.isActive & streamInfo.name === `${ownedBy},${handle}`) {
+        //             setStreamInfo(streamInfo)
+        //         }
+        //     })
 
-        }
+        // }
 
-        isUserLivestreaming()
+        // isUserLivestreaming()
 
 
     }, [data, getPublications]);
@@ -282,7 +284,7 @@ function User({ wallet, lensHub }) {
                                     <Opensea
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        href={`https://testnets.opensea.io/${wallet.address}`}
+                                        href={`https://testnets.opensea.io/${profile?.ownedBy}`}
                                     >
                                         <img src={opensea} alt="Opensea" />
                                     </Opensea>
@@ -326,7 +328,7 @@ function User({ wallet, lensHub }) {
                                 <Opensea
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    href={`https://testnets.opensea.io/${wallet.address}`}
+                                    href={`https://testnets.opensea.io/${profile?.ownedBy}`}
                                 >
                                     <img src={opensea} alt="Opensea" />
                                 </Opensea>
