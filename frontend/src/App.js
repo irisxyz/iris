@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import User from "./pages/User";
 import UserHandle from "./pages/UserHandle";
 import NewProfile from "./pages/NewProfile";
+import EditProfile from "./pages/EditProfile";
 import Profile from "./components/Profile";
 import Nav from "./components/Nav";
 import Wallet from "./components/Wallet";
@@ -113,9 +114,11 @@ function App() {
                                         </div>
                                     }
                                 />
+                                <Route path="edit-profile" element={<EditProfile wallet={wallet} />} />
                                 <Route path="new-profile" element={<NewProfile wallet={wallet} />} />
                                 <Route path="user" element={<User />}>
-                                    <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
+                                    <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />}>
+                                    </Route>
                                 </Route>
                                 <Route path="*" element={<NotFound />} />
                             </Routes>

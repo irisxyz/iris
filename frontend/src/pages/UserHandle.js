@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_PROFILES, GET_PUBLICATIONS, HAS_COLLECTED, DOES_FOLLOW } from "../utils/queries";
 import { hexToDec } from "../utils";
+import { Link } from 'react-router-dom'
+import Button from "../components/Button";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
 import Post from "../components/Post";
@@ -117,6 +119,12 @@ const Opensea = styled.a`
         box-shadow: 0px 2px 7px rgba(112, 58, 202, 1);
     }
 `;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+  transition: all 50ms ease-in-out;
+`
 
 function User({ wallet, lensHub }) {
     let params = useParams();
@@ -303,6 +311,18 @@ function User({ wallet, lensHub }) {
                                     <p>{profile.stats?.totalCollects} collects</p>
                                 </Stats>
                             </div>
+                            <div>
+                                {following ? (
+                                    <Unfollow wallet={wallet} profileId={profile.id} />
+                                ) : (
+                                    <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
+                                )}
+                            </div>
+                            <div>
+                                <StyledLink to='edit-profile'>
+                                    <Button>Edit Profile</Button>
+                                </StyledLink>
+                            </div>
                         </Columns>
                     </LiveCardContent>
                 </StyledCard>
@@ -346,6 +366,11 @@ function User({ wallet, lensHub }) {
                             ) : (
                                 <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
                             )}
+                        </div>
+                        <div>
+                            <StyledLink to='edit-profile'>
+                                <Button>Edit Profile</Button>
+                            </StyledLink>
                         </div>
                     </Columns>
                 </CardContent>
