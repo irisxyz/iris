@@ -370,9 +370,9 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 profileId: typedData.value.profileId,
                 contentURI: typedData.value.contentURI,
                 collectModule: typedData.value.collectModule,
-                collectModuleData: typedData.value.collectModuleData,
+                collectModuleInitData: typedData.value.collectModuleInitData,
                 referenceModule: typedData.value.referenceModule,
-                referenceModuleData: typedData.value.referenceModuleData,
+                referenceModuleInitData: typedData.value.referenceModuleInitData,
                 sig: {
                     v,
                     r,
