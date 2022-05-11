@@ -806,9 +806,6 @@ export const GET_PUBLICATIONS = gql`
     id
     name
     bio
-    location
-    website
-    twitter
     attributes {
       displayType
       traitType
@@ -845,7 +842,7 @@ export const GET_PUBLICATIONS = gql`
       }
     }
     ownedBy
-    depatcher {
+    dispatcher {
       address
     }
     stats {
@@ -870,6 +867,12 @@ export const GET_PUBLICATIONS = gql`
           value
         }
         recipient
+      }
+      ... on ProfileFollowModuleSettings {
+        type
+      }
+      ... on RevertFollowModuleSettings {
+        type
       }
     }
   }
@@ -1005,12 +1008,12 @@ export const GET_PUBLICATIONS = gql`
   fragment MirrorFields on Mirror {
     ...MirrorBaseFields
     mirrorOf {
-     ... on Post {
+    ... on Post {
         ...PostFields          
-     }
-     ... on Comment {
+    }
+    ... on Comment {
         ...CommentFields          
-     }
+    }
     }
   }
   fragment CommentBaseFields on Comment {
@@ -1045,10 +1048,10 @@ export const GET_PUBLICATIONS = gql`
         ...MirrorBaseFields
         mirrorOf {
           ... on Post {
-             ...PostFields          
+            ...PostFields          
           }
           ... on Comment {
-             ...CommentMirrorOfFields        
+            ...CommentMirrorOfFields        
           }
         }
       }
@@ -1061,7 +1064,7 @@ export const GET_PUBLICATIONS = gql`
         ...PostFields
       }
       ... on Mirror {
-         ...MirrorBaseFields
+        ...MirrorBaseFields
       }
     }
   }
