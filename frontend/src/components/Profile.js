@@ -140,7 +140,7 @@ function Profile({ profile = {}, wallet, children }) {
         <p>{profile.stats?.totalFollowers} followers</p>
         <p>{profile.stats?.totalFollowing} following</p>
       </Stats>
-      <Centered>
+      {/* <Centered>
         {streamInfo.playbackId ?
           <Button onClick={showLiveStreamInfo}>
             Stream Details
@@ -149,7 +149,7 @@ function Profile({ profile = {}, wallet, children }) {
             Go Live
           </Button>
         }
-      </Centered>
+      </Centered> */}
     </Card>
   );
 }
