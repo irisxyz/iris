@@ -284,7 +284,7 @@ function User({ wallet, lensHub }) {
                                     <Opensea
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        href={`https://testnets.opensea.io/${profile?.ownedBy}`}
+                                        href={`https://testnets.opensea.io/assets/mumbai/0x60ae865ee4c725cd04353b5aab364553f56cef82/${profile.decId}`}
                                     >
                                         <img src={opensea} alt="Opensea" />
                                     </Opensea>
@@ -328,7 +328,7 @@ function User({ wallet, lensHub }) {
                                 <Opensea
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    href={`https://testnets.opensea.io/${profile?.ownedBy}`}
+                                    href={`https://testnets.opensea.io/assets/mumbai/0x60ae865ee4c725cd04353b5aab364553f56cef82/${profile.decId}`}
                                 >
                                     <img src={opensea} alt="Opensea" />
                                 </Opensea>
