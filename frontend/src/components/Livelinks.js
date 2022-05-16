@@ -55,7 +55,6 @@ const LIVE_OR_NAH = true;
 
 
 function LiveLinks({ wallet }) {
-
     const { data } = useQuery(GET_FOLLOWING, {
         variables: {
             request: {
@@ -70,6 +69,7 @@ function LiveLinks({ wallet }) {
 
     useEffect(() => {
         if (!data) return;
+        console.log(wallet.address)
         console.log("Data from GET FOLLOWING", data.following.items)
 
         const walletAndHandleList = data.following.items.map((item) => {

@@ -1,35 +1,68 @@
 import { gql } from '@apollo/client'
 
 export const SEARCH = gql`
-query($request: TimelineRequest!) {
-  timeline(request: $request) {
-    items {
+  query($request: SearchQueryRequest!) {
+    search(request: $request) {
+      ... on PublicationSearchResult {
       __typename 
-      ... on Post {
-        ...PostFields
+      items {
+        __typename 
+        ... on Comment {
+          ...CommentFields
+        }
+        ... on Post {
+          ...PostFields
+        }
       }
-      ... on Comment {
-        ...CommentFields
-      }
-      ... on Mirror {
-        ...MirrorFields
+      pageInfo {
+        prev
+        totalCount
+        next
       }
     }
-    pageInfo {
-      prev
-      next
-      totalCount
+    ... on ProfileSearchResult {
+      __typename 
+      items {
+        ... on Profile {
+          ...ProfileFields
+        }
+      }
+      pageInfo {
+        prev
+        totalCount
+        next
+      }
+    }
     }
   }
-}
-fragment MediaFields on Media {
+  fragment MediaFields on Media {
   url
-  width
-  height
   mimeType
-}
-fragment ProfileFields on Profile {
+  }
+  fragment MirrorBaseFields on Mirror {
   id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ... on FollowOnlyReferenceModuleSettings {
+      type
+    }
+  }
+  appId
+  }
+  fragment ProfileFields on Profile {
+  profileId: id,
   name
   bio
   attributes {
@@ -52,12 +85,6 @@ fragment ProfileFields on Profile {
       original {
         ...MediaFields
       }
-      small {
-        ...MediaFields
-      }
-      medium {
-        ...MediaFields
-      }
     }
   }
   coverPicture {
@@ -69,12 +96,6 @@ fragment ProfileFields on Profile {
     }
     ... on MediaSet {
       original {
-        ...MediaFields
-      }
-      small {
-       ...MediaFields
-      }
-      medium {
         ...MediaFields
       }
     }
@@ -113,24 +134,18 @@ fragment ProfileFields on Profile {
       type
     }
   }
-}
-fragment PublicationStatsFields on PublicationStats { 
+  }
+  fragment PublicationStatsFields on PublicationStats { 
   totalAmountOfMirrors
   totalAmountOfCollects
   totalAmountOfComments
-}
-fragment MetadataOutputFields on MetadataOutput {
+  }
+  fragment MetadataOutputFields on MetadataOutput {
   name
   description
   content
   media {
     original {
-      ...MediaFields
-    }
-    small {
-      ...MediaFields
-    }
-    medium {
       ...MediaFields
     }
   }
@@ -139,14 +154,14 @@ fragment MetadataOutputFields on MetadataOutput {
     traitType
     value
   }
-}
-fragment Erc20Fields on Erc20 {
+  }
+  fragment Erc20Fields on Erc20 {
   name
   symbol
   decimals
   address
-}
-fragment CollectModuleFields on CollectModule {
+  }
+  fragment CollectModuleFields on CollectModule {
   __typename
   ... on FreeCollectModuleSettings {
     type
@@ -204,8 +219,8 @@ fragment CollectModuleFields on CollectModule {
     referralFee
     endTimestamp
   }
-}
-fragment PostFields on Post {
+  }
+  fragment PostFields on Post {
   id
   profile {
     ...ProfileFields
@@ -226,11 +241,8 @@ fragment PostFields on Post {
     }
   }
   appId
-  collectedBy {
-    ...WalletFields
   }
-}
-fragment MirrorBaseFields on Mirror {
+  fragment CommentBaseFields on Comment {
   id
   profile {
     ...ProfileFields
@@ -251,44 +263,8 @@ fragment MirrorBaseFields on Mirror {
     }
   }
   appId
-}
-fragment MirrorFields on Mirror {
-  ...MirrorBaseFields
-  mirrorOf {
-   ... on Post {
-      ...PostFields          
-   }
-   ... on Comment {
-      ...CommentFields          
-   }
   }
-}
-fragment CommentBaseFields on Comment {
-  id
-  profile {
-    ...ProfileFields
-  }
-  stats {
-    ...PublicationStatsFields
-  }
-  metadata {
-    ...MetadataOutputFields
-  }
-  createdAt
-  collectModule {
-    ...CollectModuleFields
-  }
-  referenceModule {
-    ... on FollowOnlyReferenceModuleSettings {
-      type
-    }
-  }
-  appId
-  collectedBy {
-    ...WalletFields
-  }
-}
-fragment CommentFields on Comment {
+  fragment CommentFields on Comment {
   ...CommentBaseFields
   mainPost {
     ... on Post {
@@ -298,31 +274,25 @@ fragment CommentFields on Comment {
       ...MirrorBaseFields
       mirrorOf {
         ... on Post {
-           ...PostFields          
+          ...PostFields          
         }
         ... on Comment {
-           ...CommentMirrorOfFields        
+          ...CommentMirrorOfFields        
         }
       }
     }
   }
-}
-fragment CommentMirrorOfFields on Comment {
+  }
+  fragment CommentMirrorOfFields on Comment {
   ...CommentBaseFields
   mainPost {
     ... on Post {
       ...PostFields
     }
     ... on Mirror {
-       ...MirrorBaseFields
+      ...MirrorBaseFields
     }
   }
-}
-fragment WalletFields on Wallet {
- address,
- defaultProfile {
-  ...ProfileFields
- }
 }
 `;
 
