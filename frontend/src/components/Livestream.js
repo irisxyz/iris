@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import Plyr from 'plyr';
 import Hls from 'hls.js';
-import 'plyr/dist/plyr.css';
+// import 'plyr/dist/plyr.css';
 
 const PlyrComponent = ({playbackId}) => {
     const video = useRef();

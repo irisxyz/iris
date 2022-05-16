@@ -83,7 +83,7 @@ function App() {
                     <Navbar>
                         <LogoContainer>
                             <img src={logo} alt="iris logo" width="50px" height="50px" />
-                            <h1>Iris</h1>
+                            <h1>iris</h1>
                         </LogoContainer>
                         <Wallet
                             wallet={wallet}

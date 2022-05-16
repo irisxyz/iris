@@ -58,7 +58,7 @@ function Landing({ wallet, setWallet, authToken, currProfile, setProfile, setLen
     <LandingStyle>
         <Body>
             <Row>
-                <Title>IRIS</Title>
+                <Title>iris</Title>
                 <Logo><img src={logo}/></Logo>
             </Row>
             <Center>
