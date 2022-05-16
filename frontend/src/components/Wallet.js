@@ -120,12 +120,12 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
   
   useEffect(() => {
     if (!authToken) return;
-
+    console.log("wallet", wallet)
     getProfiles({
       variables: {
         request: {
           // profileIds?: string[];
-          ownedBy: wallet.address
+          ownedBy: [wallet.address]
           // handles?: string[];
           // whoMirroredPublicationId?: string;
         },

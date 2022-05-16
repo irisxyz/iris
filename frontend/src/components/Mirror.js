@@ -46,8 +46,9 @@ function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
                 profileId: typedData.value.profileId,
                 profileIdPointed: typedData.value.profileIdPointed,
                 pubIdPointed: typedData.value.pubIdPointed,
-                referenceModule: typedData.value.referenceModule,
                 referenceModuleData: typedData.value.referenceModuleData,
+                referenceModule: typedData.value.referenceModule,
+                referenceModuleInitData: typedData.value.referenceModuleInitData,
                 sig: {
                     v,
                     r,

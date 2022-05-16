@@ -3,8 +3,8 @@ import { gql } from '@apollo/client'
 export const SEARCH = gql`
   query($request: SearchQueryRequest!) {
     search(request: $request) {
-			... on PublicationSearchResult {
-       __typename 
+      ... on PublicationSearchResult {
+      __typename 
       items {
         __typename 
         ... on Comment {
@@ -32,16 +32,14 @@ export const SEARCH = gql`
         totalCount
         next
       }
-     }
+    }
     }
   }
-  
-fragment MediaFields on Media {
+  fragment MediaFields on Media {
   url
   mimeType
-}
-
-fragment MirrorBaseFields on Mirror {
+  }
+  fragment MirrorBaseFields on Mirror {
   id
   profile {
     ...ProfileFields
@@ -62,15 +60,11 @@ fragment MirrorBaseFields on Mirror {
     }
   }
   appId
-}
-
-fragment ProfileFields on Profile {
+  }
+  fragment ProfileFields on Profile {
   profileId: id,
   name
   bio
-  location
-  website
-  twitter
   attributes {
     displayType
     traitType
@@ -107,7 +101,7 @@ fragment ProfileFields on Profile {
     }
   }
   ownedBy
-  depatcher {
+  dispatcher {
     address
   }
   stats {
@@ -133,16 +127,20 @@ fragment ProfileFields on Profile {
       }
       recipient
     }
+    ... on ProfileFollowModuleSettings {
+      type
+    }
+    ... on RevertFollowModuleSettings {
+      type
+    }
   }
-}
-
-fragment PublicationStatsFields on PublicationStats { 
+  }
+  fragment PublicationStatsFields on PublicationStats { 
   totalAmountOfMirrors
   totalAmountOfCollects
   totalAmountOfComments
-}
-
-fragment MetadataOutputFields on MetadataOutput {
+  }
+  fragment MetadataOutputFields on MetadataOutput {
   name
   description
   content
@@ -156,16 +154,14 @@ fragment MetadataOutputFields on MetadataOutput {
     traitType
     value
   }
-}
-
-fragment Erc20Fields on Erc20 {
+  }
+  fragment Erc20Fields on Erc20 {
   name
   symbol
   decimals
   address
-}
-
-fragment CollectModuleFields on CollectModule {
+  }
+  fragment CollectModuleFields on CollectModule {
   __typename
   ... on FreeCollectModuleSettings {
     type
@@ -223,9 +219,8 @@ fragment CollectModuleFields on CollectModule {
     referralFee
     endTimestamp
   }
-}
-
-fragment PostFields on Post {
+  }
+  fragment PostFields on Post {
   id
   profile {
     ...ProfileFields
@@ -246,9 +241,8 @@ fragment PostFields on Post {
     }
   }
   appId
-}
-
-fragment CommentBaseFields on Comment {
+  }
+  fragment CommentBaseFields on Comment {
   id
   profile {
     ...ProfileFields
@@ -269,9 +263,8 @@ fragment CommentBaseFields on Comment {
     }
   }
   appId
-}
-
-fragment CommentFields on Comment {
+  }
+  fragment CommentFields on Comment {
   ...CommentBaseFields
   mainPost {
     ... on Post {
@@ -281,24 +274,23 @@ fragment CommentFields on Comment {
       ...MirrorBaseFields
       mirrorOf {
         ... on Post {
-           ...PostFields          
+          ...PostFields          
         }
         ... on Comment {
-           ...CommentMirrorOfFields        
+          ...CommentMirrorOfFields        
         }
       }
     }
   }
-}
-
-fragment CommentMirrorOfFields on Comment {
+  }
+  fragment CommentMirrorOfFields on Comment {
   ...CommentBaseFields
   mainPost {
     ... on Post {
       ...PostFields
     }
     ... on Mirror {
-       ...MirrorBaseFields
+      ...MirrorBaseFields
     }
   }
 }
@@ -326,21 +318,16 @@ query($request: TimelineRequest!) {
     }
   }
 }
-
 fragment MediaFields on Media {
   url
   width
   height
   mimeType
 }
-
 fragment ProfileFields on Profile {
   id
   name
   bio
-  location
-  website
-  twitter
   attributes {
     displayType
     traitType
@@ -389,7 +376,7 @@ fragment ProfileFields on Profile {
     }
   }
   ownedBy
-  depatcher {
+  dispatcher {
     address
   }
   stats {
@@ -415,15 +402,19 @@ fragment ProfileFields on Profile {
       }
       recipient
     }
+    ... on ProfileFollowModuleSettings {
+      type
+    }
+    ... on RevertFollowModuleSettings {
+      type
+    }
   }
 }
-
 fragment PublicationStatsFields on PublicationStats { 
   totalAmountOfMirrors
   totalAmountOfCollects
   totalAmountOfComments
 }
-
 fragment MetadataOutputFields on MetadataOutput {
   name
   description
@@ -445,14 +436,12 @@ fragment MetadataOutputFields on MetadataOutput {
     value
   }
 }
-
 fragment Erc20Fields on Erc20 {
   name
   symbol
   decimals
   address
 }
-
 fragment CollectModuleFields on CollectModule {
   __typename
   ... on FreeCollectModuleSettings {
@@ -512,7 +501,6 @@ fragment CollectModuleFields on CollectModule {
     endTimestamp
   }
 }
-
 fragment PostFields on Post {
   id
   profile {
@@ -538,7 +526,6 @@ fragment PostFields on Post {
     ...WalletFields
   }
 }
-
 fragment MirrorBaseFields on Mirror {
   id
   profile {
@@ -561,7 +548,6 @@ fragment MirrorBaseFields on Mirror {
   }
   appId
 }
-
 fragment MirrorFields on Mirror {
   ...MirrorBaseFields
   mirrorOf {
@@ -573,7 +559,6 @@ fragment MirrorFields on Mirror {
    }
   }
 }
-
 fragment CommentBaseFields on Comment {
   id
   profile {
@@ -599,7 +584,6 @@ fragment CommentBaseFields on Comment {
     ...WalletFields
   }
 }
-
 fragment CommentFields on Comment {
   ...CommentBaseFields
   mainPost {
@@ -619,7 +603,6 @@ fragment CommentFields on Comment {
     }
   }
 }
-
 fragment CommentMirrorOfFields on Comment {
   ...CommentBaseFields
   mainPost {
@@ -631,7 +614,6 @@ fragment CommentMirrorOfFields on Comment {
     }
   }
 }
-
 fragment WalletFields on Wallet {
  address,
  defaultProfile {
@@ -647,9 +629,6 @@ export const GET_PROFILES = gql`
         id
         name
         bio
-        location
-        website
-        twitter
         attributes {
           displayType
           traitType
@@ -690,7 +669,7 @@ export const GET_PROFILES = gql`
           __typename
         }
         ownedBy
-        depatcher {
+        dispatcher {
           address
           canUseRelay
         }
@@ -717,7 +696,12 @@ export const GET_PROFILES = gql`
             }
             recipient
           }
-          __typename
+          ... on ProfileFollowModuleSettings {
+            type
+          }
+          ... on RevertFollowModuleSettings {
+            type
+          }
         }
       }
       pageInfo {
@@ -753,9 +737,9 @@ export const CREATE_POST_TYPED_DATA = gql`
         profileId
         contentURI
         collectModule
-        collectModuleData
+        collectModuleInitData
         referenceModule
-        referenceModuleData
+        referenceModuleInitData
       }
     }
   }
@@ -792,9 +776,6 @@ export const GET_PUBLICATIONS = gql`
     id
     name
     bio
-    location
-    website
-    twitter
     attributes {
       displayType
       traitType
@@ -831,7 +812,7 @@ export const GET_PUBLICATIONS = gql`
       }
     }
     ownedBy
-    depatcher {
+    dispatcher {
       address
     }
     stats {
@@ -856,6 +837,12 @@ export const GET_PUBLICATIONS = gql`
           value
         }
         recipient
+      }
+      ... on ProfileFollowModuleSettings {
+        type
+      }
+      ... on RevertFollowModuleSettings {
+        type
       }
     }
   }
@@ -991,12 +978,12 @@ export const GET_PUBLICATIONS = gql`
   fragment MirrorFields on Mirror {
     ...MirrorBaseFields
     mirrorOf {
-     ... on Post {
+    ... on Post {
         ...PostFields          
-     }
-     ... on Comment {
+    }
+    ... on Comment {
         ...CommentFields          
-     }
+    }
     }
   }
   fragment CommentBaseFields on Comment {
@@ -1031,10 +1018,10 @@ export const GET_PUBLICATIONS = gql`
         ...MirrorBaseFields
         mirrorOf {
           ... on Post {
-             ...PostFields          
+            ...PostFields          
           }
           ... on Comment {
-             ...CommentMirrorOfFields        
+            ...CommentMirrorOfFields        
           }
         }
       }
@@ -1047,7 +1034,7 @@ export const GET_PUBLICATIONS = gql`
         ...PostFields
       }
       ... on Mirror {
-         ...MirrorBaseFields
+        ...MirrorBaseFields
       }
     }
   }
@@ -1055,120 +1042,123 @@ export const GET_PUBLICATIONS = gql`
 
 
 export const GET_FOLLOWING = gql`
-query($request: FollowingRequest!) {
-  following(request: $request) { 
-        items {
-          profile {
-            id
-            name
-            bio
-            location
-            website
-            twitter
-            attributes {
-              displayType
-              traitType
-              key
-              value
-            }
-            metadata
-            isDefault
-            handle
-            picture {
-              ... on NftImage {
-                contractAddress
-                tokenId
-                uri
-                verified
+  query($request: FollowingRequest!) {
+    following(request: $request) { 
+          items {
+            profile {
+              id
+              name
+              bio
+              attributes {
+                displayType
+                traitType
+                key
+                value
               }
-              ... on MediaSet {
-                original {
-                  url
-                  width
-                  height
-                  mimeType
+              metadata
+              isDefault
+              handle
+              picture {
+                ... on NftImage {
+                  contractAddress
+                  tokenId
+                  uri
+                  verified
                 }
-                medium {
-                  url
-                  width
-                  height
-                  mimeType
-                }
-                small {
-                  url
-                  width
-                  height
-                  mimeType
-                }
-              }
-            }
-            coverPicture {
-              ... on NftImage {
-                contractAddress
-                tokenId
-                uri
-                verified
-              }
-              ... on MediaSet {
-                original {
-                  url
-                  width
-                  height
-                  mimeType
-                }
-                small {
-                  width
-                  url
-                  height
-                  mimeType
-                }
-                medium {
-                  url
-                  width
-                  height
-                  mimeType
-                }
-              }
-            }
-            ownedBy
-            depatcher {
-              address
-              canUseRelay
-            }
-            stats {
-              totalFollowers
-              totalFollowing
-              totalPosts
-              totalComments
-              totalMirrors
-              totalPublications
-              totalCollects
-            }
-            followModule {
-              ... on FeeFollowModuleSettings {
-                type
-                amount {
-                  asset {
-                    name
-                    symbol
-                    decimals
-                    address
+                ... on MediaSet {
+                  original {
+                    url
+                    width
+                    height
+                    mimeType
                   }
-                  value
+                  medium {
+                    url
+                    width
+                    height
+                    mimeType
+                  }
+                  small {
+                    url
+                    width
+                    height
+                    mimeType
+                  }
                 }
-                recipient
               }
+              coverPicture {
+                ... on NftImage {
+                  contractAddress
+                  tokenId
+                  uri
+                  verified
+                }
+                ... on MediaSet {
+                  original {
+                    url
+                    width
+                    height
+                    mimeType
+                  }
+                  small {
+                    width
+                    url
+                    height
+                    mimeType
+                  }
+                  medium {
+                    url
+                    width
+                    height
+                    mimeType
+                  }
+                }
+              }
+              ownedBy
+              dispatcher {
+                address
+                canUseRelay
+              }
+              stats {
+                totalFollowers
+                totalFollowing
+                totalPosts
+                totalComments
+                totalMirrors
+                totalPublications
+                totalCollects
+              }
+              followModule {
+                ... on FeeFollowModuleSettings {
+                  type
+                  amount {
+                    asset {
+                      name
+                      symbol
+                      decimals
+                      address
+                    }
+                    value
+                  }
+                  recipient
+                }
+                ... on ProfileFollowModuleSettings {
+                  type
+                }
+                ... on RevertFollowModuleSettings {
+                  type
+                }
+            }
           }
+          totalAmountOfTimesFollowing
         }
-        totalAmountOfTimesFollowing
+      pageInfo {
+          prev
+          next
+          totalCount
       }
-     pageInfo {
-        prev
-        next
-        totalCount
-     }
+    }
   }
-}
 `;
 
 export const HAS_COLLECTED = gql`
@@ -1277,35 +1267,36 @@ export const DOES_FOLLOW = gql`
 
 
 export const CREATE_MIRROR_TYPED_DATA = gql`
-  mutation($request: CreateMirrorRequest!) { 
-    createMirrorTypedData(request: $request) {
-      id
-      expiresAt
-      typedData {
-        types {
-          MirrorWithSig {
-            name
-            type
-          }
+mutation($request: CreateMirrorRequest!) { 
+  createMirrorTypedData(request: $request) {
+    id
+    expiresAt
+    typedData {
+      types {
+        MirrorWithSig {
+          name
+          type
         }
-      domain {
-        name
-        chainId
-        version
-        verifyingContract
       }
-      value {
-        nonce
-        deadline
-        profileId
-        profileIdPointed
-        pubIdPointed
-        referenceModule
-        referenceModuleData
-      }
-     }
+    domain {
+      name
+      chainId
+      version
+      verifyingContract
+    }
+    value {
+      nonce
+      deadline
+      profileId
+      profileIdPointed
+      pubIdPointed
+      referenceModuleData
+      referenceModule
+      referenceModuleInitData
+    }
    }
  }
+}
 `;
 
 export const CREATE_COLLECT_TYPED_DATA = gql`
@@ -1339,38 +1330,39 @@ export const CREATE_COLLECT_TYPED_DATA = gql`
 `;
 
 export const CREATE_COMMENT_TYPED_DATA = gql`
-  mutation($request: CreatePublicCommentRequest!) { 
-    createCommentTypedData(request: $request) {
-      id
-      expiresAt
-      typedData {
-        types {
-          CommentWithSig {
-            name
-            type
-          }
+mutation($request: CreatePublicCommentRequest!) { 
+  createCommentTypedData(request: $request) {
+    id
+    expiresAt
+    typedData {
+      types {
+        CommentWithSig {
+          name
+          type
         }
-      domain {
-        name
-        chainId
-        version
-        verifyingContract
       }
-      value {
-        nonce
-        deadline
-        profileId
-        profileIdPointed
-        pubIdPointed
-        contentURI
-        collectModule
-        collectModuleData
-        referenceModule
-        referenceModuleData
-      }
-     }
+    domain {
+      name
+      chainId
+      version
+      verifyingContract
+    }
+    value {
+      nonce
+      deadline
+      profileId
+      profileIdPointed
+      pubIdPointed
+      contentURI
+      collectModule
+      collectModuleInitData
+      referenceModule
+      referenceModuleInitData
+      referenceModuleData
+    }
    }
  }
+}
 `;
 
 export const GET_CHALLENGE = gql`

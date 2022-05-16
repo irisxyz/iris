@@ -78,8 +78,9 @@ function Comment({ wallet, lensHub, profileId, publicationId, stats }) {
                 profileIdPointed: typedData.value.profileIdPointed,
                 pubIdPointed: typedData.value.pubIdPointed,
                 collectModule: typedData.value.collectModule,
-                collectModuleData: typedData.value.collectModuleData,
+                collectModuleInitData: typedData.value.collectModuleInitData,
                 referenceModule: typedData.value.referenceModule,
+                referenceModuleInitData: typedData.value.referenceModuleInitData,
                 referenceModuleData: typedData.value.referenceModuleData,
                 sig: {
                     v,
