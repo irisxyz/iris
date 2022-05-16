@@ -73,7 +73,8 @@ function Post({ post, wallet, lensHub, profileId }) {
         const decode = async () => {
             await new Promise(r => setTimeout(r, 500));
             
-            if (post.metadata.description === "litcoded}") {
+            // TODO: fix lit protocol code
+            if (post.metadata.description === "litcode}") {
                 const encryptedPost = JSON.parse(post.metadata.content.replace("litcoded: ", ""));
     
                 const accessControlConditions = [

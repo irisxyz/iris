@@ -35,7 +35,7 @@ function Comment({ wallet, lensHub, profileId, publicationId, stats }) {
             publicationId: publicationId,
             contentURI: "ipfs://" + ipfsResult.path,
             collectModule: {
-                emptyCollectModule: true,
+                freeCollectModule: { followerOnly: false },
             },
             referenceModule: {
                 followerOnlyReferenceModule: false,
