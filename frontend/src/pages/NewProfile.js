@@ -74,7 +74,7 @@ function NewProfile({ profile = {}, wallet }) {
     const [newProfile, setNewProfile] = useState({ ...profile });
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
     const handleRef = createRef();
-    const costRef = createRef();
+    // const costRef = createRef();
 
     // const bioRef = createRef()
 
@@ -84,11 +84,11 @@ function NewProfile({ profile = {}, wallet }) {
             console.log("no handle");
             return;
         }
-        const cost = costRef.current.value;
-        if (!cost) {
-            console.log("no cost");
-            return;
-        }
+        // const cost = costRef.current.value;
+        // if (!cost) {
+        //     console.log("no cost");
+        //     return;
+        // }
 
         const profileRequest = {
             handle: handle,
@@ -155,7 +155,7 @@ function NewProfile({ profile = {}, wallet }) {
                 <Icon />
                 <Handle ref={handleRef} onChange={handleHandle} placeholder={"@handle"} />
                 {/* <Bio ref={bioRef} placeholder={'bio'}/> */}
-                <Cost ref={costRef} placeholder={"Subscription Cost (MATIC)"} />
+                {/* <Cost ref={costRef} placeholder={"Subscription Cost (MATIC)"} /> */}
                 <br />
                 <br />
                 <Button onClick={handleCreate}>Create Profile</Button>

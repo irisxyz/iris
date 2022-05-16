@@ -142,7 +142,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} />
-                        <Share />
+                        {/* <Share /> */}
                     </Actions>
                 </Content>
             </Container>

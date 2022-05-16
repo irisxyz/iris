@@ -55,7 +55,7 @@ const handleClick = () => {
             <Profile/>
             <p>Profile</p>
         </StyledLink>
-        <StyledLink to={`user/${Nav.handle}`}>
+        {/* <StyledLink to={`user/${Nav.handle}`}>
             <Subscriptions/>
             <p>Subscriptions</p>
         </StyledLink>
@@ -66,7 +66,7 @@ const handleClick = () => {
         <StyledLink to={`user/${Nav.handle}`}>
             <Explore/>
             <p>Explore</p>
-        </StyledLink>
+        </StyledLink> */}
         <StyledLink onClick={handleClick} to={``}>
             <Share/>
             <p>Logout</p>
