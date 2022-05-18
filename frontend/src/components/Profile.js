@@ -138,7 +138,7 @@ function Profile({ profile = {}, wallet, children }) {
 
       </Modal>}
       <StyledLink to={`user/${profile.handle}`}>
-        <Icon href={profile.picture.original.url}/>
+        <Icon href={profile.picture?.original.url}/>
         <Handle>@{profile.handle}</Handle>
       </StyledLink>
       <Stats>

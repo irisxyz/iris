@@ -98,7 +98,7 @@ const StyledLink = styled(Link)`
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
-    <UserIcon href={profile.picture.original.url} />
+    <UserIcon href={profile.picture?.original.url} />
   </StyledProfile>
 }
 
