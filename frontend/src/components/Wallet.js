@@ -17,7 +17,7 @@ const WalletContainer = styled.div`
 `
 
 const Address = styled.code`
-  box-shadow: 0px 3px 6px rgba(112, 58, 202, 0.4);
+  box-shadow: 0px 4px 12px rgba(236, 176, 178, 0.5);
   border-radius: 100px;
   height: 34px;
   display: flex;

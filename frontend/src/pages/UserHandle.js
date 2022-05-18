@@ -24,7 +24,7 @@ const Icon = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url(${avatar});
+    background: url(${p => p.href || avatar});
     background-size: cover;
     margin-bottom: -0.8em;
 `;
@@ -37,7 +37,7 @@ const LiveIcon = styled.div`
     &:hover {
         cursor: pointer;
     }
-    background: url(${avatar});
+    background: url(${p => p.href || avatar});
     background-size: cover;
     margin-bottom: -0.6em;
 `;
@@ -93,7 +93,7 @@ const Handle = styled.h1`
 `;
 
 const Address = styled.code`
-    box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
+    box-shadow: 0px 3px 12px rgba(236, 176, 178, 0.8);
     border-radius: 100px;
     padding: 0.6em;
     background: white;
@@ -111,10 +111,10 @@ const Opensea = styled.a`
     align-items: center;
     gap: 1em;
     border-radius: 100px;
-    box-shadow: 0px 2px 7px rgba(112, 58, 202, 0.2);
+    box-shadow: 0px 3px 12px rgba(236, 176, 178, 0.2);
     transition: all 100ms ease-in-out;
     &:hover {
-        box-shadow: 0px 2px 7px rgba(112, 58, 202, 1);
+        box-shadow: 0px 3px 12px rgba(236, 176, 178, 1);
     }
 `;
 
@@ -314,12 +314,14 @@ function User({ wallet, lensHub }) {
         );
     }
 
+    console.warn(profile)
+
     return (
         <>
             <StyledCard>
                 <Cover />
                 <CardContent>
-                    <Icon />
+                    <Icon href={profile.picture?.original.url}/>
                     <Columns>
                         <div>
                             <UserInfo>

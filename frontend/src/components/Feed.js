@@ -109,7 +109,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
         <Main>
             {notFound && (
                 <>
-                    <h3>You don't follow anyone. Here are some posts #LFG</h3>
+                    <h3>You don't follow anyone yet. Follow and come back here to view your feed!</h3>
                     <br />
                 </>
             )}

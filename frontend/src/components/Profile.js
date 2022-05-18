@@ -17,13 +17,18 @@ const Icon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(${avatar});
+  background: url(${p => p.href || avatar});
   background-size: cover;
   margin: auto;
 `
 
 const Handle = styled.h2`
   text-align: center;
+  color: black;
+`
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `
 
 const Stats = styled.div`
@@ -69,24 +74,24 @@ function Profile({ profile = {}, wallet, children }) {
     const isUserLivestreaming = async () => {
 
       try {
-        const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
-          {
-            headers: {
-              // TODO: Remove API KEY in the future
-              "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
-            }
-          },
-        );
-        const responseData = await response.json();
+        // const response = await fetch("https://livepeer.com/api/stream?streamsonly=1&filters=[{id: isActive, value: true}]",
+        //   {
+        //     headers: {
+        //       // TODO: Remove API KEY in the future
+        //       "authorization": "Bearer fe3ed427-ab88-415e-b691-8fba9e7e6fb0"
+        //     }
+        //   },
+        // );
+        // const responseData = await response.json();
   
-        responseData.map((streamInfo) => {
-          if (streamInfo.isActive & streamInfo.name === `${wallet.address},${profile.handle}`) {
+        // responseData.map((streamInfo) => {
+        //   if (streamInfo.isActive & streamInfo.name === `${wallet.address},${profile.handle}`) {
   
-            console.log("PROFILE Woooo")
-            setStreamInfo(streamInfo)
+        //     console.log("PROFILE Woooo")
+        //     setStreamInfo(streamInfo)
   
-          }
-        })
+        //   }
+        // })
 
       } catch (err) {
         console.log(err)
@@ -132,10 +137,10 @@ function Profile({ profile = {}, wallet, children }) {
         <br />
 
       </Modal>}
-      <Link to={`user/${profile.handle}`}>
-        <Icon />
-      </Link>
-      <Handle>@{profile.handle}</Handle>
+      <StyledLink to={`user/${profile.handle}`}>
+        <Icon href={profile.picture.original.url}/>
+        <Handle>@{profile.handle}</Handle>
+      </StyledLink>
       <Stats>
         <p>{profile.stats?.totalFollowers} followers</p>
         <p>{profile.stats?.totalFollowing} following</p>
