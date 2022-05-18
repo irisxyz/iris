@@ -36,7 +36,7 @@ export const UserIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(${avatar});
+  background: url(${p => p.href || avatar});
   background-size: cover;
   transition: all 100ms ease-in-out;
   border: 2px solid #fff;
@@ -98,7 +98,7 @@ const StyledLink = styled(Link)`
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
-    <UserIcon/>
+    <UserIcon href={profile.picture.original.url} />
   </StyledProfile>
 }
 
@@ -181,7 +181,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         </StyledLink>
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} />
+      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0].picture?.original.url} />
     </>
     : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }
