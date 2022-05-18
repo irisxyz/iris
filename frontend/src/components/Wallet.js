@@ -120,7 +120,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
   
   useEffect(() => {
     if (!authToken) return;
-    console.log("wallet", wallet)
+    // console.log("wallet", wallet)
     getProfiles({
       variables: {
         request: {
@@ -136,7 +136,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
 
   useEffect(() => {
     if (!profiles.data) return
-    console.log(profiles.data.profiles.items)
+    // console.log(profiles.data.profiles.items)
 
     setProfile(profiles.data.profiles.items[0])
 
@@ -155,7 +155,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     provider.getBalance(address).then((balance) => {
       // convert a currency unit from wei to ether
       const balanceInEth = ethers.utils.formatEther(balance)
-      console.log({balanceInEth})
+      // console.log({balanceInEth})
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
