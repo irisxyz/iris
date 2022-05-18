@@ -45,7 +45,7 @@ const TextArea = styled.textarea`
     transition: all 100ms ease-in-out;
 
     &:focus {
-        background: #ECE8FF;
+        background: #FFF3EE;
     }
 `
 
