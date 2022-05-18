@@ -55,7 +55,7 @@ const Header = styled.h2`
 `
 
 const PostPreview = styled.div`
-    background: #ECE8FF;
+    background: #FFF3EE;
     border-radius: 12px;
     padding: 1em;
     margin: 1em 0;
