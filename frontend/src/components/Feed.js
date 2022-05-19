@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import styled from "styled-components";
 import { GET_TIMELINE, SEARCH, HAS_COLLECTED } from "../utils/queries";
-import Card from "../components/Card";
 import Post from "../components/Post";
 
 const Main = styled.main``;
@@ -15,7 +14,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
 
     useEffect(() => {
         if (!profile.id) return;
-        
+
         getTimeline({
             variables: {
                 request: {
