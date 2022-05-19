@@ -314,8 +314,6 @@ function User({ wallet, lensHub }) {
         );
     }
 
-    console.warn(profile)
-
     return (
         <>
             <StyledCard>

@@ -10,27 +10,37 @@ const Main = styled.main``;
 function Feed({ profile = {}, wallet, lensHub }) {
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
-    const { loading, error, data } = useQuery(GET_TIMELINE, {
-        variables: {
-            request: {
-                profileId: profile.id,
+
+    const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
+
+    useEffect(() => {
+        if (!profile.id) return;
+        
+        getTimeline({
+            variables: {
+                request: {
+                    profileId: profile.id,
+                },
             },
-        },
-    });
+        })
+    }, [getTimeline, profile])
+
     const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
 
     useEffect(() => {
-        if (!data) return;
+        if (!timelineData.data) return;
 
-        if (data.timeline.items.length < 1) {
+        if (timelineData.data.timeline.items.length < 1) {
             setNotFound(true);
             return;
         }
 
+        console.log('timeline loaded')
+
         const pubIds = {}
         const pubs = []
 
-        data.timeline.items.forEach((post) => {
+        timelineData.data.timeline.items.forEach((post) => {
             if (pubIds[post.id]) return;
             else {
                 pubIds[post.id] = true
@@ -40,7 +50,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
 
         setPublications(pubs);
 
-        const publications = data.timeline.items.map((thing) => {
+        const publications = timelineData.data.timeline.items.map((thing) => {
             return thing.id
         })
 
@@ -56,7 +66,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
                 },
             },
         })
-    }, [data]);
+    }, [timelineData.data]);
 
     useEffect(() => {
         if (!hasCollectedData.data) return;
@@ -69,8 +79,6 @@ function Feed({ profile = {}, wallet, lensHub }) {
             }
         })
 
-        console.log(collectedIds)
-
         const newPubs = publications.map((post) => {
             return {...post, collected: collectedIds[post.id]}
         })
@@ -79,25 +87,25 @@ function Feed({ profile = {}, wallet, lensHub }) {
 
     }, [hasCollectedData.data]);
 
-    const searchData = useQuery(SEARCH, {
-        variables: {
-            request: {
-                query: "LFG",
-                type: "PUBLICATION",
-            },
-        },
-    });
+    // const searchData = useQuery(SEARCH, {
+    //     variables: {
+    //         request: {
+    //             query: "LFG",
+    //             type: "PUBLICATION",
+    //         },
+    //     },
+    // });
 
-    useEffect(() => {
-        if (!searchData.data) return;
-        if (publications.length > 0) return;
+    // useEffect(() => {
+    //     if (!searchData.data) return;
+    //     if (publications.length > 0) return;
 
-        if (searchData.data.search.items.length < 1) {
-            return;
-        }
+    //     if (searchData.data.search.items.length < 1) {
+    //         return;
+    //     }
 
-        setPublications(searchData.data.search.items);
-    }, [searchData.data]);
+    //     setPublications(searchData.data.search.items);
+    // }, [searchData.data]);
 
     // if (notFound) {
     //   return <>
