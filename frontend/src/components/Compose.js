@@ -11,7 +11,7 @@ import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
-import pollUntilIndexed from './PollUntilIndexed'
+import pollUntilIndexed from '../utils/pollUntilIndexed'
 
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -385,6 +385,8 @@ const Compose = ({ wallet, profile, lensHub }) => {
             });
             console.log('create post: tx hash', tx.hash);
             await pollUntilIndexed(tx.hash)
+            setShowModal(false)
+            setDescription('')
         }
         processPost()
 
