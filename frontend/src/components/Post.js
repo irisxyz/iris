@@ -124,7 +124,7 @@ function Post({ post, wallet, lensHub, profileId }) {
         <StyledCard>
             <Container>
                 <Link to={`/user/${post.profile.handle}`}>
-                    <Icon link={true} />
+                    <Icon link={true} href={post.profile?.picture?.original.url} />
                 </Link>
                 <Content>
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}

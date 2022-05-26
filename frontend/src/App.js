@@ -107,7 +107,7 @@ function App() {
                                     path="/"
                                     element={
                                         <div>
-                                            <Livelinks wallet={wallet} />
+                                            {/* <Livelinks wallet={wallet} /> */}
                                             {profile && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
                                             <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                                         </div>

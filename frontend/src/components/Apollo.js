@@ -8,14 +8,14 @@ import {
 } from "@apollo/client";
 
 const httpLink = new HttpLink({
-    uri: 'https://api-mumbai.lens.dev/',
+    uri: 'https://api.lens.dev/',
     fetch,
 });
   
 const authLink = new ApolloLink((operation, forward) => {
     // const token = window.authToken;
     const token = window.sessionStorage.getItem('lensToken')
-    console.log('jwt token:', token);
+    // console.log('jwt token:', token);
 
     // Use the setContext method to set the HTTP headers.
     operation.setContext({

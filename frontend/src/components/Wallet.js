@@ -17,7 +17,7 @@ const WalletContainer = styled.div`
 `
 
 const Address = styled.code`
-  box-shadow: 0px 3px 6px rgba(112, 58, 202, 0.4);
+  box-shadow: 0px 4px 12px rgba(236, 176, 178, 0.5);
   border-radius: 100px;
   height: 34px;
   display: flex;
@@ -36,7 +36,7 @@ export const UserIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(${avatar});
+  background: url(${p => p.href || avatar});
   background-size: cover;
   transition: all 100ms ease-in-out;
   border: 2px solid #fff;
@@ -98,7 +98,7 @@ const StyledLink = styled(Link)`
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
-    <UserIcon/>
+    <UserIcon href={profile.picture?.original.url} />
   </StyledProfile>
 }
 
@@ -120,7 +120,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
   
   useEffect(() => {
     if (!authToken) return;
-    console.log("wallet", wallet)
+    // console.log("wallet", wallet)
     getProfiles({
       variables: {
         request: {
@@ -136,7 +136,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
 
   useEffect(() => {
     if (!profiles.data) return
-    console.log(profiles.data.profiles.items)
+    // console.log(profiles.data.profiles.items)
 
     setProfile(profiles.data.profiles.items[0])
 
@@ -148,14 +148,14 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const signer = provider.getSigner()
     const address = await signer.getAddress()
 
-    const contract = new ethers.Contract('0x60Ae865ee4C725cd04353b5AAb364553f56ceF82', LensHub, signer)
+    const contract = new ethers.Contract('0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d', LensHub, signer)
     // console.log({contract})
     setLensHub(contract)
   
     provider.getBalance(address).then((balance) => {
       // convert a currency unit from wei to ether
       const balanceInEth = ethers.utils.formatEther(balance)
-      console.log({balanceInEth})
+      // console.log({balanceInEth})
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
@@ -181,7 +181,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         </StyledLink>
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} />
+      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0].picture?.original.url} />
     </>
     : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }

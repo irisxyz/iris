@@ -13,7 +13,7 @@ const Icon = styled.div`
     border-radius: 100px;
     &:hover {
         cursor: pointer;
-        box-shadow: 0px 4px 12px rgba(112, 58, 202, 0.5);
+        box-shadow: 0px 4px 12px rgba(236, 176, 178, 0.5);
     }
     transition: all 100ms ease-in-out;
     background: url(${avatar});
@@ -30,7 +30,7 @@ const UserContainer = styled.div`
     &:hover {
         div {
             cursor: pointer;
-            box-shadow: 0px 4px 12px rgba(112, 58, 202, 0.5);
+            box-shadow: 0px 4px 12px rgba(236, 176, 178, 0.5);
         }
     }
 `
