@@ -11,6 +11,7 @@ import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA } from '../utils/queries'
+import pollUntilIndexed from '../utils/pollUntilIndexed'
 
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -383,6 +384,9 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 },
             });
             console.log('create post: tx hash', tx.hash);
+            await pollUntilIndexed(tx.hash)
+            setShowModal(false)
+            setDescription('')
         }
         processPost()
 
@@ -416,15 +420,15 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 type="file"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
             /> */}
-                <InputWrapper>
+                {/* <InputWrapper>
                     {selectedFile ? <>
                         {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
                     </>
                         : <div class="file-input">
                             <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-                            {/* <CustomLabel for="file">Select Video</CustomLabel> */}
+                            <CustomLabel for="file">Select Video</CustomLabel>
                         </div>}
-                </InputWrapper>
+                </InputWrapper> */}
 
             </StyledCard>
         </>
