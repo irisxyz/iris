@@ -20,12 +20,12 @@ async function pollUntilIndexed (txHash) {
   
   while (true) {
     const result = await hasTxBeenIndexed(txHash);
-    console.log('pool until indexed: result', result.data);
+//     console.log('pool until indexed: result', result.data);
 
     const response = result.data.hasTxHashBeenIndexed;
     if (response.__typename === 'TransactionIndexedResult') {
-      console.log('pool until indexed: indexed', response.indexed);
-      console.log('pool until metadataStatus: metadataStatus', response.metadataStatus);
+//       console.log('pool until indexed: indexed', response.indexed);
+//       console.log('pool until metadataStatus: metadataStatus', response.metadataStatus);
 
       if (response.metadataStatus) {
         if (response.metadataStatus.status === 'SUCCESS') {
