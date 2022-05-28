@@ -10,7 +10,7 @@ import LitJsSdk from 'lit-js-sdk'
 import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
-import { CREATE_POST_TYPED_DATA } from '../utils/queries'
+import { CREATE_POST_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 
 
@@ -106,12 +106,14 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
+    const [broadcast, broadcastData] = useMutation(BROADCAST)
+    const [savedTypedData, setSavedTypedData] = useState({})
     const [showModal, setShowModal] = useState(false)
 
     const handlePreview = async () => {
         if (!description) return;
         setShowModal(true)
-        console.log({ name, description, profile })
+        // console.log({ name, description, profile })
     }
 
     // Uploading Video
@@ -266,7 +268,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const handleSubmit = async () => {
         const id = profile.id.replace('0x', '')
         if (!description) return;
-        console.log({ id, name, description })
+        // console.log({ id, name, description })
 
         var ipfsResult = "";
 
@@ -330,9 +332,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
         }
 
-        console.log(ipfsResult.path)
-
-        // hard coded to make the code example clear
         const createPostRequest = {
             profileId: profile.id,
             contentURI: 'ipfs://' + ipfsResult.path,
@@ -359,6 +358,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const processPost = async () => {
 
             const typedData = typedPostData.data.createPostTypedData.typedData
+            
             const { domain, types, value } = typedData
 
             const signature = await wallet.signer._signTypedData(
@@ -367,30 +367,67 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 omitDeep(value, '__typename')
             )
 
-            const { v, r, s } = utils.splitSignature(signature);
+            setSavedTypedData({
+                ...typedData,
+                signature
+            })
 
-            const tx = await lensHub.postWithSig({
-                profileId: typedData.value.profileId,
-                contentURI: typedData.value.contentURI,
-                collectModule: typedData.value.collectModule,
-                collectModuleInitData: typedData.value.collectModuleInitData,
-                referenceModule: typedData.value.referenceModule,
-                referenceModuleInitData: typedData.value.referenceModuleInitData,
-                sig: {
-                    v,
-                    r,
-                    s,
-                    deadline: typedData.value.deadline,
-                },
-            });
-            console.log('create post: tx hash', tx.hash);
-            await pollUntilIndexed(tx.hash)
-            setShowModal(false)
-            setDescription('')
+            broadcast({
+                variables: {
+                    request: {
+                        id: typedPostData.data.createPostTypedData.id,
+                        signature
+                    }
+                }
+            })
+
         }
         processPost()
 
     }, [typedPostData.data])
+
+    useEffect(() => {
+        if (!broadcastData.data) return;
+        const processBroadcast = async () => {
+
+            if (broadcastData.data.broadcast.__typename === 'RelayError') {
+                console.log('asking user to pay for gas because error', broadcastData.data.broadcast.reason)
+
+                const { v, r, s } = utils.splitSignature(savedTypedData.signature);
+
+                const tx = await lensHub.postWithSig({
+                    profileId: savedTypedData.value.profileId,
+                    contentURI: savedTypedData.value.contentURI,
+                    collectModule: savedTypedData.value.collectModule,
+                    collectModuleInitData: savedTypedData.value.collectModuleInitData,
+                    referenceModule: savedTypedData.value.referenceModule,
+                    referenceModuleInitData: savedTypedData.value.referenceModuleInitData,
+                    sig: {
+                        v,
+                        r,
+                        s,
+                        deadline: savedTypedData.value.deadline,
+                    },
+                });
+                
+                console.log('create post: tx hash', tx.hash);
+                await pollUntilIndexed(tx.hash)
+                setShowModal(false)
+                setDescription('')
+
+                return;
+            }
+            
+            const txHash = broadcastData.data.broadcast.txHash
+            console.log('create post: tx hash', txHash);
+            if (!txHash) return;
+            await pollUntilIndexed(txHash)
+            setShowModal(false)
+            setDescription('')
+        }
+        processBroadcast()
+
+    }, [broadcastData.data])
 
     return (
         <>
