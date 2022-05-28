@@ -107,6 +107,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
+    const [savedTypedData, setSavedTypedData] = useState({})
     const [showModal, setShowModal] = useState(false)
 
     const handlePreview = async () => {
@@ -366,6 +367,11 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 omitDeep(value, '__typename')
             )
 
+            setSavedTypedData({
+                ...typedData,
+                signature
+            })
+
             broadcast({
                 variables: {
                     request: {
@@ -382,8 +388,36 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
     useEffect(() => {
         if (!broadcastData.data) return;
-
         const processBroadcast = async () => {
+
+            if (broadcastData.data.broadcast.__typename === 'RelayError') {
+                console.log('asking user to pay for gas because error', broadcastData.data.broadcast.reason)
+
+                const { v, r, s } = utils.splitSignature(savedTypedData.signature);
+
+                const tx = await lensHub.postWithSig({
+                    profileId: savedTypedData.value.profileId,
+                    contentURI: savedTypedData.value.contentURI,
+                    collectModule: savedTypedData.value.collectModule,
+                    collectModuleInitData: savedTypedData.value.collectModuleInitData,
+                    referenceModule: savedTypedData.value.referenceModule,
+                    referenceModuleInitData: savedTypedData.value.referenceModuleInitData,
+                    sig: {
+                        v,
+                        r,
+                        s,
+                        deadline: savedTypedData.value.deadline,
+                    },
+                });
+                
+                console.log('create post: tx hash', tx.hash);
+                await pollUntilIndexed(tx.hash)
+                setShowModal(false)
+                setDescription('')
+
+                return;
+            }
+            
             const txHash = broadcastData.data.broadcast.txHash
             console.log('create post: tx hash', txHash);
             if (!txHash) return;
@@ -394,14 +428,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
         processBroadcast()
 
     }, [broadcastData.data])
-
-    useEffect(() => {
-
-        if (!broadcastData.error) return;
-
-        console.log(broadcastData.error)
-
-    }, [broadcastData.error])
 
     return (
         <>
