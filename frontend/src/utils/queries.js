@@ -746,6 +746,18 @@ export const CREATE_POST_TYPED_DATA = gql`
 }
 `;
 
+export const BROADCAST = gql`
+  mutation Broadcast($request: BroadcastRequest!) {
+    broadcast(request: $request) {
+      ... on RelayerResult {
+        txHash
+      }
+      ... on RelayError {
+    reason }
+    }
+  }
+`
+
 export const GET_PUBLICATIONS = gql`
   query($request: PublicationsQueryRequest!) {
     publications(request: $request) {

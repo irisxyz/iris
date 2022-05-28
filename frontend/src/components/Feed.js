@@ -34,7 +34,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
             return;
         }
 
-        console.log('timeline loaded')
+        // console.log('timeline loaded')
 
         const pubIds = {}
         const pubs = []
