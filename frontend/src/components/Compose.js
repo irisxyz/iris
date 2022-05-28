@@ -357,9 +357,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         const processPost = async () => {
 
             const typedData = typedPostData.data.createPostTypedData.typedData
-
-            console.log(typedPostData.data.createPostTypedData.id)
-            console.log(typedPostData.data.createPostTypedData.expiresAt)
+            
             const { domain, types, value } = typedData
 
             const signature = await wallet.signer._signTypedData(
