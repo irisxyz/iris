@@ -77,18 +77,20 @@ const StyledCard = styled(Card)`
 `;
 
 const MediaContainer = styled.div`
-    max-height: 30em;
     display: flex;
     overflow-x: auto;
 `
 
-const StyledImage = styled.img`
-    max-width: 100%;
-    max-height: 28em;
-    &:nth-child(n+2) {
-        margin-left: 1em;
-    }
+const StyledImage = styled.div`
+    width: 100%;
+    height: 16em;
     border-radius: 0.5em;
+    background: url(${p => p.src});
+    background-size: cover;
+
+    &:nth-child(n+2) {
+        margin-left: 0.6em;
+    }
 `
 
 const chain = "mumbai";
