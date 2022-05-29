@@ -124,7 +124,7 @@ function Post({ post, wallet, lensHub, profileId }) {
         <StyledCard>
             <Container>
                 <Link to={`/user/${post.profile.handle}`}>
-                    <Icon link={true} href={post.profile?.picture?.original.url} />
+                    <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
                 <Content>
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
@@ -134,7 +134,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                     {/* {post.metadata.media} */}
                     {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <p>{post.metadata.content} </p>}
                     {post.metadata.media.length ? <video width="500px" controls>
-                        <source src={`https://ipfs.io/ipfs/${post.metadata.media[0].original.url.replace("ipfs://", "")}`} type="video/mp4" />
+                        <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
                     </video> : <p></p>}
 
