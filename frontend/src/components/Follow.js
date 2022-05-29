@@ -1,12 +1,15 @@
-import { useEffect } from "react";
-import { useMutation } from "@apollo/client";
-import { utils } from "ethers";
-import { CREATE_FOLLOW_TYPED_DATA } from "../utils/queries";
-import omitDeep from "omit-deep";
-import Button from "./Button";
+import { useEffect, useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { utils } from 'ethers'
+import { CREATE_FOLLOW_TYPED_DATA, BROADCAST } from '../utils/queries'
+import omitDeep from 'omit-deep'
+import Button from './Button'
+import pollUntilIndexed from '../utils/pollUntilIndexed'
 
 function Follow({ wallet, lensHub, profile = {} }) {
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA);
+    const [broadcast, broadcastData] = useMutation(BROADCAST)
+    const [savedTypedData, setSavedTypedData] = useState({})
 
     const followRequest = [
         {
@@ -51,8 +54,6 @@ function Follow({ wallet, lensHub, profile = {} }) {
         if (!createFollowTypedData.data) return;
 
         const handleCreate = async () => {
-            console.log(createFollowTypedData.data);
-
             const typedData = createFollowTypedData.data.createFollowTypedData.typedData;
             const { domain, types, value } = typedData;
 
@@ -62,28 +63,70 @@ function Follow({ wallet, lensHub, profile = {} }) {
                 omitDeep(value, "__typename")
             );
 
-            const { v, r, s } = utils.splitSignature(signature);
+            setSavedTypedData({
+                ...typedData,
+                signature
+            })
 
-            const tx = await lensHub.followWithSig(
-                {
-                    follower: wallet.address,
-                    profileIds: typedData.value.profileIds,
-                    datas: typedData.value.datas,
-                    sig: {
-                        v,
-                        r,
-                        s,
-                        deadline: typedData.value.deadline,
-                    },
-                },
-                { gasLimit: 1000000 }
-            );
+            broadcast({
+                variables: {
+                    request: {
+                        id: createFollowTypedData.data.createFollowTypedData.id,
+                        signature
+                    }
+                }
+            })
 
-            console.log("Following:", tx.hash);
         };
 
         handleCreate();
-    }, [createFollowTypedData.data]);
+    }, [createFollowTypedData.data])
+
+    
+    useEffect(() => {
+        if (!broadcastData.data) return;
+        const processBroadcast = async () => {
+
+            if (broadcastData.data.broadcast.__typename === 'RelayError') {
+                console.log('asking user to pay for gas because error', broadcastData.data.broadcast.reason)
+
+                const { v, r, s } = utils.splitSignature(savedTypedData.signature);
+
+                const tx = await lensHub.followWithSig(
+                    {
+                        follower: wallet.address,
+                        profileIds: savedTypedData.value.profileIds,
+                        datas: savedTypedData.value.datas,
+                        sig: {
+                            v,
+                            r,
+                            s,
+                            deadline: savedTypedData.value.deadline,
+                        },
+                    },
+                    { gasLimit: 1000000 }
+                );
+                
+                console.log('follow: tx hash', tx.hash);
+                await pollUntilIndexed(tx.hash)
+                console.log('follow: success')
+                
+                //TODO: success modal
+
+                return;
+            }
+            
+            const txHash = broadcastData.data.broadcast.txHash
+            console.log('follow: tx hash', txHash);
+            if (!txHash) return;
+            await pollUntilIndexed(txHash)
+            console.log('follow: success')
+            
+            //TODO: success modal
+        }
+        processBroadcast()
+
+    }, [broadcastData.data])
 
     return (
         <div>
