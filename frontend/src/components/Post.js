@@ -76,6 +76,21 @@ const StyledCard = styled(Card)`
     padding-right: 3em;
 `;
 
+const MediaContainer = styled.div`
+    max-height: 30em;
+    display: flex;
+    overflow-x: auto;
+`
+
+const StyledImage = styled.img`
+    max-width: 100%;
+    max-height: 28em;
+    &:nth-child(n+2) {
+        margin-left: 1em;
+    }
+    border-radius: 0.5em;
+`
+
 const chain = "mumbai";
 
 function Post({ post, wallet, lensHub, profileId }) {
@@ -83,22 +98,22 @@ function Post({ post, wallet, lensHub, profileId }) {
 
     moment.locale('en', {
         relativeTime: {
-          future: 'in %s',
-          past: '%s ago',
-          s:  '1s',
-          ss: '%ss',
-          m:  '1m',
-          mm: '%dm',
-          h:  '1h',
-          hh: '%dh',
-          d:  '1d',
-          dd: '%dd',
-          M:  '1M',
-          MM: '%dM',
-          y:  '1Y',
-          yy: '%dY'
+            future: 'in %s',
+            past: '%s ago',
+            s:  '1s',
+            ss: '%ss',
+            m:  '1m',
+            mm: '%dm',
+            h:  '1h',
+            hh: '%dh',
+            d:  '1d',
+            dd: '%dd',
+            M:  '1M',
+            MM: '%dM',
+            y:  '1Y',
+            yy: '%dY'
         }
-      });
+    });
 
     useEffect(() => {
 
@@ -168,10 +183,20 @@ function Post({ post, wallet, lensHub, profileId }) {
                     </Header>
                     {/* {post.metadata.media} */}
                     {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <p>{post.metadata.content} </p>}
-                    {post.metadata.media.length ? <video width="500px" controls>
+                    {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
-                    </video> : <p></p>}
+                    </video> : <p></p>} */}
+                    {post.metadata.media.length && <MediaContainer>
+                        {
+                            post.metadata.media.map((media) => {
+                                if(media.original.mimeType.includes('image')) {
+                                    return <StyledImage key={media.original.url} src={media.original.url} alt={post.metadata.content} />
+                                }
+                                return <>hi</>
+                            })
+                        }
+                    </MediaContainer>}
 
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
