@@ -115,7 +115,7 @@ function App() {
                                 />
                                 <Route path="new-profile" element={<NewProfile wallet={wallet} />} />
                                 <Route path="user" element={<User />}>
-                                    <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} />} />
+                                    <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
                                 </Route>
                                 <Route path="*" element={<NotFound />} />
                             </Routes>
