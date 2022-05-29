@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import styled from "styled-components";
 import { GET_TIMELINE, EXPLORE_PUBLICATIONS, HAS_COLLECTED } from "../utils/queries";
 import Post from "../components/Post";
+import { PublicationsContext } from "../utils/context"
+
 
 const Main = styled.main``;
 
 function Feed({ profile = {}, wallet, lensHub }) {
-    const [publications, setPublications] = useState([]);
+    const { publications, setPublications } = useContext(PublicationsContext)
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
     const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);
@@ -56,7 +58,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
             }
         })
 
-        setPublications(pubs);
+        setPublications({type: "ADD", payload: pubs});
 
         const publications = timelineData.data.timeline.items.map((thing) => {
             return thing.id
@@ -85,7 +87,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
             return;
         }
 
-        setPublications(explorePublicationsData.data.explorePublications.items);
+        setPublications({type: "ADD", payload: explorePublicationsData.data.explorePublications.items});
     }, [explorePublicationsData.data]);
 
     useEffect(() => {
@@ -103,7 +105,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
             return {...post, collected: collectedIds[post.id]}
         })
 
-        setPublications([...newPubs])
+        setPublications({type: "ADD", payload: [...newPubs]})
 
     }, [hasCollectedData.data]);
 

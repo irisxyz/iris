@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer, useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
 import LitJsSdk from "lit-js-sdk";
+
+import { PublicationsContext } from "./utils/context"
+import { PublicationsReducer } from "./utils/reducer"
 
 import ApolloProvider from "./components/Apollo";
 import GlobalStyle from "./theme/GlobalStyle";
@@ -63,6 +66,8 @@ function App() {
     const [authToken, setAuthToken] = useState(false);
     const [profile, setProfile] = useState({});
     const [lensHub, setLensHub] = useState();
+    const publicationsState = useContext(PublicationsContext);
+    const [publications, setPublications] = useReducer(PublicationsReducer, publicationsState);
 
     useEffect(() => {
         const initLit = async () => {
@@ -106,11 +111,13 @@ function App() {
                                 <Route
                                     path="/"
                                     element={
-                                        <div>
-                                            {/* <Livelinks wallet={wallet} /> */}
-                                            {profile && profile.__typename && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
-                                            <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
-                                        </div>
+                                        <PublicationsContext.Provider value={{publications,setPublications}}>
+                                            <div>
+                                                {/* <Livelinks wallet={wallet} /> */}
+                                                {profile && profile.__typename && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
+                                                <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
+                                            </div>
+                                        </PublicationsContext.Provider>
                                     }
                                 />
                                 <Route path="new-profile" element={<NewProfile wallet={wallet} />} />
