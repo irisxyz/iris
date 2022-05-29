@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import styled from "styled-components";
-import { GET_TIMELINE, SEARCH, HAS_COLLECTED } from "../utils/queries";
+import { GET_TIMELINE, EXPLORE_PUBLICATIONS, HAS_COLLECTED } from "../utils/queries";
 import Post from "../components/Post";
 
 const Main = styled.main``;
 
 function Feed({ profile = {}, wallet, lensHub }) {
-    const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
+    const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);
+    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
 
     useEffect(() => {
-        if (!profile.id) return;
+        if (!profile.id) {
+            if (publications.length > 0) return;
+            explorePublications({
+                variables: {
+                    request: {
+                        sortCriteria: 'TOP_COLLECTED',
+                        limit: 10,
+                    },
+                },
+            })
+            return
+        };
 
         getTimeline({
             variables: {
@@ -24,13 +36,10 @@ function Feed({ profile = {}, wallet, lensHub }) {
         })
     }, [getTimeline, profile])
 
-    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
-
     useEffect(() => {
         if (!timelineData.data) return;
 
         if (timelineData.data.timeline.items.length < 1) {
-            setNotFound(true);
             return;
         }
 
@@ -68,6 +77,18 @@ function Feed({ profile = {}, wallet, lensHub }) {
     }, [timelineData.data]);
 
     useEffect(() => {
+        if (!explorePublicationsData.data) return;
+
+        if (publications.length > 0) return;
+
+        if (explorePublicationsData.data.explorePublications.items.length < 1) {
+            return;
+        }
+
+        setPublications(explorePublicationsData.data.explorePublications.items);
+    }, [explorePublicationsData.data]);
+
+    useEffect(() => {
         if (!hasCollectedData.data) return;
 
         const collectedIds = {}
@@ -86,40 +107,9 @@ function Feed({ profile = {}, wallet, lensHub }) {
 
     }, [hasCollectedData.data]);
 
-    // const searchData = useQuery(SEARCH, {
-    //     variables: {
-    //         request: {
-    //             query: "LFG",
-    //             type: "PUBLICATION",
-    //         },
-    //     },
-    // });
-
-    // useEffect(() => {
-    //     if (!searchData.data) return;
-    //     if (publications.length > 0) return;
-
-    //     if (searchData.data.search.items.length < 1) {
-    //         return;
-    //     }
-
-    //     setPublications(searchData.data.search.items);
-    // }, [searchData.data]);
-
-    // if (notFound) {
-    //   return <>
-    //     <h3>No posts, go follow some profiles!</h3>
-    //   </>
-    // }
-
     return (
         <Main>
-            {notFound && (
-                <>
-                    <h3>You don't follow anyone yet. Follow and come back here to view your feed!</h3>
-                    <br />
-                </>
-            )}
+            {!profile.id && <h3>Popular Posts</h3>}
             {publications.map((post) => {
                 return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
             })}
