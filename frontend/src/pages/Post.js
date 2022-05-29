@@ -7,7 +7,7 @@ import PostComponent from '../components/Post'
 function Post({ wallet, lensHub, profileId }) {
     let params = useParams();
     const [publication, setPublication] = useState({})
-    const [profile, setProfile] = useState('')
+    const [notFound, setNotFound] = useState(false)
 
     const { data } = useQuery(GET_PROFILES, {
         variables: {
@@ -46,7 +46,10 @@ function Post({ wallet, lensHub, profileId }) {
 
     useEffect(() => {
         if (!publicationData.data) return;
-        if (!publicationData.data.publication) return;
+        if (!publicationData.data.publication) {
+            setNotFound(true)
+            return
+        };
 
         setPublication(publicationData.data.publication)
 
@@ -83,10 +86,8 @@ function Post({ wallet, lensHub, profileId }) {
 
     return (
         <>
-            {publication.metadata
-                ? <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />
-                : <h3>No Post Found</h3>
-            }
+            {notFound && <h3>No Post Found</h3>}
+            {publication.metadata && <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />}
         </>
     );
 }
