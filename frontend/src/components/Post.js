@@ -123,13 +123,13 @@ function Post({ post, wallet, lensHub, profileId }) {
     return (
         <StyledCard>
             <Container>
-                <Link to={`/user/${post.profile.handle}`}>
+                <Link to={`/user/${post.profile?.handle}`}>
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
                 <Content>
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
-                    <StyledLink to={`/user/${post.profile.handle}`}>
-                        <b>@{post.profile.handle}</b>
+                    <StyledLink to={`/user/${post.profile?.handle}`}>
+                        <b>@{post.profile?.handle}</b>
                     </StyledLink>
                     {/* {post.metadata.media} */}
                     {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <p>{post.metadata.content} </p>}
