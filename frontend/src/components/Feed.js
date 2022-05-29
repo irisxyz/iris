@@ -15,6 +15,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
 
     useEffect(() => {
         if (!profile.id) {
+            if (publications.length > 0) return;
             explorePublications({
                 variables: {
                     request: {
@@ -77,8 +78,6 @@ function Feed({ profile = {}, wallet, lensHub }) {
 
     useEffect(() => {
         if (!explorePublicationsData.data) return;
-
-        console.log(explorePublicationsData.data.explorePublications)
 
         if (publications.length > 0) return;
 

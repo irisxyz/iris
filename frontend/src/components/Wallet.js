@@ -88,7 +88,7 @@ const StyledProfile = styled.div`
   }
 `
 
-const StyledLink = styled(Link)`
+const StyledLink = styled.a`
   text-decoration: none;
   color: black;
   transition: all 50ms ease-in-out;
@@ -174,7 +174,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         {
           profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
-        <StyledLink to='new-profile'>
+        <StyledLink href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
           <StyledProfile onClick={() => handleNew()}>
             <b>+ Create Profile</b>
             <UserIcon/>
@@ -182,7 +182,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         </StyledLink>
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0].picture?.original.url} />
+      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
     </>
     : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }
