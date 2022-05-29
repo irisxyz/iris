@@ -7,8 +7,9 @@ import ApolloProvider from "./components/Apollo";
 import GlobalStyle from "./theme/GlobalStyle";
 import ThemeProvider from "./theme/ThemeProvider";
 import NotFound from "./pages/NotFound";
+import Blank from "./pages/Blank";
 import User from "./pages/User";
-import UserHandle from "./pages/UserHandle";
+import Post from "./pages/Post";
 import NewProfile from "./pages/NewProfile";
 import Profile from "./components/Profile";
 import Nav from "./components/Nav";
@@ -114,8 +115,11 @@ function App() {
                                     }
                                 />
                                 <Route path="new-profile" element={<NewProfile wallet={wallet} />} />
-                                <Route path="user" element={<User />}>
-                                    <Route path=":handle" element={<UserHandle wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
+                                <Route path="user" element={<Blank />}>
+                                    <Route path=":handle" element={<User wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
+                                </Route>
+                                <Route path="post" element={<Blank />}>
+                                    <Route path=":postId" element={<Post wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
                                 </Route>
                                 <Route path="*" element={<NotFound />} />
                             </Routes>
