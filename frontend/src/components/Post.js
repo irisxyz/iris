@@ -10,6 +10,7 @@ import Share from '../assets/Share'
 import Comment from './Comment'
 import Mirror from './Mirror'
 import Collect from './Collect'
+import Modal from './Modal'
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
@@ -82,6 +83,7 @@ const MediaContainer = styled.div`
 `
 
 const StyledImage = styled.div`
+    cursor: pointer;
     width: 100%;
     height: 16em;
     border-radius: 0.5em;
@@ -93,10 +95,18 @@ const StyledImage = styled.div`
     }
 `
 
+const ImageDisplay = styled.img`
+    border-radius: 0.5em;
+    max-width: 100%;
+    max-height: 75vh;
+`
+
 const chain = "mumbai";
 
 function Post({ post, wallet, lensHub, profileId }) {
-    const [decryptedMsg, setDecryptedMsg] = useState("");
+    const [decryptedMsg, setDecryptedMsg] = useState("")
+    const [showModal, setShowModal] = useState(false)
+    const [selectedImage, setSelectedImage] = useState('')
 
     moment.locale('en', {
         relativeTime: {
@@ -168,8 +178,16 @@ function Post({ post, wallet, lensHub, profileId }) {
 
         decode()
     }, []);
+    
+    const handleImageClick = (media) => {
+        setShowModal(true)
+        setSelectedImage(media)
+    }
 
-    return (
+    return <>
+        {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
+            <ImageDisplay src={selectedImage} />
+        </Modal>}
         <StyledCard>
             <Container>
                 <Link to={`/user/${post.profile?.handle}`}>
@@ -193,9 +211,14 @@ function Post({ post, wallet, lensHub, profileId }) {
                         {
                             post.metadata.media.map((media) => {
                                 if(media.original.mimeType.includes('image')) {
-                                    return <StyledImage key={media.original.url} src={media.original.url} alt={post.metadata.content} />
+                                    return <StyledImage
+                                        key={media.original.url}
+                                        src={media.original.url}
+                                        alt={post.metadata.content}
+                                        onClick={() => handleImageClick(media.original.url)}
+                                    />
                                 }
-                                return <>hi</>
+                                return <>Video</>
                             })
                         }
                     </MediaContainer>}
@@ -209,7 +232,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                 </Content>
             </Container>
         </StyledCard>
-    );
+    </>
 }
 
 export default Post;
