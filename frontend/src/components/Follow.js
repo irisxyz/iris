@@ -6,16 +6,24 @@ import omitDeep from 'omit-deep'
 import Button from './Button'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 
-function Follow({ wallet, lensHub, profile = {} }) {
+// profile being the user being viewed, profileId the id of the user using the app
+function Follow({ wallet, lensHub, profile = {}, profileId }) {
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA);
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
 
-    const followRequest = [
-        {
-            profile: profile.id,
-        },
-    ];
+    const followRequest = {
+        profile: profile.id,
+        followModule: null,
+    }
+
+    if (profile?.followModule?.type === 'ProfileFollowModule') {
+        followRequest.followModule = {
+            profileFollowModule: {
+                profileId: profileId
+           }  
+        }
+    }
 
     const handleClick = async () => {
         // if (profile.followModule !== null) {
@@ -43,7 +51,7 @@ function Follow({ wallet, lensHub, profile = {} }) {
             createFollowTyped({
                 variables: {
                     request: {
-                        follow: followRequest,
+                        follow: [followRequest],
                     },
                 },
             });

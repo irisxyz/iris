@@ -8,8 +8,8 @@ import {
 } from "@apollo/client";
 
 const httpLink = new HttpLink({
-    // uri: 'https://api.lens.dev/',
-    uri: 'https://api-mumbai.lens.dev/',
+    uri: 'https://api.lens.dev/',
+    // uri: 'https://api-mumbai.lens.dev/',
     fetch,
 });
   

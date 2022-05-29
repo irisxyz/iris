@@ -342,7 +342,7 @@ function User({ wallet, lensHub, profileId }) {
                             {following ? (
                                 <Unfollow wallet={wallet} profileId={profile.id} />
                             ) : (
-                                <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
+                                <Follow wallet={wallet} lensHub={lensHub} profile={profile} profileId={profileId} />
                             )}
                         </div>
                     </Columns>
