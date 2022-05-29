@@ -118,7 +118,7 @@ const Opensea = styled.a`
     }
 `;
 
-function User({ wallet, lensHub }) {
+function User({ wallet, lensHub, profileId }) {
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
@@ -241,8 +241,6 @@ function User({ wallet, lensHub }) {
             }
         });
 
-        console.log(collectedIds);
-
         const newPubs = publications.map((post) => {
             return { ...post, collected: collectedIds[post.id] };
         });
@@ -352,7 +350,7 @@ function User({ wallet, lensHub }) {
             </StyledCard>
 
             {publications.map((post) => {
-                return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
+                return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;
             })}
         </>
     );
