@@ -46,6 +46,7 @@ function Post({ wallet, lensHub, profileId }) {
 
     useEffect(() => {
         if (!publicationData.data) return;
+        if (!publicationData.data.publication) return;
 
         setPublication(publicationData.data.publication)
 
@@ -82,7 +83,10 @@ function Post({ wallet, lensHub, profileId }) {
 
     return (
         <>
-            {publication.metadata && <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />}
+            {publication.metadata
+                ? <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />
+                : <h3>No Post Found</h3>
+            }
         </>
     );
 }
