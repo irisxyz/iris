@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
-import { useMutation } from "@apollo/client";
-import { utils } from "ethers";
-import { CREATE_COLLECT_TYPED_DATA } from "../utils/queries";
-import omitDeep from "omit-deep";
-import Heart from "../assets/Heart";
+import { useEffect, useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { utils } from 'ethers'
+import { CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
+import omitDeep from 'omit-deep'
+import Heart from '../assets/Heart'
+import pollUntilIndexed from '../utils/pollUntilIndexed'
 
 function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }) {
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
+    const [broadcast, broadcastData] = useMutation(BROADCAST)
+    const [savedTypedData, setSavedTypedData] = useState({})
     const [apiError, setApiError] = useState('')
 
     const handleClick = async () => {
@@ -30,9 +33,9 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }
         if (!createCollectTypedData.data) return;
 
         const handleCreate = async () => {
-            console.log(createCollectTypedData.data);
 
             const typedData = createCollectTypedData.data.createCollectTypedData.typedData;
+
             const { domain, types, value } = typedData;
 
             const signature = await wallet.signer._signTypedData(
@@ -41,28 +44,69 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }
                 omitDeep(value, "__typename")
             );
 
-            const { v, r, s } = utils.splitSignature(signature);
+            setSavedTypedData({
+                ...typedData,
+                signature
+            })
 
-            const tx = await lensHub.collectWithSig({
-              collector: wallet.address,
-              profileId: typedData.value.profileId,
-              pubId: typedData.value.pubId,
-              data: typedData.value.data,
-              sig: {
-                v,
-                r,
-                s,
-                deadline: typedData.value.deadline,
-              },
-            },
-            { gasLimit: 1000000 }
-            );
-            
-            console.log("collect: tx hash", tx.hash);
-        };
-
+            broadcast({
+                variables: {
+                    request: {
+                        id: createCollectTypedData.data.createCollectTypedData.id,
+                        signature
+                    }
+                }
+            })
+        }
         handleCreate();
+
     }, [createCollectTypedData.data]);
+
+    
+    useEffect(() => {
+        if (!broadcastData.data) return;
+        const processBroadcast = async () => {
+
+            if (broadcastData.data.broadcast.__typename === 'RelayError') {
+                console.log('asking user to pay for gas because error', broadcastData.data.broadcast.reason)
+
+                const { v, r, s } = utils.splitSignature(savedTypedData.signature);
+
+                const tx = await lensHub.postWithSig({
+                    collector: wallet.address,
+                    profileId: savedTypedData.value.profileId,
+                    pubId: savedTypedData.value.pubId,
+                    data: savedTypedData.value.data,
+                    sig: {
+                      v,
+                      r,
+                      s,
+                      deadline: savedTypedData.value.deadline,
+                    },
+                  },
+                  { gasLimit: 1000000 }
+                  );
+                
+                console.log('collect: tx hash', tx.hash);
+                await pollUntilIndexed(tx.hash)
+
+                //TODO: success modal
+                console.log('collect: success')
+
+                return;
+            }
+            
+            const txHash = broadcastData.data.broadcast.txHash
+            console.log('collect: tx hash', txHash);
+            if (!txHash) return;
+            await pollUntilIndexed(txHash)
+            console.log('collect: success')
+            
+            //TODO: success modal
+        }
+        processBroadcast()
+
+    }, [broadcastData.data])
     
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
