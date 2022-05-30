@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { create } from "ipfs-http-client";
-import LitJsSdk from "lit-js-sdk";
-import Card from "../components/Card";
-import { UserIcon } from "../components/Wallet";
-import Share from "../assets/Share";
-import Comment from "./Comment";
-import Mirror from "./Mirror";
-import Collect from "./Collect";
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import { create } from 'ipfs-http-client'
+import LitJsSdk from 'lit-js-sdk'
+import moment from 'moment'
+import Card from '../components/Card'
+import { UserIcon } from '../components/Wallet'
+import Share from '../assets/Share'
+import Comment from './Comment'
+import Mirror from './Mirror'
+import Collect from './Collect'
+import Modal from './Modal'
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
@@ -17,12 +19,16 @@ export const StyledLink = styled(Link)`
     font-weight: 600;
     color: black;
     transition: all 50ms ease-in-out;
-    border-bottom: 1px solid transparent;
+    border-bottom: 2px solid transparent;
     &:hover {
         border-bottom: 2px solid ${(p) => p.theme.primary};
         color: ${(p) => p.theme.primary};
     }
 `;
+
+const StyledTime = styled(StyledLink)`
+    font-weight: normal;
+`
 
 const Icon = styled(UserIcon)`
     display: inline-block;
@@ -45,8 +51,15 @@ const Actions = styled.div`
     width: 400px;
 `;
 
+const Header = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+`
+
 const Content = styled.div`
     padding-top: 4px;
+    width: 100%;
 `;
 
 const Premium = styled.div`
@@ -61,12 +74,58 @@ const Premium = styled.div`
 
 const StyledCard = styled(Card)`
     margin-bottom: 1em;
+    padding-right: 3em;
 `;
+
+const MediaContainer = styled.div`
+    display: flex;
+    overflow-x: auto;
+`
+
+const StyledImage = styled.div`
+    cursor: pointer;
+    width: 100%;
+    height: 16em;
+    border-radius: 0.5em;
+    background: url(${p => p.src});
+    background-size: cover;
+
+    &:nth-child(n+2) {
+        margin-left: 0.6em;
+    }
+`
+
+const ImageDisplay = styled.img`
+    border-radius: 0.5em;
+    max-width: 100%;
+    max-height: 75vh;
+`
 
 const chain = "mumbai";
 
 function Post({ post, wallet, lensHub, profileId }) {
-    const [decryptedMsg, setDecryptedMsg] = useState("");
+    const [decryptedMsg, setDecryptedMsg] = useState("")
+    const [showModal, setShowModal] = useState(false)
+    const [selectedImage, setSelectedImage] = useState('')
+
+    moment.locale('en', {
+        relativeTime: {
+            future: 'in %s',
+            past: '%s ago',
+            s:  '1s',
+            ss: '%ss',
+            m:  '1m',
+            mm: '%dm',
+            h:  '1h',
+            hh: '%dh',
+            d:  '1d',
+            dd: '%dd',
+            M:  '1M',
+            MM: '%dM',
+            y:  '1Y',
+            yy: '%dY'
+        }
+    });
 
     useEffect(() => {
 
@@ -119,8 +178,16 @@ function Post({ post, wallet, lensHub, profileId }) {
 
         decode()
     }, []);
+    
+    const handleImageClick = (media) => {
+        setShowModal(true)
+        setSelectedImage(media)
+    }
 
-    return (
+    return <>
+        {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
+            <ImageDisplay src={selectedImage} />
+        </Modal>}
         <StyledCard>
             <Container>
                 <Link to={`/user/${post.profile?.handle}`}>
@@ -128,15 +195,33 @@ function Post({ post, wallet, lensHub, profileId }) {
                 </Link>
                 <Content>
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
-                    <StyledLink to={`/user/${post.profile?.handle}`}>
-                        <b>@{post.profile?.handle}</b>
-                    </StyledLink>
+                    <Header>
+                        <StyledLink to={`/user/${post.profile?.handle}`}>
+                            <b>@{post.profile?.handle}</b>
+                        </StyledLink>
+                        <StyledTime to={`/post/${post.id}`}>{moment(post.createdAt).fromNow()}</StyledTime>
+                    </Header>
                     {/* {post.metadata.media} */}
                     {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <p>{post.metadata.content} </p>}
-                    {post.metadata.media.length ? <video width="500px" controls>
+                    {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
-                    </video> : <p></p>}
+                    </video> : <p></p>} */}
+                    {post.metadata.media.length && <MediaContainer>
+                        {
+                            post.metadata.media.map((media) => {
+                                if(media.original.mimeType.includes('image')) {
+                                    return <StyledImage
+                                        key={media.original.url}
+                                        src={media.original.url}
+                                        alt={post.metadata.content}
+                                        onClick={() => handleImageClick(media.original.url)}
+                                    />
+                                }
+                                return <>Video</>
+                            })
+                        }
+                    </MediaContainer>}
 
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
@@ -147,7 +232,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                 </Content>
             </Container>
         </StyledCard>
-    );
+    </>
 }
 
 export default Post;

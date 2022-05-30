@@ -15,14 +15,15 @@ const ModalContainer = styled.div`
 
 const StyledCard = styled(Card)`
     z-index: 1005;
-    width: 500px;
-    height: 400px;
+    max-width: ${p => p.width || 'fit-content'};
+    min-height: 400px;
+    max-height: 75vh;
     margin: auto;
-    margin-top: 10vh;  
-    padding: 2em;
+    margin-top: 10vh;
+    padding: ${p => p.padding || '2em'};
 `
 
-const Modal = ({ children, onExit }) => {
+const Modal = ({ children, onExit, ...props }) => {
     const ref = createRef()
     return (
         <ModalContainer ref={ref} onClick={(e) => {
@@ -32,7 +33,7 @@ const Modal = ({ children, onExit }) => {
         }
         }
             >
-            <StyledCard>
+            <StyledCard {...props} >
                 { children }
             </StyledCard>
         </ModalContainer>

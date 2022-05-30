@@ -431,7 +431,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
 
     return (
         <>
-            {showModal && <Modal onExit={() => setShowModal(false)}>
+            {showModal && <Modal width={'500px'} onExit={() => setShowModal(false)}>
 
                 <Header>Great plant! 🌱</Header>
                 <PostPreview>
