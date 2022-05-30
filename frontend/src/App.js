@@ -17,6 +17,7 @@ import Wallet from "./components/Wallet";
 import Compose from "./components/Compose";
 import Login from "./components/Login";
 import Feed from "./components/Feed";
+import Search from "./components/Search";
 import Livelinks from "./components/Livelinks";
 import logo from "./assets/logo.svg";
 import LandingPage from './pages/LandingPage'
@@ -86,6 +87,7 @@ function App() {
                             <img src={logo} alt="iris logo" width="50px" height="50px" />
                             <h1>iris</h1>
                         </LogoContainer>
+                        <Search></Search>
                         <Wallet
                             wallet={wallet}
                             setWallet={setWallet}
