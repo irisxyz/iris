@@ -16,7 +16,6 @@ const ModalContainer = styled.div`
 const StyledCard = styled(Card)`
     z-index: 1005;
     max-width: ${p => p.width || 'fit-content'};
-    min-height: 400px;
     max-height: 75vh;
     margin: auto;
     margin-top: 10vh;
