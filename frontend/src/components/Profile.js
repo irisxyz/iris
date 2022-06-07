@@ -25,6 +25,10 @@ const Icon = styled.div`
 const Handle = styled.h2`
   text-align: center;
   color: black;
+  transition: all 100ms;
+  &:hover {
+    color: ${p => p.theme.primary};
+  }
 `
 
 const StyledLink = styled(Link)`
