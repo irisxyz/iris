@@ -66,4 +66,29 @@ export default createGlobalStyle`
     font-family: 'Fira Mono', monospace;
     font-size: 0.9em;
   }
+  a {
+    text-decoration: none;
+    color: ${(p) => p.theme.primary};
+    transition: all 50ms ease-in-out;
+    &:hover {
+      color: ${(p) => p.theme.primaryHover};
+    }
+  }
+
+  .hrefUnderline a {
+    display: inline-block;
+    &:after {
+      content: '';
+      display: block;
+      margin: auto;
+      height: 2px;
+      width: 0px;
+      background: transparent;
+      transition: width 150ms ease, background-color 150ms ease;
+    }
+    &:hover:after {
+      width: 100%;
+      background: ${(p) => p.theme.primaryHover};
+    }
+  }
 `
