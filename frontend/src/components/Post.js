@@ -207,7 +207,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
                     </video> : <p></p>} */}
-                    {post.metadata.media.length && <MediaContainer>
+                    {post.metadata.media.length ? <MediaContainer>
                         {
                             post.metadata.media.map((media) => {
                                 if(media.original.mimeType.includes('image')) {
@@ -221,7 +221,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                                 return <>Video</>
                             })
                         }
-                    </MediaContainer>}
+                    </MediaContainer> : ''}
 
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
