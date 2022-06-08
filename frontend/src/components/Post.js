@@ -132,7 +132,7 @@ function Post({ post, wallet, lensHub, profileId }) {
     const [showModal, setShowModal] = useState(false)
     const [selectedImage, setSelectedImage] = useState('')
 
-    moment.locale('en', {
+    moment.updateLocale('en', {
         relativeTime: {
             future: 'in %s',
             past: '%s ago',
@@ -242,7 +242,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                                         onClick={() => handleImageClick(media.original.url)}
                                     />
                                 }
-                                return <>Video</>
+                                return <p key={media.original.url}>Video</p>
                             })
                         }
                     </MediaContainer> : ''}
