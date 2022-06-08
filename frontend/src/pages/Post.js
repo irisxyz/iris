@@ -103,8 +103,8 @@ function Post({ wallet, lensHub, profileId }) {
 
         setPublications(publicationsData.data.publications.items);
 
-        const publications = publicationsData.data.publications.items.map((thing) => {
-            return thing.id;
+        const publications = publicationsData.data.publications.items.map((pub) => {
+            return pub.id;
         });
 
         hasCollected({
