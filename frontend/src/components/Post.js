@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 import moment from 'moment'
-import reactStringReplace from 'react-string-replace';
+import reactStringReplace from 'react-string-replace'
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 import Share from '../assets/Share'
@@ -13,7 +13,7 @@ import Mirror from './Mirror'
 import Collect from './Collect'
 import Modal from './Modal'
 
-const client = create("https://ipfs.infura.io:5001/api/v0");
+const client = create("https://ipfs.infura.io:5001/api/v0")
 
 export const StyledLink = styled(Link)`
     text-decoration: none;
@@ -108,6 +108,11 @@ const PostBody = ({ children }) => {
         if (match.length > 50) return <a key={match + i} href={match} target="_blank" rel="noopener noreferrer">{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</a>
         return <a key={match + i} href={match} target="_blank" rel="noopener noreferrer">{match}</a>
     });
+
+    // Match newlines
+    replacedText = reactStringReplace(replacedText, /(\n)/g, (match, i) => (
+      <br/>
+    ));
       
     // Match @xyz.lens-mentions
     replacedText = reactStringReplace(replacedText, /@(\w+\.lens)/g, (match, i) => (
@@ -132,7 +137,7 @@ function Post({ post, wallet, lensHub, profileId }) {
     const [showModal, setShowModal] = useState(false)
     const [selectedImage, setSelectedImage] = useState('')
 
-    moment.locale('en', {
+    moment.updateLocale('en', {
         relativeTime: {
             future: 'in %s',
             past: '%s ago',
@@ -151,62 +156,64 @@ function Post({ post, wallet, lensHub, profileId }) {
         }
     });
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        const decode = async () => {
-            await new Promise(r => setTimeout(r, 500));
+    //     const decode = async () => {
+    //         await new Promise(r => setTimeout(r, 500));
             
-            // TODO: fix lit protocol code
-            if (post.metadata.description === "litcode}") {
-                const encryptedPost = JSON.parse(post.metadata.content.replace("litcoded: ", ""));
+    //         // TODO: fix lit protocol code
+    //         if (post.metadata.description === "litcode}") {
+    //             const encryptedPost = JSON.parse(post.metadata.content.replace("litcoded: ", ""));
     
-                const accessControlConditions = [
-                    {
-                        contractAddress: encryptedPost.contract,
-                        standardContractType: "ERC721",
-                        chain,
-                        method: "balanceOf",
-                        parameters: [":userAddress"],
-                        returnValueTest: {
-                            comparator: ">",
-                            value: "0",
-                        },
-                    },
-                ];
+    //             const accessControlConditions = [
+    //                 {
+    //                     contractAddress: encryptedPost.contract,
+    //                     standardContractType: "ERC721",
+    //                     chain,
+    //                     method: "balanceOf",
+    //                     parameters: [":userAddress"],
+    //                     returnValueTest: {
+    //                         comparator: ">",
+    //                         value: "0",
+    //                     },
+    //                 },
+    //             ];
     
-                const isthisblob = client.cat(encryptedPost.blobPath);
-                let newEcnrypt;
-                (async () => {
-                    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    //             const isthisblob = client.cat(encryptedPost.blobPath);
+    //             let newEcnrypt;
+    //             (async () => {
+    //                 const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
     
-                    for await (const chunk of isthisblob) {
-                        newEcnrypt = new Blob([chunk], {
-                            type: "encryptedString.type", // or whatever your Content-Type is
-                        });
-                    }
-                    const key = await window.litNodeClient.getEncryptionKey({
-                        accessControlConditions,
-                        // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
-                        toDecrypt: encryptedPost.key,
-                        chain,
-                        authSig,
-                    });
+    //                 for await (const chunk of isthisblob) {
+    //                     newEcnrypt = new Blob([chunk], {
+    //                         type: "encryptedString.type", // or whatever your Content-Type is
+    //                     });
+    //                 }
+    //                 const key = await window.litNodeClient.getEncryptionKey({
+    //                     accessControlConditions,
+    //                     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+    //                     toDecrypt: encryptedPost.key,
+    //                     chain,
+    //                     authSig,
+    //                 });
     
-                    const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
+    //                 const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
     
-                    setDecryptedMsg(decryptedString);
-                })();
-            }
+    //                 setDecryptedMsg(decryptedString);
+    //             })();
+    //         }
 
-        }
+    //     }
 
-        decode()
-    }, []);
+    //     decode()
+    // }, []);
     
     const handleImageClick = (media) => {
         setShowModal(true)
         setSelectedImage(media)
     }
+
+    console.log(post)
 
     return <>
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
@@ -242,7 +249,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                                         onClick={() => handleImageClick(media.original.url)}
                                     />
                                 }
-                                return <>Video</>
+                                return <p key={media.original.url}>Video</p>
                             })
                         }
                     </MediaContainer> : ''}
