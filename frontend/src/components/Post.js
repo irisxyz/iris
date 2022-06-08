@@ -213,8 +213,6 @@ function Post({ post, wallet, lensHub, profileId }) {
         setSelectedImage(media)
     }
 
-    console.log(post)
-
     return <>
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
             <ImageDisplay src={selectedImage} />
