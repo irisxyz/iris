@@ -179,8 +179,6 @@ function User({ wallet, lensHub, profileId }) {
                 },
             },
         });
-        
-        console.log("profile:", profile)
 
         // const isUserLivestreaming = async () => {
 
