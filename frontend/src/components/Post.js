@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 import moment from 'moment'
+import reactStringReplace from 'react-string-replace';
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 import Share from '../assets/Share'
@@ -19,9 +20,7 @@ export const StyledLink = styled(Link)`
     font-weight: 600;
     color: black;
     transition: all 50ms ease-in-out;
-    border-bottom: 2px solid transparent;
     &:hover {
-        border-bottom: 2px solid ${(p) => p.theme.primary};
         color: ${(p) => p.theme.primary};
     }
 `;
@@ -102,6 +101,31 @@ const ImageDisplay = styled.img`
 `
 
 const chain = "mumbai";
+
+const PostBody = ({ children }) => {
+    // Match URLs
+    let replacedText = reactStringReplace(children, /(https?:\/\/\S+)/g, (match, i) => {
+        if (match.length > 50) return <a key={match + i} href={match}>{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</a>
+        return <a key={match + i} href={match}>{match}</a>
+    });
+      
+    // Match @xyz.lens-mentions
+    replacedText = reactStringReplace(replacedText, /@(\w+\.lens)/g, (match, i) => (
+        <a key={match + i} href={`/user/${match}`}>@{match}</a>
+    ));
+      
+    // Match @xyz-mentions
+    replacedText = reactStringReplace(replacedText, /@(\w+)/g, (match, i) => (
+        <a key={match + i} href={`/user/${match}`}>@{match}</a>
+    ));
+
+    // Match hashtags
+    replacedText = reactStringReplace(replacedText, /#(\w+)/g, (match, i) => (
+      <a key={match + i} href={`/hashtag/${match}`}>#{match}</a>
+    ));
+
+    return <>{ replacedText }</>
+}
 
 function Post({ post, wallet, lensHub, profileId }) {
     const [decryptedMsg, setDecryptedMsg] = useState("")
@@ -193,7 +217,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                 <Link to={`/user/${post.profile?.handle}`}>
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
-                <Content>
+                <Content className="hrefUnderline">
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
                     <Header>
                         <StyledLink to={`/user/${post.profile?.handle}`}>
@@ -202,7 +226,7 @@ function Post({ post, wallet, lensHub, profileId }) {
                         <StyledTime to={`/post/${post.id}`}>{moment(post.createdAt).fromNow()}</StyledTime>
                     </Header>
                     {/* {post.metadata.media} */}
-                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <p>{post.metadata.content} </p>}
+                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <PostBody>{post.metadata.content}</PostBody>}
                     {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
