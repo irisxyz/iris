@@ -8,7 +8,7 @@ function Post({ wallet, lensHub, profileId }) {
     let params = useParams();
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)
-    const [publications, setPublications] = useState([]);
+    const [comments, setComments] = useState([]);
 
     const { data } = useQuery(GET_PROFILES, {
         variables: {
@@ -101,7 +101,7 @@ function Post({ wallet, lensHub, profileId }) {
     useEffect(() => {
         if (!publicationsData.data) return;
 
-        setPublications(publicationsData.data.publications.items);
+        setComments(publicationsData.data.publications.items);
 
         const publications = publicationsData.data.publications.items.map((pub) => {
             return pub.id;
@@ -132,19 +132,19 @@ function Post({ wallet, lensHub, profileId }) {
             }
         });
 
-        const newPubs = publications.map((post) => {
+        const newPubs = comments.map((post) => {
             return { ...post, collected: collectedIds[post.id] };
         });
 
-        setPublications([...newPubs]);
+        setComments([...newPubs]);
     }, [hasCollectedData.data]);
 
     return (
         <>
             {notFound && <h3>No Post Found</h3>}
             {publication.metadata && <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />}
-            {publications.length > 0 && <h3>Comments</h3>}
-            {publications.map((post) => {
+            {comments.length > 0 && <h3>Comments</h3>}
+            {comments.map((post) => {
                 return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;
             })}
         </>
