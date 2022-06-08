@@ -4,7 +4,7 @@ import Card from './Card'
 import Home from '../assets/Home'
 import Profile from '../assets/Profile'
 import Subscriptions from '../assets/Subscriptions'
-import Explore from '../assets/Explore'
+import Compass from '../assets/Compass'
 import Share from '../assets/Share'
 import Heart from '../assets/Heart'
 
@@ -64,7 +64,7 @@ const handleClick = () => {
             <p>Collection</p>
         </StyledLink> */}
         <StyledLink to={`explore`}>
-            <Explore/>
+            <Compass/>
             <p>Explore</p>
         </StyledLink>
         <StyledLink onClick={handleClick} to={``}>
