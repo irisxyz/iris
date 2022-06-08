@@ -106,7 +106,7 @@ const PostBody = ({ children }) => {
     // Match URLs
     let replacedText = reactStringReplace(children, /(https?:\/\/\S+)/g, (match, i) => {
         if (match.length > 50) return <a key={match + i} href={match} target="_blank" rel="noopener noreferrer">{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</a>
-        return <a key={match + i} href={match}>{match}</a>
+        return <a key={match + i} href={match} target="_blank" rel="noopener noreferrer">{match}</a>
     });
       
     // Match @xyz.lens-mentions
