@@ -6,10 +6,9 @@ import avatar from '../assets/avatar.png'
 import Button from './Button'
 import Modal from './Modal'
 
-const Icon = styled.div`
+export const Avatar = styled.div`
   height: 75px;
   width: 75px;
-  border: #E2E4E8 1px solid;
   border-radius: 100px;
   &:hover {
     cursor: pointer;
@@ -17,7 +16,7 @@ const Icon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(${p => p.href || avatar});
+  background: url(${p => p.src || avatar});
   background-size: cover;
   margin: auto;
 `
@@ -142,7 +141,7 @@ function Profile({ profile = {}, wallet, children }) {
 
       </Modal>}
       <StyledLink to={`user/${profile.handle}`}>
-        <Icon href={profile.picture?.original.url}/>
+        <Avatar src={profile.picture?.original.url}/>
         <Handle>@{profile.handle}</Handle>
       </StyledLink>
       <Stats>

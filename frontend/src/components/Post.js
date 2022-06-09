@@ -12,6 +12,7 @@ import Comment from './Comment'
 import Mirror from './Mirror'
 import Collect from './Collect'
 import Modal from './Modal'
+import { Avatar } from './Profile'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
@@ -77,6 +78,7 @@ const StyledCard = styled(Card)`
 `;
 
 const MediaContainer = styled.div`
+    margin-top: 0.75em;
     display: flex;
     overflow-x: auto;
 `
@@ -100,33 +102,48 @@ const ImageDisplay = styled.img`
     max-height: 75vh;
 `
 
+const CommunityDisplay = styled.div`
+    padding: 1.5em;
+    text-align: center;
+    color: white;
+    width: 100%;
+    height: 10em;
+    border-radius: 1em;
+    background: rgb(168,73,231);
+    background: linear-gradient(144deg, rgba(168,73,231,1) 0%, rgba(255,108,108,1) 50%, rgba(255,176,64,1) 100%);
+`
+
 const chain = "mumbai";
+
+const random = () => {
+    return (Math.random() + 1).toString(36).substring(7);
+}
 
 const PostBody = ({ children }) => {
     // Match URLs
     let replacedText = reactStringReplace(children, /(https?:\/\/\S+)/g, (match, i) => {
-        if (match.length > 50) return <a key={match + i} href={match} target="_blank" rel="noopener noreferrer">{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</a>
-        return <a key={match + i} href={match} target="_blank" rel="noopener noreferrer">{match}</a>
+        if (match.length > 50) return <a key={random() + match + i} href={match} target="_blank" rel="noopener noreferrer">{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</a>
+        return <a key={random() + match + i} href={match} target="_blank" rel="noopener noreferrer">{match}</a>
     });
 
     // Match newlines
     replacedText = reactStringReplace(replacedText, /(\n)/g, (match, i) => (
-      <br/>
+      <br key={random() + match + i} />
     ));
       
     // Match @xyz.lens-mentions
     replacedText = reactStringReplace(replacedText, /@(\w+\.lens)/g, (match, i) => (
-        <a key={match + i} href={`/user/${match}`}>@{match}</a>
+        <a key={random() + match + i} href={`/user/${match}`}>@{match}</a>
     ));
       
     // Match @xyz-mentions
     replacedText = reactStringReplace(replacedText, /@(\w+)/g, (match, i) => (
-        <a key={match + i} href={`/user/${match}`}>@{match}</a>
+        <a key={random() + match + i} href={`/user/${match}`}>@{match}</a>
     ));
 
     // Match hashtags
     replacedText = reactStringReplace(replacedText, /#(\w+)/g, (match, i) => (
-      <a key={match + i} href={`/hashtag/${match}`}>#{match}</a>
+      <a key={random() + match + i} href={`/#`}>#{match}</a>
     ));
 
     return <>{ replacedText }</>
@@ -213,6 +230,14 @@ function Post({ post, wallet, lensHub, profileId }) {
         setSelectedImage(media)
     }
 
+    let isCommunity = false;
+    
+    post?.metadata?.attributes.forEach(attribute => {
+        if(attribute.value === 'community') {
+            isCommunity = true;
+        }
+    })
+
     return <>
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
             <ImageDisplay src={selectedImage} />
@@ -252,10 +277,18 @@ function Post({ post, wallet, lensHub, profileId }) {
                         }
                     </MediaContainer> : ''}
 
+                    {isCommunity && <MediaContainer>
+                        <CommunityDisplay>
+                            <Avatar src={post.metadata?.cover?.original?.url}/>
+                            <h2>{post.metadata?.name}</h2>
+                            <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCta />
+                        </CommunityDisplay>
+                    </MediaContainer>}
+
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCommunity={isCommunity} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>
