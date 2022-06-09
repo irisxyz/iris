@@ -24,22 +24,6 @@ function Post({ wallet, lensHub, profileId }) {
         });
     }, [])
 
-    // useEffect(() => {
-    //     if(!wallet.address) return;
-    //     hasCollected({
-    //         variables: {
-    //             request: {
-    //                 collectRequests: [
-    //                     {
-    //                         walletAddress: wallet.address,
-    //                         publicationIds: [params.postId],
-    //                     },
-    //                 ],
-    //             },
-    //         },
-    //     });
-    // }, [wallet.address])
-
     useEffect(() => {
         if (!publicationData.data) return;
         if (!publicationData.data.publication) {
