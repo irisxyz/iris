@@ -74,7 +74,7 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
 
                 const { v, r, s } = utils.splitSignature(savedTypedData.signature);
 
-                const tx = await lensHub.postWithSig({
+                const tx = await lensHub.collectWithSig({
                     collector: wallet.address,
                     profileId: savedTypedData.value.profileId,
                     pubId: savedTypedData.value.pubId,

@@ -120,6 +120,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
   
   useEffect(() => {
     if (!authToken) return;
+    if (!wallet.address) return;
     // console.log("wallet", wallet)
     getProfiles({
       variables: {
@@ -132,7 +133,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       },
      })
 
-  }, [authToken])
+  }, [wallet.address, authToken])
 
   useEffect(() => {
     if (!profiles.data) return
