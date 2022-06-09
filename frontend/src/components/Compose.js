@@ -109,6 +109,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
     const [showModal, setShowModal] = useState(false)
+    const [showError, setShowError] = useState(false)
 
     const handlePreview = async () => {
         if (!description) return;
@@ -432,7 +433,6 @@ const Compose = ({ wallet, profile, lensHub }) => {
     return (
         <>
             {showModal && <Modal width={'500px'} onExit={() => setShowModal(false)}>
-
                 <Header>Great plant! 🌱</Header>
                 <PostPreview>
                     {description}
@@ -451,7 +451,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
                         onChange={e => setDescription(e.target.value)}
                     />
                 </form>
-                {videoUploading ? <Button>Video Uploading...</Button> : <Button onClick={handlePreview}>Plant</Button>}
+                {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>Plant</Button>}
 
                 {/* <input
                 type="file"
