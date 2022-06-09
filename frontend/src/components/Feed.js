@@ -78,7 +78,7 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
     }, [timelineData.data]);
 
     useEffect(() => {
-        if (profile.id) return;
+        if (profile.id && !isExplore) return;
         if (!explorePublicationsData.data) return;
 
         if (publications.length > 0) return;

@@ -139,6 +139,11 @@ fragment MetadataOutputFields on MetadataOutput {
     traitType
     value
   }
+  cover {
+    original {
+      url
+    }
+  }
 }
 fragment Erc20Fields on Erc20 {
   name
@@ -468,6 +473,11 @@ export const SEARCH = gql`
     traitType
     value
   }
+  cover {
+    original {
+      url
+    }
+  }
   }
   fragment Erc20Fields on Erc20 {
   name
@@ -748,6 +758,11 @@ fragment MetadataOutputFields on MetadataOutput {
     displayType
     traitType
     value
+  }
+  cover {
+    original {
+      url
+    }
   }
 }
 fragment Erc20Fields on Erc20 {
@@ -1183,6 +1198,11 @@ export const GET_PUBLICATION = gql`
       displayType
       traitType
       value
+    }
+    cover {
+      original {
+        url
+      }
     }
   }
   fragment Erc20Fields on Erc20 {
