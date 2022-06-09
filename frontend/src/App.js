@@ -115,7 +115,7 @@ function App() {
                                     }
                                 />
                                 <Route path="new-profile" element={<NewProfile wallet={wallet} />} />
-                                <Route path="explore" element={ <Feed profile={profile} wallet={wallet} lensHub={lensHub} isExplore/> } />
+                                <Route path="explore" element={<Feed profile={profile} wallet={wallet} lensHub={lensHub} isExplore/> } />
                                 <Route path="user" element={<Outlet />}>
                                     <Route path=":handle" element={<User wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
                                 </Route>

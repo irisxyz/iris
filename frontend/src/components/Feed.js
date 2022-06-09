@@ -14,7 +14,7 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
     const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
 
     useEffect(() => {
-        if (!profile.id) {
+        if (!profile.id || isExplore) {
             if (publications.length > 0) return;
             explorePublications({
                 variables: {
