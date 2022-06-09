@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLazyQuery, useQuery } from '@apollo/client'
-import { GET_PROFILES, GET_PUBLICATION, GET_PUBLICATIONS, HAS_COLLECTED } from '../utils/queries'
+import { GET_PUBLICATION, GET_PUBLICATIONS, HAS_COLLECTED } from '../utils/queries'
 import PostComponent from '../components/Post'
 
 function Post({ wallet, lensHub, profileId }) {
@@ -10,32 +10,11 @@ function Post({ wallet, lensHub, profileId }) {
     const [notFound, setNotFound] = useState(false)
     const [comments, setComments] = useState([]);
 
-    const { data } = useQuery(GET_PROFILES, {
-        variables: {
-            request: {
-                handles: [params.handle],
-                limit: 1,
-            },
-        },
-    })
-
     const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED)
     const [getPublication, publicationData] = useLazyQuery(GET_PUBLICATION)
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
-
-        // const ownedBy = data.profiles.items[0].ownedBy;
-        // const handle = data.profiles.items[0].handle;
-        // const id = data.profiles.items[0].id;
-        // const decId = hexToDec(id.replace('0x', ''));
-
-        // setProfile({
-        //     ...data.profiles.items[0],
-        //     address: `${ownedBy.substring(0, 6)}...${ownedBy.substring(37, ownedBy.length - 1)}`,
-        //     decId,
-        // });
-
         getPublication({
             variables: {
                 request: {
@@ -43,8 +22,23 @@ function Post({ wallet, lensHub, profileId }) {
                 },
             },
         });
+    }, [])
 
-    }, [data, getPublication])
+    // useEffect(() => {
+    //     if(!wallet.address) return;
+    //     hasCollected({
+    //         variables: {
+    //             request: {
+    //                 collectRequests: [
+    //                     {
+    //                         walletAddress: wallet.address,
+    //                         publicationIds: [params.postId],
+    //                     },
+    //                 ],
+    //             },
+    //         },
+    //     });
+    // }, [wallet.address])
 
     useEffect(() => {
         if (!publicationData.data) return;
@@ -54,38 +48,7 @@ function Post({ wallet, lensHub, profileId }) {
         };
 
         setPublication(publicationData.data.publication)
-
-        hasCollected({
-            variables: {
-                request: {
-                    collectRequests: [
-                        {
-                            walletAddress: wallet.address,
-                            publicationIds: [publicationData.data.publication.id],
-                        },
-                    ],
-                },
-            },
-        });
     }, [publicationData.data])
-
-    useEffect(() => {
-        if (!hasCollectedData.data) return;
-
-        const collectedIds = {};
-
-        hasCollectedData.data.hasCollected[0].results.forEach((result) => {
-            if (result.collected) {
-                collectedIds[result.publicationId] = true;
-            }
-        });
-
-        const newPub = { ...publication, collected: collectedIds[publication.id] }
-
-        setPublication(newPub)
-
-    }, [hasCollectedData.data])
-
     
     useEffect(() => {
         getPublications({
@@ -100,6 +63,7 @@ function Post({ wallet, lensHub, profileId }) {
     
     useEffect(() => {
         if (!publicationsData.data) return;
+        if (!wallet.address) return;
 
         setComments(publicationsData.data.publications.items);
 
@@ -113,13 +77,13 @@ function Post({ wallet, lensHub, profileId }) {
                     collectRequests: [
                         {
                             walletAddress: wallet.address,
-                            publicationIds: publications,
+                            publicationIds: [...publications, params.postId],
                         },
                     ],
                 },
             },
         });
-    }, [publicationsData.data]);
+    }, [wallet.address, publicationsData.data]);
 
     useEffect(() => {
         if (!hasCollectedData.data) return;
@@ -132,11 +96,14 @@ function Post({ wallet, lensHub, profileId }) {
             }
         });
 
-        const newPubs = comments.map((post) => {
+        const newPub = { ...publication, collected: collectedIds[publication.id] }
+        setPublication(newPub)
+
+        const newComments = comments.map((post) => {
             return { ...post, collected: collectedIds[post.id] };
         });
+        setComments([...newComments]);
 
-        setComments([...newPubs]);
     }, [hasCollectedData.data]);
 
     return (
