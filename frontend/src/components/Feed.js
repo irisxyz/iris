@@ -6,7 +6,7 @@ import Post from "../components/Post";
 
 const Main = styled.main``;
 
-function Feed({ profile = {}, wallet, lensHub }) {
+function Feed({ profile = {}, wallet, lensHub, isExplore }) {
     const [publications, setPublications] = useState([]);
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
@@ -27,6 +27,7 @@ function Feed({ profile = {}, wallet, lensHub }) {
             return
         };
 
+        if (isExplore) return;
         getTimeline({
             variables: {
                 request: {
