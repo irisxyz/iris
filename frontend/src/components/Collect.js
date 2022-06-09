@@ -4,9 +4,11 @@ import { utils } from 'ethers'
 import { CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
 import Heart from '../assets/Heart'
+import Community from '../assets/Community'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
+import { RoundedButton } from './Button'
 
-function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }) {
+function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, isCommunity, isCta }) {
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
@@ -107,10 +109,15 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats }
         processBroadcast()
 
     }, [broadcastData.data])
+
+    if(isCta) return <RoundedButton onClick={handleClick}>{collected ? 'Joined' : 'Join Community'}</RoundedButton>
     
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
-            <Heart onClick={handleClick} filled={collected} />
+            {isCommunity
+                ? <Community onClick={handleClick} filled={collected} />
+                : <Heart onClick={handleClick} filled={collected} />
+            }
             <p>{ stats.totalAmountOfCollects }</p>
         </div>
     );

@@ -20,4 +20,21 @@ const Button = styled.button`
     }
 `;
 
+
+export const RoundedButton = styled(Button)`
+    border-radius: 5em;
+    padding: 0.6em 2em;
+    color: black;
+    background: ${(p) => p.theme.textLight};
+    letter-spacing: 0.02em;
+    transition: all 100ms;
+    :hover {
+        background: #ffe8e8;
+    }
+    :focus {
+        box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.72), 0px 0px 0px 3px #D25D38;
+        outline: none;
+    }
+`;
+
 export default Button;
