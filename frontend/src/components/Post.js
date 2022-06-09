@@ -247,16 +247,17 @@ function Post({ post, wallet, lensHub, profileId }) {
                 <Link to={`/user/${post.profile?.handle}`}>
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
-                <Content className="hrefUnderline">
+                <Content>
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
-                    <Header>
+                    <Header className="hrefUnderline">
                         <StyledLink to={`/user/${post.profile?.handle}`}>
                             <b>@{post.profile?.handle}</b>
                         </StyledLink>
                         <StyledTime to={`/post/${post.id}`}>{moment(post.createdAt).fromNow()}</StyledTime>
                     </Header>
-                    {/* {post.metadata.media} */}
-                    {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <PostBody>{post.metadata.content}</PostBody>}
+                    <div className="hrefUnderline">
+                        {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <PostBody>{post.metadata.content}</PostBody>}
+                    </div>
                     {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
@@ -279,7 +280,9 @@ function Post({ post, wallet, lensHub, profileId }) {
 
                     {isCommunity && <MediaContainer>
                         <CommunityDisplay>
-                            <Avatar src={post.metadata?.cover?.original?.url}/>
+                            <Link to={`/post/${post.id}`}>
+                                <Avatar src={post.metadata?.cover?.original?.url}/>
+                            </Link>
                             <h2>{post.metadata?.name}</h2>
                             <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCta />
                         </CommunityDisplay>

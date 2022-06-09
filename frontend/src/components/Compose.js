@@ -437,10 +437,10 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 <PostPreview>
                     {description}
                 </PostPreview>
-                <b>How do you want your post to be viewed?</b>
-                <br />
-                <StyledButton onClick={handleSubmitGated}>Follower only</StyledButton>
-                <StyledButton onClick={handleSubmit}>Public</StyledButton>
+                {/* <b>How do you want your post to be viewed?</b> */}
+                {/* <br /> */}
+                {/* <StyledButton onClick={handleSubmitGated}>Follower only</StyledButton> */}
+                <StyledButton onClick={handleSubmit}>Post Publicly</StyledButton>
             </Modal>}
             <StyledCard>
                 <form onSubmit={handlePreview}>
