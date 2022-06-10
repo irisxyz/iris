@@ -88,8 +88,13 @@ const Columns = styled.div`
     justify-content: space-between;
 `;
 
-const Handle = styled.h1`
-    display: inline-block;
+const Name = styled.h1`
+    margin-bottom: 0;
+`;
+
+const Handle = styled.h3`
+    font-weight: normal;
+    margin: 0 0 1em 0;
 `;
 
 const Address = styled.code`
@@ -97,13 +102,11 @@ const Address = styled.code`
     border-radius: 100px;
     padding: 0.6em;
     background: white;
+    margin: 4em 0;
 `;
 
 const UserInfo = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 2em;
 `;
 
 const Opensea = styled.a`
@@ -319,15 +322,16 @@ function User({ wallet, lensHub, profileId }) {
                     <Columns>
                         <div>
                             <UserInfo>
+                                <Name>{profile.name}</Name>
                                 <Handle>@{params.handle}</Handle>
                                 <Address>{profile?.address}</Address>
-                                <Opensea
+                                {/* <Opensea
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     href={`https://testnets.opensea.io/assets/mumbai/0x60ae865ee4c725cd04353b5aab364553f56cef82/${profile.decId}`}
                                 >
                                     <img src={opensea} alt="Opensea" />
-                                </Opensea>
+                                </Opensea> */}
                             </UserInfo>
                             <Stats>
                                 <p>{profile.stats?.totalFollowers} followers</p>
