@@ -8,6 +8,7 @@ const theme = {
     background: 'linear-gradient(90deg, #F4E1E4 12.82%, #FFE6DC 91.48%)',
     text: '#232323',
     textLight: '#fff',
+    darken: '#fffbf9',
     font: `'General Sans', sans-serif`,
     hrefUnderline: `
     display: inline-block;

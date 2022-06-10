@@ -12,7 +12,8 @@ function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
 
-    const handleClick = async () => {
+    const handleClick = async (e) => {
+        e.stopPropagation()
         const mirrorRequest = {
             profileId: profileId,
             publicationId: publicationId,
