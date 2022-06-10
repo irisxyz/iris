@@ -310,7 +310,6 @@ function User({ wallet, lensHub, profileId }) {
     //     );
     // }
 
-    console.log(profile)
     return (
         <>
             <StyledCard>

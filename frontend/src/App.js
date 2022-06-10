@@ -17,9 +17,9 @@ import Wallet from "./components/Wallet";
 import Compose from "./components/Compose";
 import Login from "./components/Login";
 import Feed from "./components/Feed";
-import Livelinks from "./components/Livelinks";
+// import Livelinks from "./components/Livelinks";
 import logo from "./assets/logo.svg";
-import LandingPage from './pages/LandingPage'
+// import LandingPage from './pages/LandingPage'
 
 const Container = styled.div`
     max-width: 1000px;
