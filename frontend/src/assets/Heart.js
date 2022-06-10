@@ -17,7 +17,7 @@ const Icon = ({ filled, ...props }) => {
             width="24"
             height="24"
             viewBox="0 0 32 32"
-            fill={filled ? "#F28A56" : "#00000000"}
+            fill={filled ? "#F28A56" : "#ffffff00"}
             xmlns="http://www.w3.org/2000/svg"
         >
             <Path
