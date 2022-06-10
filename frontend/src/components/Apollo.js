@@ -1,11 +1,12 @@
-import React from "react";
+import React from 'react'
 import {
   ApolloClient,
   ApolloLink,
   HttpLink,
   InMemoryCache,
   ApolloProvider,
-} from "@apollo/client";
+} from '@apollo/client'
+import { onError } from '@apollo/client/link/error'
 
 const httpLink = new HttpLink({
     uri: 'https://api.lens.dev/',
@@ -29,8 +30,18 @@ const authLink = new ApolloLink((operation, forward) => {
     return forward(operation);
 });
 
+// Reset state for unauthenticated users TODO: make this less sus, ie setProfile({}) instead of location.reload()
+const errorLink = onError(({ operation, graphQLErrors, forward }) => {
+  if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+    window.sessionStorage.removeItem('lensToken')
+    window.location.reload()
+    console.log('User token expired or was not authenticated')
+  }
+  return
+});
+
 export const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: ApolloLink.from([authLink, errorLink, httpLink]), // authLink.concat(errorLink).concat(httpLink),
   cache: new InMemoryCache(),
 });
 
