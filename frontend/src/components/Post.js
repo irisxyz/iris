@@ -16,18 +16,20 @@ import { Avatar } from './Profile'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
-export const StyledLink = styled(Link)`
+export const NameLink = styled(Link)`
     text-decoration: none;
-    font-weight: 600;
     color: black;
-    transition: all 50ms ease-in-out;
     &:hover {
-        color: ${(p) => p.theme.primary};
+        color: black;
     }
 `;
 
-const StyledTime = styled(StyledLink)`
-    font-weight: normal;
+const Underlined = styled.p`
+    color: black;
+    ${(p) => p.theme.hrefUnderline}
+    &:hover {
+        color: ${(p) => p.theme.primaryHover}
+    }
 `
 
 const Icon = styled(UserIcon)`
@@ -58,7 +60,7 @@ const Header = styled.div`
 `
 
 const Content = styled.div`
-    padding-top: 4px;
+    margin-top: -4px;
     width: 100%;
 `;
 
@@ -113,6 +115,10 @@ const CommunityDisplay = styled.div`
     background: linear-gradient(144deg, rgba(168,73,231,1) 0%, rgba(255,108,108,1) 50%, rgba(255,176,64,1) 100%);
 `
 
+const A = styled.a`
+    ${(p) => p.theme.hrefUnderline}
+`
+
 const chain = "mumbai";
 
 const random = () => {
@@ -122,8 +128,8 @@ const random = () => {
 const PostBody = ({ children }) => {
     // Match URLs
     let replacedText = reactStringReplace(children, /(https?:\/\/\S+)/g, (match, i) => {
-        if (match.length > 50) return <a key={random() + match + i} href={match} target="_blank" rel="noopener noreferrer">{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</a>
-        return <a key={random() + match + i} href={match} target="_blank" rel="noopener noreferrer">{match}</a>
+        if (match.length > 50) return <A key={random() + match + i} href={match} target="_blank" rel="noopener noreferrer">{match.substring(0,30)}...{match.substring(match.length-24,match.length-1)}</A>
+        return <A key={random() + match + i} href={match} target="_blank" rel="noopener noreferrer">{match}</A>
     });
 
     // Match newlines
@@ -133,17 +139,17 @@ const PostBody = ({ children }) => {
       
     // Match @xyz.lens-mentions
     replacedText = reactStringReplace(replacedText, /@(\w+\.lens)/g, (match, i) => (
-        <a key={random() + match + i} href={`/user/${match}`}>@{match}</a>
+        <A key={random() + match + i} href={`/user/${match}`}>@{match}</A>
     ));
       
     // Match @xyz-mentions
     replacedText = reactStringReplace(replacedText, /@(\w+)/g, (match, i) => (
-        <a key={random() + match + i} href={`/user/${match}`}>@{match}</a>
+        <A key={random() + match + i} href={`/user/${match}`}>@{match}</A>
     ));
 
     // Match hashtags
     replacedText = reactStringReplace(replacedText, /#(\w+)/g, (match, i) => (
-      <a key={random() + match + i} href={`/#`}>#{match}</a>
+      <A key={random() + match + i} href={`/#`}>#{match}</A>
     ));
 
     return <>{ replacedText }</>
@@ -249,13 +255,14 @@ function Post({ post, wallet, lensHub, profileId }) {
                 </Link>
                 <Content>
                     {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
-                    <Header className="hrefUnderline">
-                        <StyledLink to={`/user/${post.profile?.handle}`}>
-                            <b>@{post.profile?.handle}</b>
-                        </StyledLink>
-                        <StyledTime to={`/post/${post.id}`}>{moment(post.createdAt).fromNow()}</StyledTime>
+                    <Header>
+                        <NameLink to={`/user/${post.profile?.handle}`}>
+                            <Underlined to={`/user/${post.profile?.handle}`}><b>{post.profile?.name || post.profile.handle}</b></Underlined>
+                            {' '}@{post.profile?.handle}
+                        </NameLink>
+                        <Link to={`/post/${post.id}`}><Underlined>{moment(post.createdAt).fromNow()}</Underlined></Link>
                     </Header>
-                    <div className="hrefUnderline">
+                    <div>
                         {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <PostBody>{post.metadata.content}</PostBody>}
                     </div>
                     {/* {post.metadata.media.length ? <video width="500px" controls>
