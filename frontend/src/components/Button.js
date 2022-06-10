@@ -18,6 +18,13 @@ const Button = styled.button`
         box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #D25D38;
         outline: none;
     }
+    :disabled {
+        opacity: 35%;
+        cursor: inherit;
+    }
+    :disabled:hover {
+        background: ${(p) => p.theme.primary};
+    }
 `;
 
 
