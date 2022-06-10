@@ -14,7 +14,8 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
     const [savedTypedData, setSavedTypedData] = useState({})
     const [apiError, setApiError] = useState('')
 
-    const handleClick = async () => {
+    const handleClick = async (e) => {
+        e.stopPropagation()
         const collectReq = {
             publicationId: publicationId,
         };

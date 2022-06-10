@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_PUBLICATION, GET_PUBLICATIONS, HAS_COLLECTED } from '../utils/queries'
 import PostComponent from '../components/Post'
+import Compose from '../components/Compose'
 
 function Post({ wallet, lensHub, profileId }) {
     let params = useParams();
@@ -94,6 +95,7 @@ function Post({ wallet, lensHub, profileId }) {
         <>
             {notFound && <h3>No Post Found</h3>}
             {publication.metadata && <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />}
+            <Compose wallet={wallet} profileId={profileId} lensHub={lensHub} cta='Comment' placeholder='Type your comment' replyTo={params.postId} />
             {comments.length > 0 && <h3>Comments</h3>}
             {comments.map((post) => {
                 return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;

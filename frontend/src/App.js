@@ -17,9 +17,9 @@ import Wallet from "./components/Wallet";
 import Compose from "./components/Compose";
 import Login from "./components/Login";
 import Feed from "./components/Feed";
-import Livelinks from "./components/Livelinks";
+// import Livelinks from "./components/Livelinks";
 import logo from "./assets/logo.svg";
-import LandingPage from './pages/LandingPage'
+// import LandingPage from './pages/LandingPage'
 
 const Container = styled.div`
     max-width: 1000px;
@@ -109,7 +109,7 @@ function App() {
                                     element={
                                         <div>
                                             {/* <Livelinks wallet={wallet} /> */}
-                                            {profile && profile.__typename && <Compose wallet={wallet} profile={profile} lensHub={lensHub} />}
+                                            {profile && profile.__typename && <Compose wallet={wallet} profileId={profile.id} lensHub={lensHub} />}
                                             <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                                         </div>
                                     }

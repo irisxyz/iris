@@ -10,7 +10,7 @@ import LitJsSdk from 'lit-js-sdk'
 import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
-import { CREATE_POST_TYPED_DATA, BROADCAST } from '../utils/queries'
+import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 
 
@@ -19,7 +19,7 @@ const client = create('https://ipfs.infura.io:5001/api/v0')
 const StyledCard = styled(Card)`
     width: 100%;
     display: inline-block;
-    margin-bottom: 2em;
+    margin-bottom: 1em;
 `
 
 const TextArea = styled.textarea`
@@ -102,10 +102,19 @@ const StyledButton = styled(Button)`
 
 const chain = 'mumbai'
 
-const Compose = ({ wallet, profile, lensHub }) => {
+const Compose = ({
+    wallet,
+    profileId,
+    lensHub,
+    cta,
+    placeholder,
+    replyTo,
+    }) => {
+        
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
+    const [mutateCommentTypedData, typedCommentData] = useMutation(CREATE_COMMENT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
     const [showModal, setShowModal] = useState(false)
@@ -160,7 +169,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     }
 
     const handleSubmitGated = async () => {
-        const id = profile.id.replace('0x', '')
+        const id = profileId.replace('0x', '')
         if (!description) return;
         console.log({ id, name, description })
 
@@ -249,7 +258,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
         }))
 
         const createPostRequest = {
-            profileId: profile.id,
+            profileId: profileId,
             contentURI: 'ipfs://' + postIpfsRes.path,
             collectModule: {
                 freeCollectModule: { followerOnly: false },
@@ -267,9 +276,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
     }
 
     const handleSubmit = async () => {
-        const id = profile.id.replace('0x', '')
         if (!description) return;
-        // console.log({ id, name, description })
 
         var ipfsResult = "";
 
@@ -313,9 +320,7 @@ const Compose = ({ wallet, profile, lensHub }) => {
             // }))
 
         } else {
-
             // For Only Text Post
-
             ipfsResult = await client.add(JSON.stringify({
                 name,
                 description,
@@ -329,63 +334,80 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 media: [],
                 metadata_id: uuidv4(),
             }))
-
-
         }
 
-        const createPostRequest = {
-            profileId: profile.id,
-            contentURI: 'ipfs://' + ipfsResult.path,
-            collectModule: {
-                freeCollectModule: { 
-                    followerOnly: false 
+        if(replyTo) {
+            const createCommentRequest  = {
+                profileId: profileId,
+                publicationId: replyTo,
+                contentURI: 'ipfs://' + ipfsResult.path,
+                collectModule: {
+                    freeCollectModule: { 
+                        followerOnly: false 
+                    },
                 },
-            },
-            referenceModule: {
-                followerOnlyReferenceModule: false,
-            },
-        };
+                referenceModule: {
+                    followerOnlyReferenceModule: false,
+                },
+            };
+    
+            mutateCommentTypedData({
+                variables: {
+                    request: createCommentRequest ,
+                }
+            })
+        } else {
+            const createPostRequest = {
+                profileId: profileId,
+                contentURI: 'ipfs://' + ipfsResult.path,
+                collectModule: {
+                    freeCollectModule: { 
+                        followerOnly: false
+                    },
+                },
+                referenceModule: {
+                    followerOnlyReferenceModule: false,
+                },
+            };
+    
+            mutatePostTypedData({
+                variables: {
+                    request: createPostRequest,
+                }
+            })
+        }
 
-        mutatePostTypedData({
-            variables: {
-                request: createPostRequest,
-            }
-        })
     }
 
     useEffect(() => {
-        if (!typedPostData.data) return;
-
-        const processPost = async () => {
-
-            const typedData = typedPostData.data.createPostTypedData.typedData
-            
-            const { domain, types, value } = typedData
+        const processPost = async (data) => {
+            const { domain, types, value } = data.typedData
 
             const signature = await wallet.signer._signTypedData(
                 omitDeep(domain, '__typename'),
                 omitDeep(types, '__typename'),
-                omitDeep(value, '__typename')
+                omitDeep(value, '__typename'),
             )
 
             setSavedTypedData({
-                ...typedData,
-                signature
+                ...data.typedData,
+                signature,
             })
 
             broadcast({
                 variables: {
                     request: {
-                        id: typedPostData.data.createPostTypedData.id,
-                        signature
+                        id: data.id,
+                        signature,
                     }
                 }
             })
 
         }
-        processPost()
+        if (typedPostData.data) processPost(typedPostData.data.createPostTypedData);
+        else if (typedCommentData.data) processPost(typedCommentData.data.createCommentTypedData);
 
-    }, [typedPostData.data])
+    }, [typedPostData.data, typedCommentData.data])
 
     useEffect(() => {
         if (!broadcastData.data) return;
@@ -446,12 +468,12 @@ const Compose = ({ wallet, profile, lensHub }) => {
                 <form onSubmit={handlePreview}>
                     <TextArea
                         value={description}
-                        placeholder="What's happening?"
+                        placeholder={placeholder || 'What\'s blooming?'}
                         height={5}
                         onChange={e => setDescription(e.target.value)}
                     />
                 </form>
-                {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>Plant</Button>}
+                {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</Button>}
 
                 {/* <input
                 type="file"

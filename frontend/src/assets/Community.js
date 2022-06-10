@@ -3,6 +3,7 @@ import styled from "styled-components";
 const SVG = styled.svg`
     path {
         stroke: #747c90;
+        ${(p) => p.filled && `stroke: #F28A56;`}
         stroke-width: 3px;
         transition: all 100ms ease-in-out;
     }
