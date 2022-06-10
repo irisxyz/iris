@@ -18,9 +18,6 @@ const Icon = styled.div`
     width: 100px;
     border: #fff 4px solid;
     border-radius: 100px;
-    &:hover {
-        cursor: pointer;
-    }
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +69,7 @@ const Live = styled.span`
 const Cover = styled.div`
     width: 100%;
     height: 200px;
-    background: url(${rainbow});
+    background: url(${p => p.src || rainbow});
     background-size: cover;
     border-radius: 16px 15px 0 0;
 `;
@@ -313,10 +310,11 @@ function User({ wallet, lensHub, profileId }) {
     //     );
     // }
 
+    console.log(profile)
     return (
         <>
             <StyledCard>
-                <Cover />
+                <Cover src={profile.coverPicture?.original?.url} />
                 <CardContent>
                     <Icon href={profile.picture?.original?.url}/>
                     <Columns>
