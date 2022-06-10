@@ -468,7 +468,7 @@ const Compose = ({
                 <form onSubmit={handlePreview}>
                     <TextArea
                         value={description}
-                        placeholder={placeholder || 'What\'s happening?'}
+                        placeholder={placeholder || 'What\'s blooming?'}
                         height={5}
                         onChange={e => setDescription(e.target.value)}
                     />
