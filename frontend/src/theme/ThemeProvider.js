@@ -9,6 +9,22 @@ const theme = {
     text: '#232323',
     textLight: '#fff',
     font: `'General Sans', sans-serif`,
+    hrefUnderline: `
+    display: inline-block;
+    &:after {
+        content: '';
+        display: block;
+        margin: auto;
+        height: 2px;
+        width: 0px;
+        background: transparent;
+        transition: width 150ms ease, background-color 150ms ease;
+    }
+    &:hover:after {
+        width: 100%;
+        background: #FF9C7D;
+    }
+    `,
 }
 
 
