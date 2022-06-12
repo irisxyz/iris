@@ -10,6 +10,9 @@ import LitJsSdk from 'lit-js-sdk'
 import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
+import EyeSlash from '../assets/EyeSlash'
+import Eye from '../assets/Eye'
+import EyeClosed from '../assets/EyeClosed'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 
@@ -91,13 +94,18 @@ const CustomLabel = styled.label`
     }
 `
 
-const InputWrapper = styled.div`
-    float: right;
+const Actions = styled.div`
+    display: flex;
+    align-items: center;
 `
 
 const StyledButton = styled(Button)`
     display: block;
     margin: 1em 0;
+`
+
+const PostButton = styled(Button)`
+    margin-left: auto;
 `
 
 const chain = 'mumbai'
@@ -473,7 +481,10 @@ const Compose = ({
                         onChange={e => setDescription(e.target.value)}
                     />
                 </form>
-                {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</Button>}
+                <Actions>
+                    <EyeSlash/>
+                {videoUploading ? <Button>Video Uploading...</Button> : <PostButton disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</PostButton>}
+                </Actions>
 
                 {/* <input
                 type="file"
