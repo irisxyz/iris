@@ -114,9 +114,17 @@ const VisibilitySelector = ({ showFollower, showCommunity, showCollector, select
             <Globe width="18" height="18"/>
             Public
         </>}
+        {selectedVisibility === 'follower' && <>
+            <Community width="18" height="18"/>
+            Follower
+        </>}
         {selectedVisibility === 'community' && <>
             <Community width="18" height="18"/>
             Community
+        </>}
+        {selectedVisibility === 'collector' && <>
+            <Community width="18" height="18"/>
+            Collector
         </>}
         <CaretDown filled/>
     </Container>
