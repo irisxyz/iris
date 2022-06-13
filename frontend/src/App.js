@@ -109,7 +109,7 @@ function App() {
                                     element={
                                         <div>
                                             {/* <Livelinks wallet={wallet} /> */}
-                                            {profile && profile.__typename && <Compose wallet={wallet} profileId={profile.id} lensHub={lensHub} />}
+                                            {profile && profile.__typename && <Compose wallet={wallet} profileId={profile.id} lensHub={lensHub} isPost/>}
                                             <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                                         </div>
                                     }
