@@ -111,10 +111,14 @@ const Compose = ({
     cta,
     placeholder,
     replyTo,
+    isPost,
+    isCommunity,
+    isComment,
     }) => {
         
     const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
+    const [selectedVisibility, setSelectedVisibility] = useState('public')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
     const [mutateCommentTypedData, typedCommentData] = useMutation(CREATE_COMMENT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
@@ -477,7 +481,12 @@ const Compose = ({
                 </form>
                 <Actions>
                     {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</Button>}
-                    <VisibilitySelector/>
+                    <VisibilitySelector
+                        showFollower={isPost}
+                        showCommunity={isCommunity}
+                        showCollector={isComment}
+                        selectedVisibility={selectedVisibility}
+                        setSelectedVisibility={setSelectedVisibility} />
                 </Actions>
 
                 {/* <input

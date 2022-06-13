@@ -4,7 +4,7 @@ const SVG = styled.svg`
     path {
         stroke: #747c90;
         ${(p) => p.filled && `stroke: #F28A56;`}
-        stroke-width: 3px;
+        stroke-width: 2.5px;
         transition: all 100ms ease-in-out;
     }
     transition: all 100ms ease-in-out;
@@ -19,7 +19,7 @@ const SVG = styled.svg`
 
 const Icon = ({ ...props }) => {
     return (
-        <SVG {...props} width="25" height="25" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <SVG width="25" height="25" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props} >
             <path
                 d="M11 20C14.5899 20 17.5 17.0899 17.5 13.5C17.5 9.91015 14.5899 7 11 7C7.41015 7 4.5 9.91015 4.5 13.5C4.5 17.0899 7.41015 20 11 20Z"
                 stroke="#8247E5"

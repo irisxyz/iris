@@ -10,6 +10,7 @@ function Post({ wallet, lensHub, profileId }) {
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)
     const [comments, setComments] = useState([]);
+    const [isCommunity, setIsCommunity] = useState(false)
 
     const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED)
     const [getPublication, publicationData] = useLazyQuery(GET_PUBLICATION)
@@ -33,6 +34,11 @@ function Post({ wallet, lensHub, profileId }) {
         };
 
         setPublication(publicationData.data.publication)
+        publicationData.data.publication.metadata?.attributes.forEach(attribute => {
+            if(attribute.value === 'community') {
+                setIsCommunity(true)
+            }
+        })
     }, [publicationData.data])
     
     useEffect(() => {
@@ -95,7 +101,16 @@ function Post({ wallet, lensHub, profileId }) {
         <>
             {notFound && <h3>No Post Found</h3>}
             {publication.metadata && <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />}
-            <Compose wallet={wallet} profileId={profileId} lensHub={lensHub} cta='Comment' placeholder='Type your comment' replyTo={params.postId} />
+            <Compose
+                wallet={wallet}
+                profileId={profileId}
+                lensHub={lensHub}
+                cta='Comment'
+                placeholder='Type your comment'
+                replyTo={params.postId}
+                isCommunity={isCommunity}
+                isComment={!isCommunity}
+            />
             {comments.length > 0 && <h3>Comments</h3>}
             {comments.map((post) => {
                 return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;

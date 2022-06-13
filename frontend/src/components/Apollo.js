@@ -32,7 +32,7 @@ const authLink = new ApolloLink((operation, forward) => {
 
 // Reset state for unauthenticated users TODO: make this less sus, ie setProfile({}) instead of location.reload()
 const errorLink = onError(({ operation, graphQLErrors, forward }) => {
-  if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+  if (graphQLErrors && graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
     window.sessionStorage.removeItem('lensToken')
     window.location.reload()
     console.log('User token expired or was not authenticated')

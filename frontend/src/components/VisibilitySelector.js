@@ -11,7 +11,7 @@ const StyledModal = styled(Modal)`
 
 const Container = styled.button`
     border: none;
-    font-family: ${(p) => p.theme.font};
+    font-family: ${p => p.theme.font};
     margin-left: auto;
     background: ${p => p.theme.darken2};
     padding: 0.4em 1em 0.4em 0.75em;
@@ -29,7 +29,7 @@ const Container = styled.button`
 
 const StyledButton = styled.button`
     background: none;
-    font-family: ${(p) => p.theme.font};
+    font-family: ${p => p.theme.font};
     font-size: 1em;
     text-align: left;
     b {
@@ -51,6 +51,13 @@ const StyledButton = styled.button`
             color: ${p=>p.theme.primary};
         }
     }
+    ${p => p.selected && `
+        border: ${p.theme.border};
+        cursor: pointer;
+        b {
+            color: ${p.theme.primary};
+        }
+    `}
 `
 
 const Span = styled.span`
@@ -59,30 +66,58 @@ const Span = styled.span`
     gap: 0.5em;
 `
 
-const VisibilitySelector = ({ selectedVisibility }) => {
+const VisibilitySelector = ({ showFollower, showCommunity, showCollector, selectedVisibility, setSelectedVisibility }) => {
     const [showModal, setShowModal] = useState(false)
 
     return <>
     {showModal && <StyledModal onExit={() => setShowModal(false)}>
         <h3>Post Visibility</h3>
-        <StyledButton>
+        <StyledButton
+            selected={selectedVisibility === 'public'}
+            onClick={() => setSelectedVisibility('public')}>
             <Span>
                 <Globe filled/>
                 <b>Public</b>
             </Span>
             <p>Everyone on the internet can view this post.</p>
         </StyledButton>
-        <StyledButton>
+        {showFollower && <StyledButton
+            selected={selectedVisibility === 'follower'}
+            onClick={() => setSelectedVisibility('follower')}>
+            <Span>
+                <Community filled/>
+                <b>Follower Only</b>
+            </Span>
+            <p>Only your followers can view this post.</p>
+        </StyledButton>}
+        {showCommunity && <StyledButton
+            selected={selectedVisibility === 'community'}
+            onClick={() => setSelectedVisibility('community')}>
             <Span>
                 <Community filled/>
                 <b>Community Only</b>
             </Span>
             <p>Only members of this community can view this post.</p>
-        </StyledButton>
+        </StyledButton>}
+        {showCollector && <StyledButton
+            selected={selectedVisibility === 'collector'}
+            onClick={() => setSelectedVisibility('collector')}>
+            <Span>
+                <Community filled/>
+                <b>Collector Only</b>
+            </Span>
+            <p>Only collectors of the post can view your comment.</p>
+        </StyledButton>}
     </StyledModal>}
     <Container onClick={() => setShowModal(true)}>
-        <Globe width="18" height="18"/>
-        Public
+        {selectedVisibility === 'public' && <>
+            <Globe width="18" height="18"/>
+            Public
+        </>}
+        {selectedVisibility === 'community' && <>
+            <Community width="18" height="18"/>
+            Community
+        </>}
         <CaretDown filled/>
     </Container>
     </>
