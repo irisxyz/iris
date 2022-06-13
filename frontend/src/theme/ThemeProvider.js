@@ -9,6 +9,7 @@ const theme = {
     text: '#232323',
     textLight: '#fff',
     darken: '#fffaf8',
+    darken2: '#FFF3EE',
     font: `'General Sans', sans-serif`,
     hrefUnderline: `
     display: inline-block;
