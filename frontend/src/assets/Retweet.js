@@ -18,7 +18,7 @@ const SVG = styled.svg`
 
 const Icon = ({ ...props }) => {
     return (
-        <SVG {...props} width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <SVG width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
                 d="M22.0254 12.4625H28.0254V6.46252"
                 stroke="#F28A56"

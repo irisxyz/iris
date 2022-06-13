@@ -7,12 +7,12 @@ import moment from 'moment'
 import reactStringReplace from 'react-string-replace'
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
-import Share from '../assets/Share'
 import Comment from './Comment'
 import Mirror from './Mirror'
 import Collect from './Collect'
 import Modal from './Modal'
 import { Avatar } from './Profile'
+import Retweet from '../assets/Retweet'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
@@ -128,6 +128,25 @@ const A = ({ children, ...props }) => {
     return <StyledA {...props} onClick={(e) => e.stopPropagation()}>{children}</StyledA>
 }
 
+const MirrorContainer = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5em;
+    gap: 4px;
+`
+
+const Supertext = styled.span`
+    font-size: 0.8em;
+    padding-bottom: 1px;
+`
+
+const Mirrored = ({ children }) => {
+    return <MirrorContainer>
+        <Retweet width='15px' height='15px' />
+        <Supertext>{children}</Supertext>
+    </MirrorContainer>
+}
+
 const chain = "mumbai";
 
 const random = () => {
@@ -164,10 +183,12 @@ const PostBody = ({ children }) => {
     return <>{ replacedText }</>
 }
 
-function Post({ post, wallet, lensHub, profileId }) {
+function Post({ wallet, lensHub, profileId, ...props }) {
     const [decryptedMsg, setDecryptedMsg] = useState("")
     const [showModal, setShowModal] = useState(false)
     const [selectedImage, setSelectedImage] = useState('')
+    const [post, setPost] = useState(props.post)
+    const [mirror, setMirror] = useState(null)
 
     const navigate = useNavigate()
 
@@ -189,6 +210,15 @@ function Post({ post, wallet, lensHub, profileId }) {
             yy: '%dY'
         }
     });
+
+    useEffect(() => {
+        if(props.post.__typename === 'Mirror') {
+            setPost(props.post.mirrorOf)
+            setMirror(props.post)
+        } else {
+            setPost(props.post)
+        }
+    }, [props.post])
 
     // useEffect(() => {
 
@@ -260,6 +290,7 @@ function Post({ post, wallet, lensHub, profileId }) {
             <ImageDisplay src={selectedImage} />
         </Modal>}
         <StyledCard onClick={() => navigate(`/post/${post.id}`)}>
+            {mirror && <Mirrored>mirrored by {mirror.profile?.name}</Mirrored>}
             <Container>
                 <Link to={`/user/${post.profile?.handle}`} onClick={(e) => e.stopPropagation()}>
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
