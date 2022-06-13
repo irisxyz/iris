@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.5.10",
+    "@coinbase/wallet-sdk": "^3.2.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "@walletconnect/web3-provider": "^1.7.8",
     "axios": "^0.26.1",
     "cross-fetch": "^3.1.5",
     "ethers": "^5.6.1",
@@ -25,7 +27,8 @@
     "react-string-replace": "^1.1.0",
     "styled-components": "^5.3.3",
     "uuid": "^8.3.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "web3modal": "^1.9.8"
   },
   "scripts": {
     "start": "react-scripts start",
