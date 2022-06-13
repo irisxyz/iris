@@ -10,11 +10,9 @@ import LitJsSdk from 'lit-js-sdk'
 import Button from './Button'
 import Card from './Card'
 import Modal from './Modal'
-import EyeSlash from '../assets/EyeSlash'
-import Eye from '../assets/Eye'
-import EyeClosed from '../assets/EyeClosed'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
+import VisibilitySelector from './VisibilitySelector'
 
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -49,7 +47,7 @@ const TextArea = styled.textarea`
     transition: all 100ms ease-in-out;
 
     &:focus {
-        background: #FFF3EE;
+        background: ${p => p.theme.darken2};
     }
 `
 
@@ -102,10 +100,6 @@ const Actions = styled.div`
 const StyledButton = styled(Button)`
     display: block;
     margin: 1em 0;
-`
-
-const PostButton = styled(Button)`
-    margin-left: auto;
 `
 
 const chain = 'mumbai'
@@ -482,8 +476,8 @@ const Compose = ({
                     />
                 </form>
                 <Actions>
-                    <EyeSlash/>
-                {videoUploading ? <Button>Video Uploading...</Button> : <PostButton disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</PostButton>}
+                    {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</Button>}
+                    <VisibilitySelector/>
                 </Actions>
 
                 {/* <input

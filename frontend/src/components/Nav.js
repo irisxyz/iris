@@ -14,7 +14,7 @@ display: flex;
 align-items: center;
 gap: 12px;
 p {
-    padding-top: 2px;
+    padding-top: 1px;
     font-weight: 600;
     display: inline;
     color: black;
@@ -22,7 +22,7 @@ p {
 }
 
 padding: .5em;
-transition: all 100ms ease-in-out;
+transition: all 150ms ease-in-out;
 border-radius: 12px;
 border: 2px solid transparent;
 &:hover {
