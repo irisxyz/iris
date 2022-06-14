@@ -228,9 +228,8 @@ function Post({ wallet, lensHub, profileId, ...props }) {
         if (!wallet.signer) return;
 
         const decode = async () => {
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 100));
             
-            // TODO: fix lit protocol code
             if (post.appId === "iris super") {
                 const encryptedPostRaw = post.metadata?.attributes?.filter((attr) => attr.traitType === 'Encoded Post Data')[0].value
                 const encryptedPost = JSON.parse(encryptedPostRaw);
