@@ -67,7 +67,7 @@ const Content = styled.div`
 const Premium = styled.div`
     right: 0;
     position: absolute;
-    background: #ece8ff;
+    background: ${p=>p.theme.darken2};
     border-radius: 100px;
     padding: 0.2em 1em;
     font-weight: 500;
@@ -220,57 +220,54 @@ function Post({ wallet, lensHub, profileId, ...props }) {
         }
     }, [props.post])
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     const decode = async () => {
-    //         await new Promise(r => setTimeout(r, 500));
+        if (!wallet.signer) return;
+
+        const decode = async () => {
+            await new Promise(r => setTimeout(r, 500));
             
-    //         // TODO: fix lit protocol code
-    //         if (post.metadata.description === "litcode}") {
-    //             const encryptedPost = JSON.parse(post.metadata.content.replace("litcoded: ", ""));
+            // TODO: fix lit protocol code
+            if (post.appId === "iris super") {
+                const encryptedPostRaw = post.metadata?.attributes?.filter((attr) => attr.traitType === 'Encoded Post Data')[0].value
+                const encryptedPost = JSON.parse(encryptedPostRaw);
+                console.log(encryptedPost)
     
-    //             const accessControlConditions = [
-    //                 {
-    //                     contractAddress: encryptedPost.contract,
-    //                     standardContractType: "ERC721",
-    //                     chain,
-    //                     method: "balanceOf",
-    //                     parameters: [":userAddress"],
-    //                     returnValueTest: {
-    //                         comparator: ">",
-    //                         value: "0",
-    //                     },
-    //                 },
-    //             ];
+                const isthisblob = client.cat(encryptedPost.blobPath);
+                let newEcnrypt;
+                (async () => {
+                    // const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+                    const sig = await wallet.signer?.signMessage('Enable lit protocol on iris')
+                    console.log(sig)
     
-    //             const isthisblob = client.cat(encryptedPost.blobPath);
-    //             let newEcnrypt;
-    //             (async () => {
-    //                 const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+                    for await (const chunk of isthisblob) {
+                        newEcnrypt = new Blob([chunk], {
+                            type: "encryptedString.type", // or whatever your Content-Type is
+                        });
+                    }
+                    const key = await window.litNodeClient.getEncryptionKey({
+                        accessControlConditions: encryptedPost.accessControlConditions,
+                        // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+                        toDecrypt: encryptedPost.key,
+                        chain,
+                        authSig: {
+                            sig,
+                            derivedVia: 'ethers.signer.signMessage',
+                            signedMessage: 'Enable lit protocol on iris',
+                            address: wallet.address,
+                        },
+                    });
     
-    //                 for await (const chunk of isthisblob) {
-    //                     newEcnrypt = new Blob([chunk], {
-    //                         type: "encryptedString.type", // or whatever your Content-Type is
-    //                     });
-    //                 }
-    //                 const key = await window.litNodeClient.getEncryptionKey({
-    //                     accessControlConditions,
-    //                     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
-    //                     toDecrypt: encryptedPost.key,
-    //                     chain,
-    //                     authSig,
-    //                 });
+                    const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
     
-    //                 const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
-    
-    //                 setDecryptedMsg(decryptedString);
-    //             })();
-    //         }
+                    setDecryptedMsg(decryptedString);
+                })();
+            }
 
-    //     }
+        }
 
-    //     decode()
-    // }, []);
+        decode()
+    }, [wallet.signer]);
     
     const handleImageClick = (media) => {
         setShowModal(true)
@@ -285,8 +282,6 @@ function Post({ wallet, lensHub, profileId, ...props }) {
         }
     })
 
-    console.log(post)
-
     return <>
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
             <ImageDisplay src={selectedImage} />
@@ -298,7 +293,7 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
                 <Content>
-                    {post.metadata.description === "litcoded}" && <Premium>Followers Only</Premium>}
+                    {post.appId === "iris super" && <Premium>Followers Only</Premium>}
                     <Header>
                         <NameLink to={`/user/${post.profile?.handle}`} onClick={(e) => e.stopPropagation()}>
                             <Underlined to={`/user/${post.profile?.handle}`}><b>{post.profile?.name || post.profile.handle}</b></Underlined>
@@ -307,7 +302,7 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                         <Link to={`/post/${post.id}`}><Underlined>{moment(post.createdAt).fromNow()}</Underlined></Link>
                     </Header>
                     <div>
-                        {post.metadata.description === "litcoded}" ? <p>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</p> : <PostBody>{post.metadata.content}</PostBody>}
+                        {post.appId === "iris super" ? <>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
                     </div>
                     {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />

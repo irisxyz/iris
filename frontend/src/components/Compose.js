@@ -8,7 +8,7 @@ import Button from './Button'
 import Card from './Card'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
-import { handleCompose } from '../utils/compose'
+import { handleCompose } from '../utils/litIntegration'
 import VisibilitySelector from './VisibilitySelector'
 
 const StyledCard = styled(Card)`
