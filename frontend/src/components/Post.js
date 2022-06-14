@@ -290,7 +290,7 @@ function Post({ wallet, lensHub, profileId, ...props }) {
             <ImageDisplay src={selectedImage} />
         </Modal>}
         <StyledCard onClick={() => navigate(`/post/${post.id}`)}>
-            {mirror && <Mirrored>mirrored by {mirror.profile?.name}</Mirrored>}
+            {mirror && <Mirrored>mirrored by {mirror.profile?.name || mirror.profile?.handle}</Mirrored>}
             <Container>
                 <Link to={`/user/${post.profile?.handle}`} onClick={(e) => e.stopPropagation()}>
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
