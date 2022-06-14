@@ -3,19 +3,13 @@ import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
-import { v4 as uuidv4 } from 'uuid';
-import { create } from 'ipfs-http-client'
-import LitJsSdk from 'lit-js-sdk'
 
 import Button from './Button'
 import Card from './Card'
-import Modal from './Modal'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
+import { handleCompose } from '../utils/compose'
 import VisibilitySelector from './VisibilitySelector'
-
-
-const client = create('https://ipfs.infura.io:5001/api/v0')
 
 const StyledCard = styled(Card)`
     width: 100%;
@@ -125,18 +119,11 @@ const Compose = ({
     const [showModal, setShowModal] = useState(false)
     const [showError, setShowError] = useState(false)
 
-    const handlePreview = async () => {
-        if (!description) return;
-        setShowModal(true)
-        // console.log({ name, description, profile })
-    }
-
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [video, setVideo] = useState("")
     const [videoNftMetadata, setVideoNftMetadata] = useState({})
-
 
     const videoUpload = async () => {
         setVideoUploading(true)
@@ -174,113 +161,7 @@ const Compose = ({
     }
 
     const handleSubmit = async () => {
-        if (!description) return;
-
-        let ipfsResult = '';
-        const attributes = [];
-        const metadata = {
-            name: `post by ${profileName}`,
-            description,
-            content: description,
-            external_url: null,
-            image: null,
-            imageMimeType: null,
-            version: "1.0.0",
-            appId: 'iris',
-            attributes,
-            media: [],
-            metadata_id: uuidv4(),
-        }
-        
-        switch(selectedVisibility) {
-            case 'follower':
-                attributes.push({
-                    traitType: 'Encoded Post Data',
-                    value: '',
-                });
-                break;
-            case 'collector':
-                attributes.push({
-                    traitType: 'Encoded Post Data',
-                    value: '',
-                });
-                break;
-            case 'community':
-                attributes.push({
-                    traitType: 'Encoded Post Data',
-                    value: '',
-                });
-                break;
-            default:
-        }
-
-        if (videoNftMetadata.animation_url) {
-            // For video
-            ipfsResult = await client.add(JSON.stringify({
-                name: videoNftMetadata["name"],
-                description,
-                content: description,
-                external_url: null,
-                // image: null,
-                image: videoNftMetadata["image"],
-                imageMimeType: null,
-                version: "1.0.0",
-                appId: 'iris',
-                attributes: [],
-                media: [{
-                    item: videoNftMetadata["animation_url"],
-                    type: "video/mp4"
-                }],
-                metadata_id: uuidv4(),
-            }))
-
-        } else {
-            // For Only Text Post
-            console.log(metadata)
-            ipfsResult = await client.add(JSON.stringify(metadata))
-        }
-
-        if(replyTo) {
-            const createCommentRequest  = {
-                profileId: profileId,
-                publicationId: replyTo,
-                contentURI: 'ipfs://' + ipfsResult.path,
-                collectModule: {
-                    freeCollectModule: { 
-                        followerOnly: false 
-                    },
-                },
-                referenceModule: {
-                    followerOnlyReferenceModule: false,
-                },
-            };
-    
-            mutateCommentTypedData({
-                variables: {
-                    request: createCommentRequest ,
-                }
-            })
-        } else {
-            const createPostRequest = {
-                profileId: profileId,
-                contentURI: 'ipfs://' + ipfsResult.path,
-                collectModule: {
-                    freeCollectModule: { 
-                        followerOnly: false
-                    },
-                },
-                referenceModule: {
-                    followerOnlyReferenceModule: false,
-                },
-            };
-    
-            mutatePostTypedData({
-                variables: {
-                    request: createPostRequest,
-                }
-            })
-        }
-
+        await handleCompose(description, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData)
     }
 
     useEffect(() => {
@@ -359,14 +240,12 @@ const Compose = ({
     return (
         <>
             <StyledCard>
-                <form onSubmit={handlePreview}>
-                    <TextArea
-                        value={description}
-                        placeholder={placeholder || 'What\'s blooming?'}
-                        height={5}
-                        onChange={e => setDescription(e.target.value)}
-                    />
-                </form>
+                <TextArea
+                    value={description}
+                    placeholder={placeholder || 'What\'s blooming?'}
+                    height={5}
+                    onChange={e => setDescription(e.target.value)}
+                />
                 <Actions>
                     {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
                     <VisibilitySelector
