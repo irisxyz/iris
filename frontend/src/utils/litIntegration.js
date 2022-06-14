@@ -116,12 +116,9 @@ export const handleSubmitGated = async (description, profileId, profileName, mut
 }
 
 const getEncodedMetadata = async (params) => {
-    const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData} = params
-
-    // const contract = new ethers.Contract('0x60Ae865ee4C725cd04353b5AAb364553f56ceF82', LensHub, wallet.signer)
+    const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo} = params
     const followNFTAddr = await lensHub.getFollowNFT(profileId);
-    // console.log(followNFTAddr)
-
+    
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
         description
     );
@@ -142,13 +139,7 @@ const getEncodedMetadata = async (params) => {
         }
     ]
 
-    console.log(accessControlConditions)
-    console.log(wallet)
-
-    // const sig = await wallet.signer.signMessage('Enable lit protocol on iris')
-    // console.log(sig)
     const authSig = JSON.parse(window.sessionStorage.getItem('signature'))
-    console.warn(authSig)
 
     const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
         accessControlConditions,
