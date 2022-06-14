@@ -5,7 +5,7 @@ import Home from '../assets/Home'
 import Profile from '../assets/Profile'
 import Subscriptions from '../assets/Subscriptions'
 import Compass from '../assets/Compass'
-import Share from '../assets/Share'
+import Share from '../assets/Logout'
 import Heart from '../assets/Heart'
 
 const StyledLink = styled(Link)`
