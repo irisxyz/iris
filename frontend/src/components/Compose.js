@@ -107,6 +107,7 @@ const chain = 'mumbai'
 const Compose = ({
     wallet,
     profileId,
+    profileName,
     lensHub,
     cta,
     placeholder,
@@ -115,8 +116,6 @@ const Compose = ({
     isCommunity,
     isComment,
     }) => {
-        
-    const [name, setName] = useState('title')
     const [description, setDescription] = useState('')
     const [selectedVisibility, setSelectedVisibility] = useState('public')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
@@ -174,120 +173,48 @@ const Compose = ({
 
     }
 
-    const handleSubmitGated = async () => {
-        const id = profileId.replace('0x', '')
+    const handleSubmit = async () => {
         if (!description) return;
-        console.log({ id, name, description })
 
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
-
-        const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
-            description
-        );
-
-        const accessControlConditions = [
-            {
-                contractAddress: '0xdde7691b609fC36A59Bef8957B5A1F9164cB24d2',
-                standardContractType: 'ERC721',
-                chain,
-                method: 'balanceOf',
-                parameters: [
-                    ':userAddress',
-                ],
-                returnValueTest: {
-                    comparator: '>',
-                    value: '0'
-                }
-            }
-        ]
-
-        const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
-            accessControlConditions,
-            symmetricKey,
-            authSig,
-            chain,
-        });
-
-
-        const blobString = await encryptedString.text()
-        console.log(JSON.stringify(encryptedString))
-        console.log(encryptedString)
-        const newBlob = new Blob([blobString], {
-            type: encryptedString.type // or whatever your Content-Type is
-        });
-        console.log(newBlob)
-        console.log(LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"))
-
-        const ipfsResult = await client.add(encryptedString)
-
-        // const isthisblob = client.cat(ipfsResult.path)
-        // let newEcnrypt;
-        // for await (const chunk of isthisblob) {
-        //     newEcnrypt = new Blob([chunk], {
-        //         type: encryptedString.type // or whatever your Content-Type is
-        //       })
-        // }
-
-        // const key = await window.litNodeClient.getEncryptionKey({
-        //     accessControlConditions,
-        //     // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
-        //     toDecrypt: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
-        //     chain,
-        //     authSig
-        //   })
-
-        //   const decryptedString = await LitJsSdk.decryptString(
-        //     newEcnrypt,
-        //     key
-        //   );
-
-        //   console.log(decryptedString)
-
-        const encryptedPost = {
-            key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
-            blobPath: ipfsResult.path,
-            contract: '0xdde7691b609fC36A59Bef8957B5A1F9164cB24d2'
-        }
-
-        const postIpfsRes = await client.add(JSON.stringify({
-            name,
-            description: `litcoded}`,
-            content: `${JSON.stringify(encryptedPost)}`,
+        let ipfsResult = '';
+        const attributes = [];
+        const metadata = {
+            name: `post by ${profileName}`,
+            description,
+            content: description,
             external_url: null,
             image: null,
             imageMimeType: null,
             version: "1.0.0",
             appId: 'iris',
-            attributes: [],
+            attributes,
             media: [],
             metadata_id: uuidv4(),
-        }))
-
-        const createPostRequest = {
-            profileId: profileId,
-            contentURI: 'ipfs://' + postIpfsRes.path,
-            collectModule: {
-                freeCollectModule: { followerOnly: false },
-            },
-            referenceModule: {
-                followerOnlyReferenceModule: false,
-            },
-        };
-
-        mutatePostTypedData({
-            variables: {
-                request: createPostRequest,
-            }
-        })
-    }
-
-    const handleSubmit = async () => {
-        if (!description) return;
-
-        var ipfsResult = "";
+        }
+        
+        switch(selectedVisibility) {
+            case 'follower':
+                attributes.push({
+                    traitType: 'Encoded Post Data',
+                    value: '',
+                });
+                break;
+            case 'collector':
+                attributes.push({
+                    traitType: 'Encoded Post Data',
+                    value: '',
+                });
+                break;
+            case 'community':
+                attributes.push({
+                    traitType: 'Encoded Post Data',
+                    value: '',
+                });
+                break;
+            default:
+        }
 
         if (videoNftMetadata.animation_url) {
-
             // For video
             ipfsResult = await client.add(JSON.stringify({
                 name: videoNftMetadata["name"],
@@ -306,40 +233,11 @@ const Compose = ({
                 }],
                 metadata_id: uuidv4(),
             }))
-            // Sample file of a what it should look like
-            // ipfsResult = await client.add(JSON.stringify({
-            //     name,
-            //     description,
-            //     content: description,
-            //     external_url: null,
-            //     // image: null,
-            //     image: "ipfs://bafkreidmlgpjoxgvefhid2xjyqjnpmjjmq47yyrcm6ifvoovclty7sm4wm",
-            //     imageMimeType: null,
-            //     version: "1.0.0",
-            //     appId: 'iris',
-            //     attributes: [],
-            //     media: [{
-            //         item: "ipfs://QmPUwFjbapev1rrppANs17APcpj8YmgU5ThT1FzagHBxm7",
-            //         type: "video/mp4"
-            //     }],
-            //     metadata_id: uuidv4(),
-            // }))
 
         } else {
             // For Only Text Post
-            ipfsResult = await client.add(JSON.stringify({
-                name,
-                description,
-                content: description,
-                external_url: null,
-                image: null,
-                imageMimeType: null,
-                version: "1.0.0",
-                appId: 'iris',
-                attributes: [],
-                media: [],
-                metadata_id: uuidv4(),
-            }))
+            console.log(metadata)
+            ipfsResult = await client.add(JSON.stringify(metadata))
         }
 
         if(replyTo) {
@@ -470,7 +368,7 @@ const Compose = ({
                     />
                 </form>
                 <Actions>
-                    {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Plant'}</Button>}
+                    {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
                     <VisibilitySelector
                         showFollower={isPost}
                         showCommunity={isCommunity}

@@ -109,7 +109,7 @@ function App() {
                                     element={
                                         <div>
                                             {/* <Livelinks wallet={wallet} /> */}
-                                            {profile && profile.__typename && <Compose wallet={wallet} profileId={profile.id} lensHub={lensHub} isPost/>}
+                                            {profile && profile.__typename && <Compose wallet={wallet} profileId={profile.id} profileName={profile.name || profile.handle} lensHub={lensHub} isPost/>}
                                             <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
                                         </div>
                                     }
@@ -120,7 +120,7 @@ function App() {
                                     <Route path=":handle" element={<User wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
                                 </Route>
                                 <Route path="post" element={<Outlet />}>
-                                    <Route path=":postId" element={<Post wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
+                                    <Route path=":postId" element={<Post wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} profileName={profile && (profile.name || profile.handle)}  />} />
                                 </Route>
                                 <Route path="*" element={<NotFound />} />
                             </Routes>

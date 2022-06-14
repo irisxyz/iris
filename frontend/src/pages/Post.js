@@ -5,7 +5,7 @@ import { GET_PUBLICATION, GET_PUBLICATIONS, HAS_COLLECTED } from '../utils/queri
 import PostComponent from '../components/Post'
 import Compose from '../components/Compose'
 
-function Post({ wallet, lensHub, profileId }) {
+function Post({ wallet, lensHub, profileId, profileName }) {
     let params = useParams();
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)
@@ -104,6 +104,7 @@ function Post({ wallet, lensHub, profileId }) {
             <Compose
                 wallet={wallet}
                 profileId={profileId}
+                profileName={profileName} 
                 lensHub={lensHub}
                 cta='Comment'
                 placeholder='Type your comment'
