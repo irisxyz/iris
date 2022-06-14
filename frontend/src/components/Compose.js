@@ -45,18 +45,6 @@ const TextArea = styled.textarea`
     }
 `
 
-const Header = styled.h2`
-    margin: 0;
-    color: ${p => p.theme.primary};
-`
-
-const PostPreview = styled.div`
-    background: #FFF3EE;
-    border-radius: 12px;
-    padding: 1em;
-    margin: 1em 0;
-`
-
 const FileInput = styled.input`
     opacity: 0;
     width: 0.1px;
@@ -91,13 +79,6 @@ const Actions = styled.div`
     align-items: center;
 `
 
-const StyledButton = styled(Button)`
-    display: block;
-    margin: 1em 0;
-`
-
-const chain = 'mumbai'
-
 const Compose = ({
     wallet,
     profileId,
@@ -117,7 +98,6 @@ const Compose = ({
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
     const [showModal, setShowModal] = useState(false)
-    const [showError, setShowError] = useState(false)
 
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
@@ -161,7 +141,7 @@ const Compose = ({
     }
 
     const handleSubmit = async () => {
-        await handleCompose(description, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData)
+        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
     }
 
     useEffect(() => {
