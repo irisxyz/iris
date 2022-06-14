@@ -97,8 +97,6 @@ function Post({ wallet, lensHub, profileId, profileName }) {
 
     }, [hasCollectedData.data]);
 
-    console.log(publication)
-
     return (
         <>
             {notFound && <h3>No Post Found</h3>}

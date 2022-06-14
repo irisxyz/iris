@@ -154,7 +154,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
           appName: "iris", // Required
           infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
           rpc: "", // Optional if `infuraId` is provided; otherwise it's required
-          chainId: 1, // Optional. It defaults to 1 if not provided
+          chainId: 137, // Optional. It defaults to 1 if not provided
           darkMode: false // Optional. Use dark theme, defaults to false
         }
       },

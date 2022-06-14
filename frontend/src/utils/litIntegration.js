@@ -145,18 +145,15 @@ const getEncodedMetadata = async (params) => {
     console.log(accessControlConditions)
     console.log(wallet)
 
-    const sig = await wallet.signer.signMessage('Enable lit protocol on iris')
-    console.log(sig)
+    // const sig = await wallet.signer.signMessage('Enable lit protocol on iris')
+    // console.log(sig)
+    const authSig = JSON.parse(window.sessionStorage.getItem('signature'))
+    console.warn(authSig)
 
     const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
         accessControlConditions,
         symmetricKey,
-        authSig: {
-            sig,
-            derivedVia: 'ethers.signer.signMessage',
-            signedMessage: 'Enable lit protocol on iris',
-            address: wallet.address,
-        },
+        authSig,
         chain,
     });
 

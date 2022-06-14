@@ -32,6 +32,13 @@ function Login({ wallet, auth }) {
 
       const handleSign = async () => {
         const signature = await wallet.signer.signMessage(challengeData.data.challenge.text);
+        window.sessionStorage.setItem('signature', JSON.stringify({
+          sig: signature,
+          derivedVia: 'ethers.signer.signMessage',
+          signedMessage: challengeData.data.challenge.text,
+          address: wallet.address,
+      }))
+        console.log(signature)
         mutateAuth({
           variables: {
             request: {

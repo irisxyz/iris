@@ -231,14 +231,11 @@ function Post({ wallet, lensHub, profileId, ...props }) {
             if (post.appId === "iris super") {
                 const encryptedPostRaw = post.metadata?.attributes?.filter((attr) => attr.traitType === 'Encoded Post Data')[0].value
                 const encryptedPost = JSON.parse(encryptedPostRaw);
-                console.log(encryptedPost)
     
                 const isthisblob = client.cat(encryptedPost.blobPath);
                 let newEcnrypt;
                 (async () => {
-                    // const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
-                    const sig = await wallet.signer?.signMessage('Enable lit protocol on iris')
-                    console.log(sig)
+                    const authSig = JSON.parse(window.sessionStorage.getItem('signature'))
     
                     for await (const chunk of isthisblob) {
                         newEcnrypt = new Blob([chunk], {
@@ -250,12 +247,7 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                         // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
                         toDecrypt: encryptedPost.key,
                         chain,
-                        authSig: {
-                            sig,
-                            derivedVia: 'ethers.signer.signMessage',
-                            signedMessage: 'Enable lit protocol on iris',
-                            address: wallet.address,
-                        },
+                        authSig,
                     });
     
                     const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
