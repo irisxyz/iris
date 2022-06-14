@@ -460,16 +460,6 @@ const Compose = ({
 
     return (
         <>
-            {showModal && <Modal width={'500px'} onExit={() => setShowModal(false)}>
-                <Header>Great plant! 🌱</Header>
-                <PostPreview>
-                    {description}
-                </PostPreview>
-                {/* <b>How do you want your post to be viewed?</b> */}
-                {/* <br /> */}
-                {/* <StyledButton onClick={handleSubmitGated}>Follower only</StyledButton> */}
-                <StyledButton onClick={handleSubmit}>Post Publicly</StyledButton>
-            </Modal>}
             <StyledCard>
                 <form onSubmit={handlePreview}>
                     <TextArea
@@ -480,7 +470,7 @@ const Compose = ({
                     />
                 </form>
                 <Actions>
-                    {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handlePreview}>{cta || 'Plant'}</Button>}
+                    {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Plant'}</Button>}
                     <VisibilitySelector
                         showFollower={isPost}
                         showCommunity={isCommunity}

@@ -319,7 +319,7 @@ function User({ wallet, lensHub, profileId }) {
                     <Columns>
                         <div>
                             <UserInfo>
-                                <Name>{profile.name}</Name>
+                                <Name>{profile.name || params.handle}</Name>
                                 <Handle>@{params.handle}</Handle>
                                 <Address>{profile?.address}</Address>
                                 {/* <Opensea
