@@ -8,6 +8,9 @@ import { GET_PROFILES } from '../utils/queries'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import LensHub from '../abi/LensHub.json'
+import Web3Modal from "web3modal";
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const WalletContainer = styled.div`
   display: flex;
@@ -144,7 +147,34 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
   }, [profiles.data])
 
   const connectWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const providerOptions = {
+      coinbasewallet: {
+        package: CoinbaseWalletSDK, // Required
+        options: {
+          appName: "iris", // Required
+          infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
+          rpc: "", // Optional if `infuraId` is provided; otherwise it's required
+          chainId: 1, // Optional. It defaults to 1 if not provided
+          darkMode: false // Optional. Use dark theme, defaults to false
+        }
+      },
+      walletconnect: {
+        package: WalletConnectProvider, // required
+        options: {
+          infuraId: "6a436461eae543349fa0de6bc4152fb9" // required
+        }
+      }
+    };
+
+    const web3Modal = new Web3Modal({
+      network: "mainnet", // optional
+      cacheProvider: true, 
+      providerOptions // required
+    });
+    const instance = await web3Modal.connect();
+
+    const provider = new ethers.providers.Web3Provider(instance)
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
     const address = await signer.getAddress()
@@ -161,10 +191,6 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
-
-  useEffect(() => {
-    connectWallet()
-  }, [])
   
   return (
     
