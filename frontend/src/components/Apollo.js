@@ -9,8 +9,8 @@ import {
 import { onError } from '@apollo/client/link/error'
 
 const httpLink = new HttpLink({
-    // uri: 'https://api.lens.dev/',
-    uri: 'https://api-mumbai.lens.dev/',
+    uri: 'https://api.lens.dev/',
+    // uri: 'https://api-mumbai.lens.dev/',
     fetch,
 });
   
