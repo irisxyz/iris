@@ -17,6 +17,9 @@ import Retweet from '../assets/Retweet'
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
 const NameLink = styled(Link)`
+    display: flex;
+    align-items: center;
+    gap: 5px;
     text-decoration: none;
     color: black;
     &:hover {
@@ -24,7 +27,7 @@ const NameLink = styled(Link)`
     }
 `;
 
-const Underlined = styled.p`
+const Underlined = styled.span`
     color: black;
     ${(p) => p.theme.hrefUnderline}
     &:hover {
@@ -64,19 +67,19 @@ const Content = styled.div`
     width: 100%;
 `;
 
-const Premium = styled.div`
-    right: 0;
-    position: absolute;
+const Premium = styled.span`
     background: ${p=>p.theme.darken2};
-    border-radius: 100px;
-    padding: 0.2em 1em;
-    font-weight: 500;
-    color: #220d6d;
+    display: inline-block;
+    border-radius: 60px;
+    padding: 0.2em 0.8em;
+    font-size: 0.8em;
+    margin-bottom: 2px;
+    color: ${p=>p.theme.greyed};
 `;
 
 const StyledCard = styled(Card)`
     margin-bottom: 1em;
-    padding-right: 3em;
+    padding-right: 1.5em;
     transition: background 100ms;
     &:hover {
         background: ${p => p.theme.darken};
@@ -285,11 +288,13 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
                 <Content>
-                    {post.appId === "iris super" && <Premium>Followers Only</Premium>}
                     <Header>
                         <NameLink to={`/user/${post.profile?.handle}`} onClick={(e) => e.stopPropagation()}>
-                            <Underlined to={`/user/${post.profile?.handle}`}><b>{post.profile?.name || post.profile.handle}</b></Underlined>
-                            {' '}@{post.profile?.handle}
+                            <p>
+                                <Underlined to={`/user/${post.profile?.handle}`}><b>{post.profile?.name || post.profile.handle}</b></Underlined>
+                                {' '}@{post.profile?.handle}
+                            </p>
+                            {post.appId === "iris super" && <Premium>Followers Only</Premium>}
                         </NameLink>
                         <Link to={`/post/${post.id}`}><Underlined>{moment(post.createdAt).fromNow()}</Underlined></Link>
                     </Header>
