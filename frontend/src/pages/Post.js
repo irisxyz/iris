@@ -54,7 +54,6 @@ function Post({ wallet, lensHub, profileId, profileName }) {
     
     useEffect(() => {
         if (!publicationsData.data) return;
-        if (!wallet.address) return;
 
         setComments(publicationsData.data.publications.items);
 
@@ -62,6 +61,8 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             return pub.id;
         });
 
+        if (!wallet.address) return;
+        
         hasCollected({
             variables: {
                 request: {
