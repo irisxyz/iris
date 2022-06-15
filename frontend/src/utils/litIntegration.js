@@ -30,9 +30,7 @@ const getAccessControlConditions = async (params) => {
         case 'community':
             const pubProfileId = replyTo.split('-')[0]
             const pubId = replyTo.split('-')[1]
-            console.log({replyTo, pubProfileId, pubId})
             const collectNFTAddr = await lensHub.getCollectNFT(pubProfileId, pubId);
-            console.log(collectNFTAddr)
             if (collectNFTAddr === '0x0000000000000000000000000000000000000000') {
                 console.warn('getCollectNFT returned 0x0 address')
                 return

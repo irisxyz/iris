@@ -182,8 +182,6 @@ const premiumCopy = (postType) => {
     }
 }
 
-
-
 const PostBody = ({ children }) => {
     // Match URLs
     let replacedText = reactStringReplace(children, /(https?:\/\/\S+)/g, (match, i) => {
@@ -261,8 +259,6 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
             if (post.appId === "iris exclusive") {
                 const encryptedPostRaw = post.metadata?.attributes?.filter((attr) => attr.traitType === 'Encoded Post Data')[0].value
                 const encryptedPost = JSON.parse(encryptedPostRaw);
-
-                console.log(encryptedPost)
     
                 const isthisblob = client.cat(encryptedPost.blobPath);
                 let newEcnrypt;

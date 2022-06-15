@@ -69,6 +69,7 @@ function App() {
         const initLit = async () => {
             const client = new LitJsSdk.LitNodeClient({
                 alertWhenUnauthorized: false,
+                debug: false,
             });
             await client.connect();
             window.litNodeClient = client;

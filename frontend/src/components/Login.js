@@ -38,7 +38,6 @@ function Login({ wallet, auth }) {
           signedMessage: challengeData.data.challenge.text,
           address: wallet.address,
       }))
-        console.log(signature)
         mutateAuth({
           variables: {
             request: {
