@@ -156,6 +156,34 @@ const random = () => {
     return (Math.random() + 1).toString(36).substring(7);
 }
 
+const premiumLabel = (postType) => {
+    switch(postType) {
+        case 'Post':
+            return 'Follower Exclusive';
+        case 'Comment':
+            return 'Collector Exclusive';
+        case 'CommunityPost':
+            return 'Community Exclusive';
+        default:
+            return 'Exclusive';
+    }
+}
+
+const premiumCopy = (postType) => {
+    switch(postType) {
+        case 'Post':
+            return 'Post for followers only';
+        case 'Comment':
+            return 'Comment for post collectors only';
+        case 'CommunityPost':
+            return 'Message for community members only';
+        default:
+            return 'Exclusive';
+    }
+}
+
+
+
 const PostBody = ({ children }) => {
     // Match URLs
     let replacedText = reactStringReplace(children, /(https?:\/\/\S+)/g, (match, i) => {
@@ -186,7 +214,7 @@ const PostBody = ({ children }) => {
     return <>{ replacedText }</>
 }
 
-function Post({ wallet, lensHub, profileId, ...props }) {
+function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
     const [decryptedMsg, setDecryptedMsg] = useState("")
     const [showModal, setShowModal] = useState(false)
     const [selectedImage, setSelectedImage] = useState('')
@@ -230,9 +258,11 @@ function Post({ wallet, lensHub, profileId, ...props }) {
         const decode = async () => {
             await new Promise(r => setTimeout(r, 100));
             
-            if (post.appId === "iris super") {
+            if (post.appId === "iris exclusive") {
                 const encryptedPostRaw = post.metadata?.attributes?.filter((attr) => attr.traitType === 'Encoded Post Data')[0].value
                 const encryptedPost = JSON.parse(encryptedPostRaw);
+
+                console.log(encryptedPost)
     
                 const isthisblob = client.cat(encryptedPost.blobPath);
                 let newEcnrypt;
@@ -268,11 +298,14 @@ function Post({ wallet, lensHub, profileId, ...props }) {
         setSelectedImage(media)
     }
 
-    let isCommunity = false;
-    
+    let postType = post.__typename;
+    if (isCommunityPost) {
+        postType = 'CommunityPost'
+    }
+
     post?.metadata?.attributes.forEach(attribute => {
         if(attribute.value === 'community') {
-            isCommunity = true;
+            postType = 'Community';
         }
     })
 
@@ -293,12 +326,12 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                                 <Underlined to={`/user/${post.profile?.handle}`}><b>{post.profile?.name || post.profile.handle}</b></Underlined>
                                 {' '}@{post.profile?.handle}
                             </p>
-                            {post.appId === "iris super" && <Premium>Followers Only</Premium>}
+                            {post.appId === "iris exclusive" && <Premium>{premiumLabel(postType)}</Premium>}
                         </NameLink>
                         <Link to={`/post/${post.id}`}><Underlined>{moment(post.createdAt).fromNow()}</Underlined></Link>
                     </Header>
                     <div>
-                        {post.appId === "iris super" ? <>{decryptedMsg ? decryptedMsg : <code>Message for followers only</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
+                        {post.appId === "iris exclusive" ? <>{decryptedMsg ? decryptedMsg : <code>{premiumCopy(postType)}</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
                     </div>
                     {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
@@ -320,7 +353,7 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                         }
                     </MediaContainer> : ''}
 
-                    {isCommunity && <MediaContainer>
+                    {postType === 'Community' && <MediaContainer>
                         <CommunityDisplay>
                             <Link to={`/post/${post.id}`}>
                                 <Avatar src={post.metadata?.cover?.original?.url}/>
@@ -333,7 +366,7 @@ function Post({ wallet, lensHub, profileId, ...props }) {
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCommunity={isCommunity} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

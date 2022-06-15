@@ -115,7 +115,7 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             />
             {comments.length > 0 && <h3>Comments</h3>}
             {comments.map((post) => {
-                return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;
+                return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} isCommunityPost={isCommunity} />;
             })}
         </>
     );

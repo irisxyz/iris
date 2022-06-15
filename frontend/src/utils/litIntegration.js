@@ -5,31 +5,70 @@ import LitJsSdk from 'lit-js-sdk'
 const client = create('https://ipfs.infura.io:5001/api/v0')
 const chain = 'mumbai'
 
+const getAccessControlConditions = async (params) => {
+    const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo} = params
+
+    switch(selectedVisibility) {
+        case 'follower':
+            const followNFTAddr = await lensHub.getFollowNFT(profileId);
+            return [
+                {
+                    contractAddress: followNFTAddr,
+                    standardContractType: 'ERC721',
+                    chain,
+                    method: 'balanceOf',
+                    parameters: [
+                        ':userAddress',
+                    ],
+                    returnValueTest: {
+                        comparator: '>',
+                        value: '0'
+                    }
+                }
+            ]
+        case 'collector':
+        case 'community':
+            const pubProfileId = replyTo.split('-')[0]
+            const pubId = replyTo.split('-')[1]
+            console.log({replyTo, pubProfileId, pubId})
+            const collectNFTAddr = await lensHub.getCollectNFT(pubProfileId, pubId);
+            console.log(collectNFTAddr)
+            if (collectNFTAddr === '0x0000000000000000000000000000000000000000') {
+                console.warn('getCollectNFT returned 0x0 address')
+                return
+            }
+            return [
+                {
+                    contractAddress: collectNFTAddr,
+                    standardContractType: 'ERC721',
+                    chain,
+                    method: 'balanceOf',
+                    parameters: [
+                        ':userAddress',
+                    ],
+                    returnValueTest: {
+                        comparator: '>',
+                        value: '0'
+                    }
+                }
+            ]
+        default:
+            console.warn(`invalid selectedVisibilty ${selectedVisibility}`)
+            return []
+    }
+
+}
+
 const getEncodedMetadata = async (params) => {
     const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo} = params
-    const followNFTAddr = await lensHub.getFollowNFT(profileId);
     
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
         description
     );
 
-    const accessControlConditions = [
-        {
-            contractAddress: followNFTAddr,
-            standardContractType: 'ERC721',
-            chain,
-            method: 'balanceOf',
-            parameters: [
-                ':userAddress',
-            ],
-            returnValueTest: {
-                comparator: '>',
-                value: '0'
-            }
-        }
-    ]
-
     const authSig = JSON.parse(window.sessionStorage.getItem('signature'))
+
+    const accessControlConditions = await getAccessControlConditions(params)
 
     const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
         accessControlConditions,
@@ -55,7 +94,7 @@ const getEncodedMetadata = async (params) => {
         image: null,
         imageMimeType: null,
         version: "1.0.0",
-        appId: 'iris super',
+        appId: 'iris exclusive',
         attributes,
         media: [],
         metadata_id: uuidv4(),
@@ -65,28 +104,6 @@ const getEncodedMetadata = async (params) => {
         traitType: 'Encoded Post Data',
         value: `${JSON.stringify(encryptedPost)}`,
     })
-    
-    // switch(selectedVisibility) {
-    //     case 'follower':
-    //         attributes.push({
-    //             traitType: 'Encoded Post Data',
-    //             value: '',
-    //         });
-    //         break;
-    //     case 'collector':
-    //         attributes.push({
-    //             traitType: 'Encoded Post Data',
-    //             value: '',
-    //         });
-    //         break;
-    //     case 'community':
-    //         attributes.push({
-    //             traitType: 'Encoded Post Data',
-    //             value: '',
-    //         });
-    //         break;
-    //     default:
-    // }
 
     return metadata
 }
