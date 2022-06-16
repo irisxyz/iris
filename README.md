@@ -8,17 +8,23 @@ You will need Metamask installed on Google Chrome, connected to Polygon Mumbai n
 
 `npm install` to install all dependencies
 
-`npx hardhat compile` to compile smart contract
-
-
 ## Frontend
-
-`npx hardhat compile` to compile smart contracts
-
-copy the `artifacts/` folder to `frontend/src`
 
 `cd frontend`
 
 `npm install` install deps
 
 `npm start` run react app at http://localhost:3000/
+
+### Gasless
+
+On localhost you must run app on port 4783
+
+`/frontend/.env` add `PORT=4783`
+
+### Changing Chain
+
+Default chain on localhost is `mumbai`. If you want to change it change `/frontend/.env` to `REACT_APP_CHAIN="polygon"`
+
+
+Remember all `.env` changes require an `npm start` restart.
