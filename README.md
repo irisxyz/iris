@@ -18,7 +18,7 @@ You will need Metamask installed on Google Chrome, connected to Polygon Mumbai n
 
 ### Gasless
 
-On localhost you must run app on port 4783
+On localhost you must run app on port 4783 to enable gasless tx with Lens API
 
 `/frontend/.env` add `PORT=4783`
 
