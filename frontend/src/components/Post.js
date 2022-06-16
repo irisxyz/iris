@@ -156,7 +156,7 @@ const random = () => {
     return (Math.random() + 1).toString(36).substring(7);
 }
 
-const premiumLabel = (postType) => {
+const exclusiveLabel = (postType) => {
     switch(postType) {
         case 'Post':
             return 'Follower Exclusive';
@@ -169,7 +169,7 @@ const premiumLabel = (postType) => {
     }
 }
 
-const premiumCopy = (postType) => {
+const exclusiveDescription = (postType) => {
     switch(postType) {
         case 'Post':
             return 'Post for followers only';
@@ -305,6 +305,9 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
         }
     })
 
+    const profileHandle = post.profile?.handle
+    const profileName = post.profile?.name || post.profile?.handle
+
     return <>
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
             <ImageDisplay src={selectedImage} />
@@ -312,22 +315,22 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
         <StyledCard onClick={() => navigate(`/post/${post.id}`)}>
             {mirror && <Mirrored>mirrored by {mirror.profile?.name || mirror.profile?.handle}</Mirrored>}
             <Container>
-                <Link to={`/user/${post.profile?.handle}`} onClick={(e) => e.stopPropagation()}>
+                <Link to={`/user/${profileHandle}`} onClick={(e) => e.stopPropagation()}>
                     <Icon link={true} href={post.profile?.picture?.original?.url} />
                 </Link>
                 <Content>
                     <Header>
-                        <NameLink to={`/user/${post.profile?.handle}`} onClick={(e) => e.stopPropagation()}>
+                        <NameLink to={`/user/${profileHandle}`} onClick={(e) => e.stopPropagation()}>
                             <p>
-                                <Underlined to={`/user/${post.profile?.handle}`}><b>{post.profile?.name || post.profile.handle}</b></Underlined>
-                                {' '}@{post.profile?.handle}
+                                <Underlined to={`/user/${profileHandle}`}><b>{profileName}</b></Underlined>
+                                {' '}@{profileHandle}
                             </p>
-                            {post.appId === "iris exclusive" && <Premium>{premiumLabel(postType)}</Premium>}
+                            {post.appId === "iris exclusive" && <Premium>{exclusiveLabel(postType)}</Premium>}
                         </NameLink>
                         <Link to={`/post/${post.id}`}><Underlined>{moment(post.createdAt).fromNow()}</Underlined></Link>
                     </Header>
                     <div>
-                        {post.appId === "iris exclusive" ? <>{decryptedMsg ? decryptedMsg : <code>{premiumCopy(postType)}</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
+                        {post.appId === "iris exclusive" ? <>{decryptedMsg ? decryptedMsg : <code>{exclusiveDescription(postType)}</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
                     </div>
                     {/* {post.metadata.media.length ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
