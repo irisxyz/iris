@@ -42,6 +42,7 @@ function Nav({ handle, setProfile }) {
 
 const handleClick = () => {
     window.sessionStorage.removeItem('lensToken')
+    window.sessionStorage.removeItem('signature')
     setProfile({})
 }
 

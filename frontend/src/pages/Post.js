@@ -5,7 +5,7 @@ import { GET_PUBLICATION, GET_PUBLICATIONS, HAS_COLLECTED } from '../utils/queri
 import PostComponent from '../components/Post'
 import Compose from '../components/Compose'
 
-function Post({ wallet, lensHub, profileId }) {
+function Post({ wallet, lensHub, profileId, profileName }) {
     let params = useParams();
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)
@@ -54,7 +54,6 @@ function Post({ wallet, lensHub, profileId }) {
     
     useEffect(() => {
         if (!publicationsData.data) return;
-        if (!wallet.address) return;
 
         setComments(publicationsData.data.publications.items);
 
@@ -62,6 +61,8 @@ function Post({ wallet, lensHub, profileId }) {
             return pub.id;
         });
 
+        if (!wallet.address) return;
+        
         hasCollected({
             variables: {
                 request: {
@@ -104,6 +105,7 @@ function Post({ wallet, lensHub, profileId }) {
             <Compose
                 wallet={wallet}
                 profileId={profileId}
+                profileName={profileName} 
                 lensHub={lensHub}
                 cta='Comment'
                 placeholder='Type your comment'
@@ -113,7 +115,7 @@ function Post({ wallet, lensHub, profileId }) {
             />
             {comments.length > 0 && <h3>Comments</h3>}
             {comments.map((post) => {
-                return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;
+                return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} isCommunityPost={isCommunity} />;
             })}
         </>
     );

@@ -209,12 +209,12 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         {
           profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
-        <StyledLink href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
+        {/* <StyledLink href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
           <StyledProfile onClick={() => handleNew()}>
             <b>+ Create Profile</b>
             <UserIcon/>
           </StyledProfile>
-        </StyledLink>
+        </StyledLink> */}
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
       <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
