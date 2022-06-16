@@ -3,14 +3,14 @@ import styled from 'styled-components'
 import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
-import Button from './Button'
+import Web3Modal from 'web3modal'
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
+import WalletConnectProvider from '@walletconnect/web3-provider'
 import { GET_PROFILES } from '../utils/queries'
+import { CHAIN } from '../utils/constants'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import LensHub from '../abi/LensHub.json'
-import Web3Modal from "web3modal";
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
-import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const WalletContainer = styled.div`
   display: flex;
@@ -179,8 +179,9 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const signer = provider.getSigner()
     const address = await signer.getAddress()
 
-    const contract = new ethers.Contract('0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d', LensHub, signer)
-    // const contract = new ethers.Contract('0x60Ae865ee4C725cd04353b5AAb364553f56ceF82', LensHub, signer)
+    // const contract = new ethers.Contract('0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d', LensHub, signer)
+    const contractAddr = CHAIN === 'polygon' ? '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d' : '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82';
+    const contract = new ethers.Contract(contractAddr, LensHub, signer)
     // console.log({contract})
     setLensHub(contract)
   

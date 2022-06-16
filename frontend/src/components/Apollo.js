@@ -7,10 +7,10 @@ import {
   ApolloProvider,
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
+import { CHAIN } from '../utils/constants'
 
 const httpLink = new HttpLink({
-    uri: 'https://api.lens.dev/',
-    // uri: 'https://api-mumbai.lens.dev/',
+    uri: CHAIN === 'polygon' ? 'https://api.lens.dev/' : 'https://api-mumbai.lens.dev/',
     fetch,
 });
   
