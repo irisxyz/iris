@@ -146,31 +146,32 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
 
   }, [profiles.data])
 
-  const connectWallet = async () => {
-    const providerOptions = {
-      coinbasewallet: {
-        package: CoinbaseWalletSDK, // Required
-        options: {
-          appName: "iris", // Required
-          infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
-          rpc: "", // Optional if `infuraId` is provided; otherwise it's required
-          chainId: 1, // Optional. It defaults to 1 if not provided
-          darkMode: false // Optional. Use dark theme, defaults to false
-        }
-      },
-      walletconnect: {
-        package: WalletConnectProvider, // required
-        options: {
-          infuraId: "6a436461eae543349fa0de6bc4152fb9" // required
-        }
+  const providerOptions = {
+    coinbasewallet: {
+      package: CoinbaseWalletSDK, // Required
+      options: {
+        appName: "iris", // Required
+        infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
+        rpc: "", // Optional if `infuraId` is provided; otherwise it's required
+        chainId: 1, // Optional. It defaults to 1 if not provided
+        darkMode: false // Optional. Use dark theme, defaults to false
       }
-    };
+    },
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        infuraId: "6a436461eae543349fa0de6bc4152fb9" // required
+      }
+    }
+  };
 
-    const web3Modal = new Web3Modal({
-      network: "mainnet", // optional
-      cacheProvider: true, 
-      providerOptions // required
-    });
+  const web3Modal = new Web3Modal({
+    network: "mainnet", // optional
+    cacheProvider: true, 
+    providerOptions // required
+  });
+
+  const connectWallet = async () => {
     const instance = await web3Modal.connect();
 
     const provider = new ethers.providers.Web3Provider(instance)
@@ -192,6 +193,12 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       setWallet({...wallet, signer, address, balanceInEth})
       })
   }
+
+  // hook to automatically connect to the cached provider
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      connectWallet();
+  }}, [])
   
   return (
     
