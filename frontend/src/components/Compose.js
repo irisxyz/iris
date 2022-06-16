@@ -10,6 +10,7 @@ import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '..
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { handleCompose } from '../utils/litIntegration'
 import VisibilitySelector from './VisibilitySelector'
+import Toast from './Toast'
 
 const StyledCard = styled(Card)`
     width: 100%;
@@ -98,6 +99,7 @@ const Compose = ({
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
     const [showModal, setShowModal] = useState(false)
+    const [toastMsg, setToastMsg] = useState({})
 
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
@@ -154,6 +156,8 @@ const Compose = ({
                 omitDeep(value, '__typename'),
             )
 
+            setToastMsg({type: 'loading', msg: 'Transaction indexing...'})
+
             setSavedTypedData({
                 ...data.typedData,
                 signature,
@@ -202,7 +206,7 @@ const Compose = ({
                 await pollUntilIndexed(tx.hash)
                 setShowModal(false)
                 setDescription('')
-
+                setToastMsg({type: 'success', msg: 'Transaction indexed'})
                 return;
             }
             
@@ -212,6 +216,7 @@ const Compose = ({
             await pollUntilIndexed(txHash)
             setShowModal(false)
             setDescription('')
+            setToastMsg({type: 'success', msg: 'Transaction indexed'})
         }
         processBroadcast()
 
@@ -219,6 +224,7 @@ const Compose = ({
 
     return (
         <>
+            <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
             <StyledCard>
                 <TextArea
                     value={description}
