@@ -22,6 +22,7 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
                         sortCriteria: 'TOP_COLLECTED',
                         limit: 10,
                     },
+                    reactionRequest: { profileId: profile.id },
                 },
             })
             return

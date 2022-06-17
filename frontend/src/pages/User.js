@@ -177,6 +177,7 @@ function User({ wallet, lensHub, profileId }) {
                     profileId: data.profiles.items[0].id,
                     publicationTypes: ["POST", "COMMENT", "MIRROR"],
                 },
+                reactionRequest: { profileId: data.profiles.items[0].id }
             },
         });
 

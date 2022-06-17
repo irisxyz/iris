@@ -340,7 +340,10 @@ const CommentMirrorOfFields = gql`
 `
 
 export const EXPLORE_PUBLICATIONS = gql`
-query($request: ExplorePublicationRequest!) {
+query(
+  $request: ExplorePublicationRequest!
+  $reactionRequest: ReactionFieldResolverRequest
+  ) {
   explorePublications(request: $request) {
     items {
       __typename 
@@ -630,7 +633,10 @@ export const GET_PUBLICATION = gql`
 `;
 
 export const GET_PUBLICATIONS = gql`
-  query($request: PublicationsQueryRequest!) {
+  query(
+    $request: PublicationsQueryRequest!
+    $reactionRequest: ReactionFieldResolverRequest
+  ) {
     publications(request: $request) {
       items {
         __typename 
