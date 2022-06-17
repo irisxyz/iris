@@ -193,6 +193,8 @@ const PublicationStatsFields = gql`
     totalAmountOfMirrors
     totalAmountOfCollects
     totalAmountOfComments
+    totalDownvotes
+    totalUpvotes
   }
 `
 
@@ -202,6 +204,7 @@ const PostFields = gql`
     profile {
       ...ProfileFields
     }
+    reaction(request: $reactionRequest)
     stats {
       ...PublicationStatsFields
     }
@@ -228,6 +231,7 @@ const PostFields = gql`
 const CommentFields = gql`
   fragment CommentFields on Comment {
     ...CommentBaseFields
+    reaction(request: $reactionRequest)
     mainPost {
       ... on Post {
         ...PostFields
@@ -275,6 +279,7 @@ const MirrorBaseFields = gql`
 const MirrorFields = gql`
   fragment MirrorFields on Mirror {
     ...MirrorBaseFields
+    reaction(request: $reactionRequest)
     mirrorOf {
     ... on Post {
         ...PostFields          
@@ -418,7 +423,10 @@ export const SEARCH = gql`
 `;
 
 export const GET_TIMELINE = gql`
-query($request: TimelineRequest!) {
+query(
+  $request: TimelineRequest!
+  $reactionRequest: ReactionFieldResolverRequest
+  ) {
   timeline(request: $request) {
     items {
       __typename 
@@ -590,7 +598,10 @@ export const BROADCAST = gql`
 `
 
 export const GET_PUBLICATION = gql`
-  query($request: PublicationQueryRequest!) {
+  query(
+    $request: PublicationQueryRequest!
+    $reactionRequest: ReactionFieldResolverRequest
+  ) {
     publication(request: $request) {
         __typename 
         ... on Post {
@@ -1070,3 +1081,14 @@ export const HAS_TX_BEEN_INDEXED = gql`
   }
 `;
 
+export const ADD_REACTION_MUTATION = gql`
+  mutation AddReaction($request: ReactionRequest!) {
+    addReaction(request: $request)
+  }
+`
+
+export const REMOVE_REACTION_MUTATION = gql`
+  mutation RemoveReaction($request: ReactionRequest!) {
+    removeReaction(request: $request)
+  }
+`

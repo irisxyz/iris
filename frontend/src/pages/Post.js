@@ -19,9 +19,8 @@ function Post({ wallet, lensHub, profileId, profileName }) {
     useEffect(() => {
         getPublication({
             variables: {
-                request: {
-                    publicationId: params.postId,
-                },
+                request: { publicationId: params.postId },
+                reactionRequest: { profileId },
             },
         });
     }, [])

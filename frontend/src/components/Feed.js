@@ -30,9 +30,8 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
         if (isExplore) return;
         getTimeline({
             variables: {
-                request: {
-                    profileId: profile.id,
-                },
+                request: { profileId: profile.id },
+                reactionRequest: { profileId: profile.id },
             },
         })
     }, [getTimeline, profile])

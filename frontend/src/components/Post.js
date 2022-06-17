@@ -9,6 +9,7 @@ import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 import Comment from './Comment'
 import Mirror from './Mirror'
+import Like from './Like'
 import Collect from './Collect'
 import Modal from './Modal'
 import { Avatar } from './Profile'
@@ -223,6 +224,7 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
     const [mirror, setMirror] = useState(null)
     const [toastMsg, setToastMsg] = useState({})
 
+    console.log(post)
     const navigate = useNavigate()
 
     moment.updateLocale('en', {
@@ -370,6 +372,7 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
+                        <Like wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE'} />
                         <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
