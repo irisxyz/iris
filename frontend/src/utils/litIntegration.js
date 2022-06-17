@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
 import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
+import { CHAIN } from '../utils/constants'
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
-const chain = 'mumbai'
 
 const getAccessControlConditions = async (params) => {
     const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo} = params
@@ -15,7 +15,7 @@ const getAccessControlConditions = async (params) => {
                 {
                     contractAddress: followNFTAddr,
                     standardContractType: 'ERC721',
-                    chain,
+                    chain: CHAIN,
                     method: 'balanceOf',
                     parameters: [
                         ':userAddress',
@@ -39,7 +39,7 @@ const getAccessControlConditions = async (params) => {
                 {
                     contractAddress: collectNFTAddr,
                     standardContractType: 'ERC721',
-                    chain,
+                    chain: CHAIN,
                     method: 'balanceOf',
                     parameters: [
                         ':userAddress',
@@ -72,7 +72,7 @@ const getEncodedMetadata = async (params) => {
         accessControlConditions,
         symmetricKey,
         authSig,
-        chain,
+        chain: CHAIN,
     });
 
     const ipfsResult = await client.add(encryptedString)

@@ -14,6 +14,7 @@ import Modal from './Modal'
 import { Avatar } from './Profile'
 import Toast from './Toast'
 import Retweet from '../assets/Retweet'
+import { CHAIN } from '../utils/constants'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
@@ -151,8 +152,6 @@ const Mirrored = ({ children }) => {
     </MirrorContainer>
 }
 
-const chain = "mumbai";
-
 const random = () => {
     return (Math.random() + 1).toString(36).substring(7);
 }
@@ -276,7 +275,7 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
                         accessControlConditions: encryptedPost.accessControlConditions,
                         // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
                         toDecrypt: encryptedPost.key,
-                        chain,
+                        chain: CHAIN,
                         authSig,
                     });
     
