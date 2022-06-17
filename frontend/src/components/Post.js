@@ -12,6 +12,7 @@ import Mirror from './Mirror'
 import Collect from './Collect'
 import Modal from './Modal'
 import { Avatar } from './Profile'
+import Toast from './Toast'
 import Retweet from '../assets/Retweet'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
@@ -218,6 +219,7 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
     const [selectedImage, setSelectedImage] = useState('')
     const [post, setPost] = useState(props.post)
     const [mirror, setMirror] = useState(null)
+    const [toastMsg, setToastMsg] = useState({})
 
     const navigate = useNavigate()
 
@@ -312,6 +314,7 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
             <ImageDisplay src={selectedImage} />
         </Modal>}
+        <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
         <StyledCard onClick={() => navigate(`/post/${post.id}`)}>
             {mirror && <Mirrored>mirrored by {mirror.profile?.name || mirror.profile?.handle}</Mirrored>}
             <Container>
@@ -364,8 +367,8 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
 
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
-                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCommunity={postType === 'Community'} />
+                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>
