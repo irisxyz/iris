@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import { CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
-import Heart from '../assets/Heart'
+import Bookmark from '../assets/Bookmark'
 import Community from '../assets/Community'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { RoundedButton } from './Button'
@@ -117,7 +117,7 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             {isCommunity
                 ? <Community onClick={handleClick} filled={collected} />
-                : <Heart onClick={handleClick} filled={collected} />
+                : <Bookmark onClick={handleClick} filled={collected} />
             }
             <p>{ stats.totalAmountOfCollects }</p>
         </div>

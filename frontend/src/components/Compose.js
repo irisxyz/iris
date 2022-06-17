@@ -234,12 +234,12 @@ const Compose = ({
                 />
                 <Actions>
                     {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
-                    <VisibilitySelector
+                    {/* <VisibilitySelector
                         showFollower={isPost}
                         showCommunity={isCommunity}
                         showCollector={isComment}
                         selectedVisibility={selectedVisibility}
-                        setSelectedVisibility={setSelectedVisibility} />
+                        setSelectedVisibility={setSelectedVisibility} /> */}
                 </Actions>
 
                 {/* <input
