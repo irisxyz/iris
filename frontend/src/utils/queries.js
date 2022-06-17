@@ -257,6 +257,7 @@ const MirrorBaseFields = gql`
     profile {
       ...ProfileFields
     }
+    reaction(request: $reactionRequest)
     stats {
       ...PublicationStatsFields
     }
@@ -279,9 +280,8 @@ const MirrorBaseFields = gql`
 const MirrorFields = gql`
   fragment MirrorFields on Mirror {
     ...MirrorBaseFields
-    reaction(request: $reactionRequest)
     mirrorOf {
-    ... on Post {
+      ... on Post {
         ...PostFields          
     }
     ... on Comment {
@@ -306,6 +306,7 @@ const CommentBaseFields = gql`
     profile {
       ...ProfileFields
     }
+    reaction(request: $reactionRequest)
     stats {
       ...PublicationStatsFields
     }

@@ -153,7 +153,7 @@ function User({ wallet, lensHub, profileId }) {
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
-        if (!data) return;
+        if (!data || !profileId) return;
 
         if (data.profiles.items.length < 1) {
             setNotFound(true);
@@ -177,7 +177,7 @@ function User({ wallet, lensHub, profileId }) {
                     profileId: data.profiles.items[0].id,
                     publicationTypes: ["POST", "COMMENT", "MIRROR"],
                 },
-                reactionRequest: { profileId: data.profiles.items[0].id }
+                reactionRequest: { profileId }
             },
         });
 
@@ -204,7 +204,7 @@ function User({ wallet, lensHub, profileId }) {
         // isUserLivestreaming()
 
 
-    }, [data, getPublications]);
+    }, [data, profileId, getPublications]);
 
     useEffect(() => {
         if (!publicationsData.data) return;

@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { utils } from 'ethers'
-import { ADD_REACTION_MUTATION, REMOVE_REACTION_MUTATION, CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
-import omitDeep from 'omit-deep'
+import { ADD_REACTION_MUTATION, REMOVE_REACTION_MUTATION } from '../utils/queries'
 import Heart from '../assets/Heart'
-import pollUntilIndexed from '../utils/pollUntilIndexed'
-import { RoundedButton } from './Button'
 
 function Collect({ wallet, lensHub, profileId, publicationId, liked, stats, setToastMsg }) {
     const [addReaction, addReactionData] = useMutation(ADD_REACTION_MUTATION, {

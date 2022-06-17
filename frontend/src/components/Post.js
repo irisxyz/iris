@@ -224,7 +224,6 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
     const [mirror, setMirror] = useState(null)
     const [toastMsg, setToastMsg] = useState({})
 
-    console.log(post)
     const navigate = useNavigate()
 
     moment.updateLocale('en', {
