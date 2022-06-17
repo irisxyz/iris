@@ -4,37 +4,58 @@ import { ADD_REACTION_MUTATION, REMOVE_REACTION_MUTATION } from '../utils/querie
 import Heart from '../assets/Heart'
 
 function Collect({ wallet, lensHub, profileId, publicationId, liked, stats, setToastMsg }) {
-    const [addReaction, addReactionData] = useMutation(ADD_REACTION_MUTATION, {
+    const [addReaction] = useMutation(ADD_REACTION_MUTATION, {
         onError(error) {
-            setLiked(!liked)
+            setLiked(!stateLiked)
+            setCount(count-1)
             console.warn(error)
         }
     })
-    const [removeReaction, removeReactionData] = useMutation(REMOVE_REACTION_MUTATION, {
+    const [removeReaction] = useMutation(REMOVE_REACTION_MUTATION, {
         onError(error) {
-            setLiked(!liked)
+            setLiked(!stateLiked)
+            setCount(count+1)
             console.warn(error)
         }
     })
     const [stateLiked, setLiked] = useState(liked)
+    const [count, setCount] = useState(stats.totalUpvotes)
+
+    useEffect(() => {
+        setCount(stats.totalUpvotes)
+    }, [stats.totalUpvotes])
     
     const [apiError, setApiError] = useState('')
 
     const handleClick = async (e) => {
-        setLiked(!liked)
+        setLiked(!stateLiked)
 
         e.stopPropagation()
-        const reactionReq = {
-            profileId: profileId,
-            reaction: 'UPVOTE',
-            publicationId: publicationId,
-        };
+
         try {
-            await addReaction({
-                variables: {
-                    request: reactionReq,
-                },
-            });
+            if (stateLiked) {
+                setCount(count-1)
+                await removeReaction({
+                    variables: {
+                        request: {
+                            profileId: profileId,
+                            reaction: 'UPVOTE',
+                            publicationId: publicationId,
+                        },
+                    },
+                });
+            } else {
+                setCount(count+1)
+                await addReaction({
+                    variables: {
+                        request: {
+                            profileId: profileId,
+                            reaction: 'UPVOTE',
+                            publicationId: publicationId,
+                        },
+                    },
+                });
+            }
         }
         catch (err) {
             alert(err)
@@ -45,7 +66,7 @@ function Collect({ wallet, lensHub, profileId, publicationId, liked, stats, setT
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             <Heart onClick={handleClick} filled={stateLiked} />
-            <p>{ stats.totalUpvotes }</p>
+            <p>{ count }</p>
         </div>
     );
 }
