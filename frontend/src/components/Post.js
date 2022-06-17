@@ -14,6 +14,7 @@ import Modal from './Modal'
 import { Avatar } from './Profile'
 import Toast from './Toast'
 import Retweet from '../assets/Retweet'
+import { CHAIN } from '../utils/constants'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
@@ -196,7 +197,8 @@ const PostBody = ({ children }) => {
     ));
       
     // Match @xyz.lens-mentions
-    replacedText = reactStringReplace(replacedText, /@(\w+\.lens)/g, (match, i) => (
+    const taggedRegex = CHAIN === 'polygon' ? /@(\w+\.lens)/g : /@(\w+\.test)/g
+    replacedText = reactStringReplace(replacedText, taggedRegex, (match, i) => (
         <A key={random() + match + i} href={`/user/${match}`}>@{match}</A>
     ));
       
