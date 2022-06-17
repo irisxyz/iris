@@ -198,6 +198,15 @@ const PublicationStatsFields = gql`
   }
 `
 
+const WalletFields = gql`
+fragment WalletFields on Wallet {
+  address,
+  defaultProfile {
+   ...ProfileFields
+  }
+}
+`
+
 const PostFields = gql`
   fragment PostFields on Post {
     id
@@ -205,6 +214,9 @@ const PostFields = gql`
       ...ProfileFields
     }
     reaction(request: $reactionRequest)
+    collectedBy {
+      ...WalletFields
+    }
     stats {
       ...PublicationStatsFields
     }
@@ -223,6 +235,7 @@ const PostFields = gql`
     appId
   }
   ${ProfileFields}
+  ${WalletFields}
   ${MetadataOutputFields}
   ${CollectModuleFields}
   ${PublicationStatsFields}
@@ -232,6 +245,9 @@ const CommentFields = gql`
   fragment CommentFields on Comment {
     ...CommentBaseFields
     reaction(request: $reactionRequest)
+    collectedBy {
+      ...WalletFields
+    }
     mainPost {
       ... on Post {
         ...PostFields
@@ -249,6 +265,7 @@ const CommentFields = gql`
       }
     }
   }
+  ${WalletFields}
 `
 
 const MirrorBaseFields = gql`

@@ -372,7 +372,7 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
                         <Like wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected} isCommunity={postType === 'Community'} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

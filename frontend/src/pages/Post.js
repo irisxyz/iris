@@ -33,7 +33,7 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             return
         };
 
-        setPublication(publicationData.data.publication)
+        setPublication({...publication, ...publicationData.data.publication})
         publicationData.data.publication.metadata?.attributes.forEach(attribute => {
             if(attribute.value === 'community') {
                 setIsCommunity(true)
@@ -88,7 +88,7 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             }
         });
 
-        const newPub = { ...publication, collected: collectedIds[publication.id] }
+        const newPub = { ...publication, collected: collectedIds[params.postId] }
         setPublication(newPub)
 
         const newComments = comments.map((post) => {
