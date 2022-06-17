@@ -9,6 +9,7 @@ import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 import Comment from './Comment'
 import Mirror from './Mirror'
+import Like from './Like'
 import Collect from './Collect'
 import Modal from './Modal'
 import { Avatar } from './Profile'
@@ -195,7 +196,8 @@ const PostBody = ({ children }) => {
     ));
       
     // Match @xyz.lens-mentions
-    replacedText = reactStringReplace(replacedText, /@(\w+\.lens)/g, (match, i) => (
+    const taggedRegex = CHAIN === 'polygon' ? /@(\w+\.lens)/g : /@(\w+\.test)/g
+    replacedText = reactStringReplace(replacedText, taggedRegex, (match, i) => (
         <A key={random() + match + i} href={`/user/${match}`}>@{match}</A>
     ));
       
@@ -367,7 +369,8 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
                     <Actions>
                         <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected} isCommunity={postType === 'Community'} />
+                        <Like wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
+                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

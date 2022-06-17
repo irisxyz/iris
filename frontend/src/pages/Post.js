@@ -17,14 +17,14 @@ function Post({ wallet, lensHub, profileId, profileName }) {
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
+        if(!profileId) return;
         getPublication({
             variables: {
-                request: {
-                    publicationId: params.postId,
-                },
+                request: { publicationId: params.postId },
+                reactionRequest: { profileId },
             },
         });
-    }, [])
+    }, [profileId])
 
     useEffect(() => {
         if (!publicationData.data) return;
@@ -33,7 +33,7 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             return
         };
 
-        setPublication(publicationData.data.publication)
+        setPublication({...publication, ...publicationData.data.publication})
         publicationData.data.publication.metadata?.attributes.forEach(attribute => {
             if(attribute.value === 'community') {
                 setIsCommunity(true)
@@ -88,7 +88,7 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             }
         });
 
-        const newPub = { ...publication, collected: collectedIds[publication.id] }
+        const newPub = { ...publication, collected: collectedIds[params.postId] }
         setPublication(newPub)
 
         const newComments = comments.map((post) => {
