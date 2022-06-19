@@ -11,6 +11,7 @@ import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { handleCompose } from '../utils/litIntegration'
 import { CHAIN } from '../utils/constants'
 import VisibilitySelector from './VisibilitySelector'
+import CollectModuleSelector from './CollectModuleSelector'
 import Toast from './Toast'
 
 const StyledCard = styled(Card)`
@@ -241,6 +242,12 @@ const Compose = ({
                         showCollector={isComment}
                         selectedVisibility={selectedVisibility}
                         setSelectedVisibility={setSelectedVisibility} />}
+                    {/* {CHAIN === 'mumbai' && <CollectModuleSelector
+                        showFollower={isPost}
+                        showCommunity={isCommunity}
+                        showCollector={isComment}
+                        selectedModule={selectedVisibility}
+                        setModule={setSelectedVisibility} />} */}
                 </Actions>
 
                 {/* <input
