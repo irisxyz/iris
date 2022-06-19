@@ -110,9 +110,6 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
-  const [provider, setProvider] = useState()
-  const [network, setNetwork] = useState()
-  const [chainId, setChainId] = useState()
 
   const handleSelect = (profile) => {
     console.log(profile)
@@ -179,10 +176,6 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const instance = await web3Modal.connect();
 
     const provider = new ethers.providers.Web3Provider(instance)
-    setProvider(provider)
-    const network = await provider.getNetwork();
-    setNetwork(network)
-    setChainId(network.chainId);
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
@@ -199,39 +192,35 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       const balanceInEth = ethers.utils.formatEther(balance)
       // console.log({balanceInEth})
       setWallet({...wallet, signer, address, balanceInEth})
-      })
-  }
+    })
 
-  // hook to automatically connect to the cached provider
-  useEffect(() => {
-    if (web3Modal.cachedProvider) {
-      connectWallet();
-  }}, [])
-
-  useEffect(() => {
     const switchNetwork = async () => {
+      const chainId = CHAIN === 'polygon' ? toHex(137) : toHex(80001)
+      const network = CHAIN === 'polygon' ? {
+        chainId: toHex(137),
+        chainName: "Polygon",
+        rpcUrls: ["https://polygon-rpc.com/"],
+        blockExplorerUrls: ["https://polygonscan.com/"],
+      } :
+      {
+        chainId: toHex(80001),
+        chainName: "Polygon Mumbai",
+        rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+        blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+      }
+
       try {
-        console.log("Switching Networks")
-        console.log(provider)
         await provider.provider.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: toHex(137) }],
+          params: [{ chainId: chainId }],
         });
-        console.log("Switched to Polygon")
       } catch (switchError) {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
           try {
             await provider.provider.request({
               method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: toHex(137),
-                  chainName: "Polygon",
-                  rpcUrls: ["https://polygon-rpc.com/"],
-                  blockExplorerUrls: ["https://polygonscan.com/"],
-                },
-              ],
+              params: [network],
             });
           } catch (addError) {
             throw addError;
@@ -239,9 +228,15 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         }
       }
     };
-    
+
     switchNetwork()
-  }, [network])
+  }
+
+  // hook to automatically connect to the cached provider
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      connectWallet();
+  }}, [])
 
   return (
     <WalletContainer>
