@@ -1,21 +1,13 @@
 import styled from "styled-components";
 
-const StrokePath = styled.path`
-    stroke: ${p => p.theme.error};
-    stroke-width: 3px;
-
-`
-
 const FillPath = styled.path`
     fill: ${p => p.theme.error};
 `
 
 const Icon = ({ ...props }) => {
     return (
-    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <StrokePath d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z" stroke="#8247E5" strokeLinecap="round" strokeLinejoin="round"/>
-        <StrokePath d="M16 10V16.5" stroke="#8247E5" strokeLinecap="round" strokeLinejoin="round"/>
-        <FillPath d="M16 23.5C17.1046 23.5 18 22.6046 18 21.5C18 20.3954 17.1046 19.5 16 19.5C14.8954 19.5 14 20.3954 14 21.5C14 22.6046 14.8954 23.5 16 23.5Z" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <FillPath d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM12 10.586L9.172 7.757L7.757 9.172L10.586 12L7.757 14.828L9.172 16.243L12 13.414L14.828 16.243L16.243 14.828L13.414 12L16.243 9.172L14.828 7.757L12 10.586Z" />
     </svg>
     );
 };
