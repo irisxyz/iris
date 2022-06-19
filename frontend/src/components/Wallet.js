@@ -156,7 +156,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         appName: "iris", // Required
         infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
         rpc: "", // Optional if `infuraId` is provided; otherwise it's required
-        chainId: 1, // Optional. It defaults to 1 if not provided
+        chainId: 137, // Optional. It defaults to 1 if not provided
         darkMode: false // Optional. Use dark theme, defaults to false
       }
     },
@@ -249,12 +249,12 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         {
           profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
-        <StyledLink href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
+        {/* <StyledLink href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
           <StyledProfile onClick={() => handleNew()}>
             <b>+ Create Profile</b>
             <UserIcon/>
           </StyledProfile>
-        </StyledLink>
+        </StyledLink> */}
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
       <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />

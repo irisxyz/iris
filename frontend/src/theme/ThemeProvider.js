@@ -8,6 +8,7 @@ const theme = {
     background: 'linear-gradient(90deg, #F4E1E4 12.82%, #FFE6DC 91.48%)',
     text: '#232323',
     textLight: '#fff',
+    greyed: '#747c90',
     darken: '#fffaf8',
     darken2: '#FFF3EE',
     font: `'General Sans', sans-serif`,

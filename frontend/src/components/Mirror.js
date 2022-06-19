@@ -7,7 +7,7 @@ import Retweet from '../assets/Retweet'
 import Button from './Button'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 
-function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
+function Mirror({ wallet, lensHub, profileId, publicationId, stats, setToastMsg }) {
     const [createMirrorTyped, createMirrorTypedData] = useMutation(CREATE_MIRROR_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
@@ -43,6 +43,8 @@ function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
             )
+
+            setToastMsg({ type: 'loading', msg: 'Transaction indexing...' })
 
             setSavedTypedData({
                 ...typedData,
@@ -91,8 +93,7 @@ function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
                 console.log('mirror: tx hash', tx.hash);
                 await pollUntilIndexed(tx.hash)
                 console.log('mirror: success')
-                
-                //TODO: success modal
+                setToastMsg({ type: 'success', msg: 'Transaction indexed' })
 
                 return;
             }
@@ -102,8 +103,7 @@ function Mirror({ wallet, lensHub, profileId, publicationId, stats }) {
             if (!txHash) return;
             await pollUntilIndexed(txHash)
             console.log('mirror: success')
-            
-            //TODO: success modal
+            setToastMsg({ type: 'success', msg: 'Transaction indexed' })
         }
         processBroadcast()
 

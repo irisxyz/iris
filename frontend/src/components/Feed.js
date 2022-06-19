@@ -22,6 +22,7 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
                         sortCriteria: 'TOP_COLLECTED',
                         limit: 10,
                     },
+                    reactionRequest: profile.id ? { profileId: profile.id } : null,
                 },
             })
             return
@@ -30,9 +31,8 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
         if (isExplore) return;
         getTimeline({
             variables: {
-                request: {
-                    profileId: profile.id,
-                },
+                request: { profileId: profile.id },
+                reactionRequest: { profileId: profile.id },
             },
         })
     }, [getTimeline, profile])

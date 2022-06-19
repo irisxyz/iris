@@ -3,12 +3,12 @@ import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import { CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
-import Heart from '../assets/Heart'
+import Bookmark from '../assets/Bookmark'
 import Community from '../assets/Community'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { RoundedButton } from './Button'
 
-function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, isCommunity, isCta }) {
+function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
@@ -46,6 +46,8 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
             );
+
+            setToastMsg({ type: 'loading', msg: 'Transaction indexing...' })
 
             setSavedTypedData({
                 ...typedData,
@@ -92,9 +94,8 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
                 
                 console.log('collect: tx hash', tx.hash);
                 await pollUntilIndexed(tx.hash)
-
-                //TODO: success modal
                 console.log('collect: success')
+                setToastMsg({ type: 'success', msg: 'Transaction indexed' })
 
                 return;
             }
@@ -104,8 +105,7 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
             if (!txHash) return;
             await pollUntilIndexed(txHash)
             console.log('collect: success')
-            
-            //TODO: success modal
+            setToastMsg({ type: 'success', msg: 'Transaction indexed' })
         }
         processBroadcast()
 
@@ -117,7 +117,7 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             {isCommunity
                 ? <Community onClick={handleClick} filled={collected} />
-                : <Heart onClick={handleClick} filled={collected} />
+                : <Bookmark onClick={handleClick} filled={collected} />
             }
             <p>{ stats.totalAmountOfCollects }</p>
         </div>

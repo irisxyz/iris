@@ -193,7 +193,18 @@ const PublicationStatsFields = gql`
     totalAmountOfMirrors
     totalAmountOfCollects
     totalAmountOfComments
+    totalDownvotes
+    totalUpvotes
   }
+`
+
+const WalletFields = gql`
+fragment WalletFields on Wallet {
+  address,
+  defaultProfile {
+   ...ProfileFields
+  }
+}
 `
 
 const PostFields = gql`
@@ -201,6 +212,10 @@ const PostFields = gql`
     id
     profile {
       ...ProfileFields
+    }
+    reaction(request: $reactionRequest)
+    collectedBy {
+      ...WalletFields
     }
     stats {
       ...PublicationStatsFields
@@ -220,6 +235,7 @@ const PostFields = gql`
     appId
   }
   ${ProfileFields}
+  ${WalletFields}
   ${MetadataOutputFields}
   ${CollectModuleFields}
   ${PublicationStatsFields}
@@ -228,6 +244,10 @@ const PostFields = gql`
 const CommentFields = gql`
   fragment CommentFields on Comment {
     ...CommentBaseFields
+    reaction(request: $reactionRequest)
+    collectedBy {
+      ...WalletFields
+    }
     mainPost {
       ... on Post {
         ...PostFields
@@ -245,6 +265,7 @@ const CommentFields = gql`
       }
     }
   }
+  ${WalletFields}
 `
 
 const MirrorBaseFields = gql`
@@ -253,6 +274,7 @@ const MirrorBaseFields = gql`
     profile {
       ...ProfileFields
     }
+    reaction(request: $reactionRequest)
     stats {
       ...PublicationStatsFields
     }
@@ -276,7 +298,7 @@ const MirrorFields = gql`
   fragment MirrorFields on Mirror {
     ...MirrorBaseFields
     mirrorOf {
-    ... on Post {
+      ... on Post {
         ...PostFields          
     }
     ... on Comment {
@@ -301,6 +323,7 @@ const CommentBaseFields = gql`
     profile {
       ...ProfileFields
     }
+    reaction(request: $reactionRequest)
     stats {
       ...PublicationStatsFields
     }
@@ -335,7 +358,10 @@ const CommentMirrorOfFields = gql`
 `
 
 export const EXPLORE_PUBLICATIONS = gql`
-query($request: ExplorePublicationRequest!) {
+query(
+  $request: ExplorePublicationRequest!
+  $reactionRequest: ReactionFieldResolverRequest
+  ) {
   explorePublications(request: $request) {
     items {
       __typename 
@@ -418,7 +444,10 @@ export const SEARCH = gql`
 `;
 
 export const GET_TIMELINE = gql`
-query($request: TimelineRequest!) {
+query(
+  $request: TimelineRequest!
+  $reactionRequest: ReactionFieldResolverRequest
+  ) {
   timeline(request: $request) {
     items {
       __typename 
@@ -590,7 +619,10 @@ export const BROADCAST = gql`
 `
 
 export const GET_PUBLICATION = gql`
-  query($request: PublicationQueryRequest!) {
+  query(
+    $request: PublicationQueryRequest!
+    $reactionRequest: ReactionFieldResolverRequest
+  ) {
     publication(request: $request) {
         __typename 
         ... on Post {
@@ -619,7 +651,10 @@ export const GET_PUBLICATION = gql`
 `;
 
 export const GET_PUBLICATIONS = gql`
-  query($request: PublicationsQueryRequest!) {
+  query(
+    $request: PublicationsQueryRequest!
+    $reactionRequest: ReactionFieldResolverRequest
+  ) {
     publications(request: $request) {
       items {
         __typename 
@@ -1070,3 +1105,14 @@ export const HAS_TX_BEEN_INDEXED = gql`
   }
 `;
 
+export const ADD_REACTION_MUTATION = gql`
+  mutation AddReaction($request: ReactionRequest!) {
+    addReaction(request: $request)
+  }
+`
+
+export const REMOVE_REACTION_MUTATION = gql`
+  mutation RemoveReaction($request: ReactionRequest!) {
+    removeReaction(request: $request)
+  }
+`
