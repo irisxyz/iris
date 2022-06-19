@@ -200,19 +200,6 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
 
     const switchNetwork = async () => {
       const chainId = CHAIN === 'polygon' ? toHex(137) : toHex(80001)
-      const network = CHAIN === 'polygon' ? {
-        chainId: toHex(137),
-        chainName: "Polygon",
-        rpcUrls: ["https://polygon-rpc.com/"],
-        blockExplorerUrls: ["https://polygonscan.com/"],
-      } :
-      {
-        chainId: toHex(80001),
-        chainName: "Polygon Mumbai",
-        rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
-        blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
-      }
-
       try {
         await provider.provider.request({
           method: "wallet_switchEthereumChain",
@@ -221,6 +208,18 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
       } catch (switchError) {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
+          const network = CHAIN === 'polygon' ? {
+            chainId: chainId,
+            chainName: "Polygon",
+            rpcUrls: ["https://polygon-rpc.com/"],
+            blockExplorerUrls: ["https://polygonscan.com/"],
+          } :
+          {
+            chainId: chainId,
+            chainName: "Polygon Mumbai",
+            rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+            blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+          }
           try {
             await provider.provider.request({
               method: "wallet_addEthereumChain",
