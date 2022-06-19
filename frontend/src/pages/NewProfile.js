@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { CREATE_PROFILE, MODULE_APPROVAL_DATA } from "../utils/queries";
+import Toast from "../components/Toast";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import avatar from "../assets/avatar.png";
@@ -71,11 +72,11 @@ const Cover = styled.div`
 `;
 
 function NewProfile({ profile = {}, wallet }) {
-    const [newProfile, setNewProfile] = useState({ ...profile });
+    const [toastMsg, setToastMsg] = useState({})
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
+    const [submittedHandle, setSubmittedHandle] = useState('')
     const handleRef = createRef();
     // const costRef = createRef();
-
     // const bioRef = createRef()
 
     const handleCreate = async () => {
@@ -90,22 +91,31 @@ function NewProfile({ profile = {}, wallet }) {
         //     return;
         // }
 
+        // Block submitting the same handle twice
+        if(submittedHandle === handle) return;
+
         const profileRequest = {
             handle: handle,
         };
 
         // const bio = bioRef.current.value
+        setToastMsg({ type: 'loading', msg: 'Creating profile...' })
         createProfile({
             variables: {
                 request: profileRequest,
             },
         });
+        setSubmittedHandle(handle)
     };
 
     useEffect(() => {
         if (!createProfileData.data) return;
-
         console.log(createProfileData.data);
+        if (createProfileData.data.createProfile.reason === 'HANDLE_TAKEN') {
+            setToastMsg({ type: 'error', msg: 'Handle Taken' })
+        } else {
+            setToastMsg({ type: 'success', msg: 'Profile created!' })
+        }
     }, [createProfileData.data]);
 
     // const moduleApprovalRequest = {
@@ -148,7 +158,8 @@ function NewProfile({ profile = {}, wallet }) {
         }
     };
 
-    return (
+    return <>
+        <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
         <StyledCard>
             <Cover />
             <CardContent>
@@ -161,7 +172,7 @@ function NewProfile({ profile = {}, wallet }) {
                 <Button onClick={handleCreate}>Create Profile</Button>
             </CardContent>
         </StyledCard>
-    );
+    </>
 }
 
 export default NewProfile;

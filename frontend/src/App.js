@@ -20,6 +20,7 @@ import Feed from "./components/Feed";
 // import Livelinks from "./components/Livelinks";
 import logo from "./assets/logo.svg";
 // import LandingPage from './pages/LandingPage'
+import { CHAIN } from "./utils/constants";
 
 const Container = styled.div`
     max-width: 1000px;
@@ -115,7 +116,7 @@ function App() {
                                         </div>
                                     }
                                 />
-                                {/* <Route path="new-profile" element={<NewProfile wallet={wallet} />} /> */}
+                                { CHAIN === 'mumbai' && <Route path="new-profile" element={<NewProfile wallet={wallet} />} />}
                                 <Route path="explore" element={<Feed profile={profile} wallet={wallet} lensHub={lensHub} isExplore/> } />
                                 <Route path="user" element={<Outlet />}>
                                     <Route path=":handle" element={<User wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />

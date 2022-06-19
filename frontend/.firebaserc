@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "irisxyz"
+  },
+  "targets": {
+    "irisxyz": {
+      "hosting": {
+        "prod": [
+          "irisxyz"
+        ],
+        "testnet": [
+          "iris-testnet"
+        ]
+      }
+    }
   }
 }

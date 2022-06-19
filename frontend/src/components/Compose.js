@@ -9,6 +9,7 @@ import Card from './Card'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { handleCompose } from '../utils/litIntegration'
+import { CHAIN } from '../utils/constants'
 import VisibilitySelector from './VisibilitySelector'
 import Toast from './Toast'
 
@@ -234,12 +235,12 @@ const Compose = ({
                 />
                 <Actions>
                     {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
-                    {/* <VisibilitySelector
+                    {CHAIN === 'mumbai' && <VisibilitySelector
                         showFollower={isPost}
                         showCommunity={isCommunity}
                         showCollector={isComment}
                         selectedVisibility={selectedVisibility}
-                        setSelectedVisibility={setSelectedVisibility} /> */}
+                        setSelectedVisibility={setSelectedVisibility} />}
                 </Actions>
 
                 {/* <input

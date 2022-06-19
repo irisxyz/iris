@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Check from '../assets/Check'
 import Spinner from '../assets/Spinner'
+import Error from '../assets/Error'
 
 const ToastDiv = styled.div`
     display: flex;
@@ -21,6 +22,7 @@ const ToastDiv = styled.div`
     word-break: break-word;
     ${p => p.type === 'success' && `border-left: #4DD06A 4px solid;`}
     ${p => p.type === 'loading' && `border-left: ${p.theme.primary} 4px solid;`}
+    ${p => p.type === 'error' && `border-left: ${p.theme.error} 4px solid;`}
     box-shadow: 0px 2px 9px rgba(236, 176, 178, 0.6);
 `
 const ToastText = styled.p`
@@ -52,6 +54,7 @@ export default function Toast({ children, type = 'error' }) {
     <ToastDiv shown={showToast} type={type}>
         {type === 'success' && <Check/>}
         {type === 'loading' && <Spinner/>}
+        {type === 'error' && <Error/>}
         <ToastText>{children}</ToastText>
     </ToastDiv>
   )
