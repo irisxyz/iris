@@ -8,6 +8,7 @@ import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { GET_PROFILES } from '../utils/queries'
 import { CHAIN } from '../utils/constants'
+import { toHex } from '../utils/index'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import LensHub from '../abi/LensHub.json'
@@ -109,6 +110,8 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
+  const [provider, setProvider] = useState()
+  const [network, setNetwork] = useState()
 
   const handleSelect = (profile) => {
     console.log(profile)
@@ -175,6 +178,9 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const instance = await web3Modal.connect();
 
     const provider = new ethers.providers.Web3Provider(instance)
+    setProvider(provider)
+    const network = await provider.getNetwork();
+    setNetwork(network)
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
@@ -199,9 +205,43 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     if (web3Modal.cachedProvider) {
       connectWallet();
   }}, [])
-  
+
+  useEffect(() => {
+    const switchNetwork = async () => {
+      try {
+        console.log("Switching Networks")
+        console.log(provider)
+        await provider.provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: toHex(137) }],
+        });
+        console.log("Switched to Polygon")
+      } catch (switchError) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+          try {
+            await provider.provider.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: toHex(137),
+                  chainName: "Polygon",
+                  rpcUrls: ["https://polygon-rpc.com/"],
+                  blockExplorerUrls: ["https://polygonscan.com/"],
+                },
+              ],
+            });
+          } catch (addError) {
+            throw addError;
+          }
+        }
+      }
+    };
+
+    switchNetwork()
+  }, [])
+
   return (
-    
     <WalletContainer>
     { wallet.signer
     ? <>
