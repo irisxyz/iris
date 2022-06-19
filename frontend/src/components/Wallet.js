@@ -92,7 +92,13 @@ const StyledProfile = styled.div`
   }
 `
 
-const StyledLink = styled.a`
+const StyledA = styled.a`
+  text-decoration: none;
+  color: black;
+  transition: all 50ms ease-in-out;
+`
+
+const StyledLink = styled(Link)`
   text-decoration: none;
   color: black;
   transition: all 50ms ease-in-out;
@@ -181,10 +187,8 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const signer = provider.getSigner()
     const address = await signer.getAddress()
 
-    // const contract = new ethers.Contract('0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d', LensHub, signer)
     const contractAddr = CHAIN === 'polygon' ? '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d' : '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82';
     const contract = new ethers.Contract(contractAddr, LensHub, signer)
-    // console.log({contract})
     setLensHub(contract)
   
     provider.getBalance(address).then((balance) => {
@@ -246,12 +250,20 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         {
           profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
         }
-        {/* <StyledLink href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
+        { CHAIN === 'polygon'
+        ? <StyledA href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
           <StyledProfile onClick={() => handleNew()}>
             <b>+ Create Profile</b>
             <UserIcon/>
           </StyledProfile>
-        </StyledLink> */}
+        </StyledA>
+        : <StyledLink to="/new-profile">
+          <StyledProfile onClick={() => handleNew()}>
+            <b>+ Create Profile</b>
+            <UserIcon/>
+          </StyledProfile>
+        </StyledLink>
+        }
       </AccountPicker>
       <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
       <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />

@@ -28,3 +28,15 @@ Default chain on localhost is `mumbai`. If you want to change it change `/fronte
 
 
 Remember all `.env` changes require an `npm start` restart.
+
+## Deploying
+
+Testnet
+- change `.env` to `REACT_APP_CHAIN="mumbai"`
+- `npm run build`
+- `firebase deploy --only hosting:testnet`
+
+Prod
+- change `.env` to `REACT_APP_CHAIN="polygon"` or remove `REACT_APP_CHAIN`
+- `npm run build`
+- `firebase deploy --only hosting:prod`
