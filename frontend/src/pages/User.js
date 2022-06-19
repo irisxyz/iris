@@ -153,7 +153,7 @@ function User({ wallet, lensHub, profileId }) {
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
-        if (!data || !profileId) return;
+        if (!data) return;
 
         if (data.profiles.items.length < 1) {
             setNotFound(true);
@@ -177,7 +177,7 @@ function User({ wallet, lensHub, profileId }) {
                     profileId: data.profiles.items[0].id,
                     publicationTypes: ["POST", "COMMENT", "MIRROR"],
                 },
-                reactionRequest: { profileId }
+                reactionRequest: profileId ? { profileId } : null,
             },
         });
 
