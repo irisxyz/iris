@@ -1,31 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
-import { MODULE_APPROVAL_DATA, CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
+import { CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
 import Bookmark from '../assets/Bookmark'
 import Community from '../assets/Community'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
-import { CHAIN } from '../utils/constants'
 import { RoundedButton } from './Button'
 
 function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
-    const [getModuleApproval, getModuleApprovalData] = useLazyQuery(MODULE_APPROVAL_DATA)
-    const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA, {
-        onError(error){
-            if (error.message === 'You do not have enough allowance to collect this publication.'){
-                getModuleApproval({
-                    variables: {
-                        request: {
-                            currency: CHAIN === 'polygon' ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270' : '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
-                            value: '1000',
-                            collectModule: 'FeeCollectModule',
-                        }
-                    }
-                })
-            }
-        }
-    })
+    const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
     const [apiError, setApiError] = useState('')
