@@ -112,6 +112,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
   const [openPicker, setPicker] = useState(false)
   const [provider, setProvider] = useState()
   const [network, setNetwork] = useState()
+  const [chainId, setChainId] = useState()
 
   const handleSelect = (profile) => {
     console.log(profile)
@@ -181,6 +182,7 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     setProvider(provider)
     const network = await provider.getNetwork();
     setNetwork(network)
+    setChainId(network.chainId);
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()
@@ -237,9 +239,9 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
         }
       }
     };
-
+    
     switchNetwork()
-  }, [])
+  }, [network])
 
   return (
     <WalletContainer>
