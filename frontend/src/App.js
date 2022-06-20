@@ -65,6 +65,7 @@ const Sidebar = styled.div`
 `;
 
 const Content = styled.main`
+    width: 100%;
     @media (min-width: 768px) {
         width: 700px;
     }
