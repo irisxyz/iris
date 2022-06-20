@@ -17,11 +17,10 @@ function Post({ wallet, lensHub, profileId, profileName }) {
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
-        if(!profileId) return;
         getPublication({
             variables: {
                 request: { publicationId: params.postId },
-                reactionRequest: { profileId },
+                reactionRequest: profileId ? { profileId } : null,
             },
         });
     }, [profileId])
