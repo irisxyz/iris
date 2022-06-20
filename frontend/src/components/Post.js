@@ -17,6 +17,7 @@ import Toast from './Toast'
 import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
 import { random } from '../utils'
+import { useWallet } from '../utils/wallet'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
@@ -211,7 +212,8 @@ const PostBody = ({ children }) => {
     return <>{ replacedText }</>
 }
 
-function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
+function Post({ profileId, isCommunityPost, ...props }) {
+    const { wallet } = useWallet()
     const [decryptedMsg, setDecryptedMsg] = useState("")
     const [showModal, setShowModal] = useState(false)
     const [selectedImage, setSelectedImage] = useState('')
@@ -359,15 +361,15 @@ function Post({ wallet, lensHub, profileId, isCommunityPost, ...props }) {
                                 <Avatar src={post.metadata?.cover?.original?.url}/>
                             </Link>
                             <h2>{post.metadata?.name}</h2>
-                            <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCta />
+                            <Collect profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCta />
                         </CommunityDisplay>
                     </MediaContainer>}
 
                     <Actions>
-                        <Comment wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} />
-                        <Mirror wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
-                        <Like wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
-                        <Collect wallet={wallet} lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
+                        <Comment profileId={profileId} publicationId={post.id} stats={post.stats} />
+                        <Mirror profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
+                        <Like profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
+                        <Collect profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

@@ -39,12 +39,11 @@ const StyledCard = styled(Card)`
 `
 
 function Nav({ handle, setProfile }) {
-
-const handleClick = () => {
+  const handleClick = () => {
     window.sessionStorage.removeItem('lensToken')
     window.sessionStorage.removeItem('signature')
     setProfile({})
-}
+  }
 
   return (
     <StyledCard>
@@ -52,10 +51,10 @@ const handleClick = () => {
             <Home/>
             <p>Home</p>
         </StyledLink>
-        <StyledLink to={`user/${handle}`}>
+        {handle && <StyledLink to={`user/${handle}`}>
             <Profile/>
             <p>Profile</p>
-        </StyledLink>
+        </StyledLink>}
         {/* <StyledLink to={`user/${Nav.handle}`}>
             <Subscriptions/>
             <p>Subscriptions</p>
@@ -68,10 +67,10 @@ const handleClick = () => {
             <Compass/>
             <p>Explore</p>
         </StyledLink>
-        <StyledLink onClick={handleClick} to={``}>
+        {handle && <StyledLink onClick={handleClick} to={``}>
             <Share/>
             <p>Logout</p>
-        </StyledLink>
+        </StyledLink>}
     </StyledCard>
   );
 }

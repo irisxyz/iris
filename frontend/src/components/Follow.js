@@ -6,9 +6,11 @@ import omitDeep from 'omit-deep'
 import Button from './Button'
 import Toast from './Toast'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
+import { useWallet } from '../utils/wallet'
 
 // profile being the user being viewed, profileId the id of the user using the app
-function Follow({ wallet, lensHub, profile = {}, profileId }) {
+function Follow({ profile = {}, profileId }) {
+    const { wallet, lensHub} = useWallet()
     const [toastMsg, setToastMsg] = useState('')
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA, {
         onError(error){

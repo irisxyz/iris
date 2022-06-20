@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_PUBLICATION, GET_PUBLICATIONS, HAS_COLLECTED } from '../utils/queries'
 import PostComponent from '../components/Post'
 import Compose from '../components/Compose'
+import { useWallet } from '../utils/wallet'
 
-function Post({ wallet, lensHub, profileId, profileName }) {
+function Post({ profileId, profileName }) {
+    const { wallet } = useWallet()
     let params = useParams();
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)
@@ -100,12 +102,10 @@ function Post({ wallet, lensHub, profileId, profileName }) {
     return (
         <>
             {notFound && <h3>No Post Found</h3>}
-            {publication.metadata && <PostComponent post={publication} wallet={wallet} lensHub={lensHub} profileId={profileId} />}
+            {publication.metadata && <PostComponent post={publication} profileId={profileId} />}
             <Compose
-                wallet={wallet}
                 profileId={profileId}
                 profileName={profileName} 
-                lensHub={lensHub}
                 cta='Comment'
                 placeholder='Type your comment'
                 replyTo={params.postId}
@@ -114,7 +114,7 @@ function Post({ wallet, lensHub, profileId, profileName }) {
             />
             {comments.length > 0 && <h3>Comments</h3>}
             {comments.map((post) => {
-                return <PostComponent key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} isCommunityPost={isCommunity} />;
+                return <PostComponent key={post.id} post={post} profileId={profileId} isCommunityPost={isCommunity} />;
             })}
         </>
     );

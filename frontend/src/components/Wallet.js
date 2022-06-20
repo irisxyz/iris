@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
@@ -11,7 +11,9 @@ import { CHAIN } from '../utils/constants'
 import { toHex } from '../utils/index'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
+import Login from './Login'
 import LensHub from '../abi/LensHub.json'
+import { useWallet } from '../utils/wallet'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -104,6 +106,15 @@ const StyledLink = styled(Link)`
   transition: all 50ms ease-in-out;
 `
 
+const StyledLogin = styled(Login)`
+  width: 100%;
+  background: white;
+  color: black;
+  :hover {
+    background: white;
+    color: ${p=>p.theme.primary};
+  }
+`
 
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
@@ -113,7 +124,8 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 }
 
 
-function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
+function Wallet({ currProfile, setProfile }) {
+  const { wallet, setWallet, setLensHub, authToken } = useWallet()
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 
@@ -245,27 +257,32 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     <WalletContainer>
     { wallet.signer
     ? <>
-      <AccountPicker show={openPicker}>
-        {
-          profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
-        }
-        { CHAIN === 'polygon'
-        ? <StyledA href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
-          <StyledProfile onClick={() => handleNew()}>
-            <b>+ Create Profile</b>
-            <UserIcon/>
-          </StyledProfile>
-        </StyledA>
-        : <StyledLink to="/new-profile">
-          <StyledProfile onClick={() => handleNew()}>
-            <b>+ Create Profile</b>
-            <UserIcon/>
-          </StyledProfile>
-        </StyledLink>
-        }
-      </AccountPicker>
-      <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
+          <AccountPicker show={openPicker}>
+          { authToken
+            ? <>
+              {
+                profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
+              }
+              { CHAIN === 'polygon'
+              ? <StyledA href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
+                <StyledProfile onClick={() => handleNew()}>
+                  <b>+ Create Profile</b>
+                  <UserIcon/>
+                </StyledProfile>
+              </StyledA>
+              : <StyledLink to="/new-profile">
+                <StyledProfile onClick={() => handleNew()}>
+                  <b>+ Create Profile</b>
+                  <UserIcon/>
+                </StyledProfile>
+              </StyledLink>
+              }
+              </>
+            : <StyledLogin />
+          }
+        </AccountPicker>
+        <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
+        <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
     </>
     : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }

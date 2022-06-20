@@ -12,6 +12,7 @@ import Livestream from "../components/Livestream";
 import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
+import { useWallet } from "../utils/wallet";
 
 const Icon = styled.div`
     height: 100px;
@@ -118,7 +119,8 @@ const Opensea = styled.a`
     }
 `;
 
-function User({ wallet, lensHub, profileId }) {
+function User({ profileId }) {
+    const { wallet } = useWallet()
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
@@ -265,52 +267,6 @@ function User({ wallet, lensHub, profileId }) {
         );
     }
 
-    // if (streamInfo.playbackId) {
-    //     return (
-    //         <>
-    //             <StyledCard>
-    //                 <LiveCardContent>
-    //                     <Livestream playbackId={streamInfo.playbackId} />
-    //                     <Columns>
-    //                         <div>
-    //                             <UserInfo>
-    //                                 <LiveIcon />
-    //                                 <Live>Live</Live>
-    //                                 <Handle>@{params.handle}</Handle>
-    //                                 <Address>{profile?.address}</Address>
-    //                                 <Opensea
-    //                                     target="_blank"
-    //                                     rel="noopener noreferrer"
-    //                                     href={`https://testnets.opensea.io/assets/mumbai/0x60ae865ee4c725cd04353b5aab364553f56cef82/${profile.decId}`}
-    //                                 >
-    //                                     <img src={opensea} alt="Opensea" />
-    //                                 </Opensea>
-    //                                 <div>
-    //                                     {following ? (
-    //                                         <Unfollow wallet={wallet} profile={profile} />
-    //                                     ) : (
-    //                                         <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
-    //                                     )}
-    //                                 </div>
-    //                             </UserInfo>
-    //                             <Stats>
-    //                                 <p>{profile.stats?.totalFollowers} followers</p>
-    //                                 <p>{profile.stats?.totalFollowing} following</p>
-    //                                 <p>{profile.stats?.totalPublications} posts</p>
-    //                                 <p>{profile.stats?.totalCollects} collects</p>
-    //                             </Stats>
-    //                         </div>
-    //                     </Columns>
-    //                 </LiveCardContent>
-    //             </StyledCard>
-
-    //             {publications.map((post) => {
-    //                 return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
-    //             })}
-    //         </>
-    //     );
-    // }
-
     return (
         <>
             <StyledCard>
@@ -340,9 +296,9 @@ function User({ wallet, lensHub, profileId }) {
                         </div>
                         <div>
                             {following ? (
-                                <Unfollow wallet={wallet} profileId={profile.id} />
+                                <Unfollow profileId={profile.id} />
                             ) : (
-                                <Follow wallet={wallet} lensHub={lensHub} profile={profile} profileId={profileId} />
+                                <Follow profile={profile} profileId={profileId} />
                             )}
                         </div>
                     </Columns>
@@ -350,7 +306,7 @@ function User({ wallet, lensHub, profileId }) {
             </StyledCard>
 
             {publications.map((post) => {
-                return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;
+                return <Post key={post.id} post={post} profileId={profileId} />;
             })}
         </>
     );

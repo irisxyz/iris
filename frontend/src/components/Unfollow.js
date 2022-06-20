@@ -5,8 +5,10 @@ import { LENS_FOLLOW_NFT_ABI } from "../config.ts";
 import { CREATE_UNFOLLOW_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import FollowButton from "./FollowButton";
+import { useWallet } from "../utils/wallet";
 
-function Follow({ wallet, profileId }) {
+function Follow({ profileId }) {
+    const { wallet } = useWallet()
     const [createUnfollowTyped, createUnfollowTypedData] = useMutation(CREATE_UNFOLLOW_TYPED_DATA);
 
     const unfollowRequest = {
