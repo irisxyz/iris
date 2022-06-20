@@ -31,6 +31,7 @@ const Container = styled.div`
     margin: auto;
     @media (max-width: 768px) {
         padding: 0 0.5em 0.5em 0.5em;
+        margin-bottom: 3em;
     }
 `;
 
@@ -69,6 +70,12 @@ const Content = styled.main`
     }
 `;
 
+const MobileNav = styled(Nav)`
+    @media (min-width: 768px) {
+        display: none;
+    }
+`
+
 function App() {
     const [profile, setProfile] = useState({});
 
@@ -89,6 +96,7 @@ function App() {
         <ApolloProvider>
             <ThemeProvider>
                 <GlobalStyle />
+                <MobileNav handle={profile?.handle} />
                 <Container>
                     <Navbar>
                         <LogoContainer>
