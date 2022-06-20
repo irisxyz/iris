@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { GET_PROFILES, GET_PUBLICATIONS, HAS_COLLECTED, DOES_FOLLOW } from "../utils/queries";
+import { GET_PROFILES, GET_PUBLICATIONS, DOES_FOLLOW } from "../utils/queries";
 import { hexToDec } from "../utils";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
@@ -151,7 +151,6 @@ function User({ profileId }) {
         },
     });
 
-    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
@@ -213,41 +212,7 @@ function User({ profileId }) {
 
         setPublications(publicationsData.data.publications.items);
 
-        const publications = publicationsData.data.publications.items.map((thing) => {
-            return thing.id;
-        });
-
-        hasCollected({
-            variables: {
-                request: {
-                    collectRequests: [
-                        {
-                            walletAddress: wallet.address,
-                            publicationIds: publications,
-                        },
-                    ],
-                },
-            },
-        });
     }, [publicationsData.data]);
-
-    useEffect(() => {
-        if (!hasCollectedData.data) return;
-
-        const collectedIds = {};
-
-        hasCollectedData.data.hasCollected[0].results.forEach((result) => {
-            if (result.collected) {
-                collectedIds[result.publicationId] = true;
-            }
-        });
-
-        const newPubs = publications.map((post) => {
-            return { ...post, collected: collectedIds[post.id] };
-        });
-
-        setPublications([...newPubs]);
-    }, [hasCollectedData.data]);
 
     useEffect(() => {
         if (!doesFollow.data) return;

@@ -21,6 +21,8 @@ const ProfileFields = gql`
     metadata
     isDefault
     handle
+    isFollowing
+    isFollowedByMe
     picture {
       ... on NftImage {
         contractAddress
@@ -224,6 +226,7 @@ const PostFields = gql`
       ...MetadataOutputFields
     }
     createdAt
+    hasCollectedByMe
     collectModule {
       ...CollectModuleFields
     }
@@ -245,6 +248,7 @@ const CommentFields = gql`
   fragment CommentFields on Comment {
     ...CommentBaseFields
     reaction(request: $reactionRequest)
+    hasCollectedByMe
     collectedBy {
       ...WalletFields
     }
@@ -805,19 +809,6 @@ export const GET_FOLLOWING = gql`
           prev
           next
           totalCount
-      }
-    }
-  }
-`;
-
-export const HAS_COLLECTED = gql`
-  query($request: HasCollectedRequest!) {
-    hasCollected(request: $request) {
-      walletAddress
-      results {
-        collected
-        publicationId
-        collectedTimes
       }
     }
   }
