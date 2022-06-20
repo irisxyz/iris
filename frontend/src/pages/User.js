@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { GET_PROFILES, GET_PUBLICATIONS, HAS_COLLECTED, DOES_FOLLOW } from "../utils/queries";
+import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
 import { hexToDec } from "../utils";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
@@ -137,21 +137,7 @@ function User({ profileId }) {
             },
         },
     });
-    const followInfos = [
-        {
-            followerAddress: wallet.address,
-            profileId: profile.id,
-        },
-    ];
-    const doesFollow = useQuery(DOES_FOLLOW, {
-        variables: {
-            request: {
-                followInfos,
-            },
-        },
-    });
 
-    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {
@@ -163,7 +149,6 @@ function User({ profileId }) {
         }
 
         const ownedBy = data.profiles.items[0].ownedBy;
-        const handle = data.profiles.items[0].handle;
         const id = data.profiles.items[0].id;
         const decId = hexToDec(id.replace("0x", ""));
 
@@ -213,51 +198,7 @@ function User({ profileId }) {
 
         setPublications(publicationsData.data.publications.items);
 
-        const publications = publicationsData.data.publications.items.map((thing) => {
-            return thing.id;
-        });
-
-        hasCollected({
-            variables: {
-                request: {
-                    collectRequests: [
-                        {
-                            walletAddress: wallet.address,
-                            publicationIds: publications,
-                        },
-                    ],
-                },
-            },
-        });
     }, [publicationsData.data]);
-
-    useEffect(() => {
-        if (!hasCollectedData.data) return;
-
-        const collectedIds = {};
-
-        hasCollectedData.data.hasCollected[0].results.forEach((result) => {
-            if (result.collected) {
-                collectedIds[result.publicationId] = true;
-            }
-        });
-
-        const newPubs = publications.map((post) => {
-            return { ...post, collected: collectedIds[post.id] };
-        });
-
-        setPublications([...newPubs]);
-    }, [hasCollectedData.data]);
-
-    useEffect(() => {
-        if (!doesFollow.data) return;
-
-        const handleCreate = async () => {
-            setFollowing(doesFollow.data.doesFollow[0].follows);
-        };
-
-        handleCreate();
-    }, [doesFollow.data]);
 
     if (notFound) {
         return (
@@ -295,7 +236,7 @@ function User({ profileId }) {
                             </Stats>
                         </div>
                         <div>
-                            {following ? (
+                            {profile.isFollowedByMe ? (
                                 <Unfollow profileId={profile.id} />
                             ) : (
                                 <Follow profile={profile} profileId={profileId} />
