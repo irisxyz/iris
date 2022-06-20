@@ -8,6 +8,7 @@ import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { GET_PROFILES } from '../utils/queries'
 import { CHAIN } from '../utils/constants'
+import { toHex } from '../utils/index'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import LensHub from '../abi/LensHub.json'
@@ -189,7 +190,49 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const contractAddr = CHAIN === 'polygon' ? '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d' : '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82';
     const contract = new ethers.Contract(contractAddr, LensHub, signer)
     setLensHub(contract)
-    setWallet({...wallet, signer, address})
+  
+    provider.getBalance(address).then((balance) => {
+      // convert a currency unit from wei to ether
+      const balanceInEth = ethers.utils.formatEther(balance)
+      // console.log({balanceInEth})
+      setWallet({...wallet, signer, address, balanceInEth})
+    })
+
+    const switchNetwork = async () => {
+      const chainId = CHAIN === 'polygon' ? toHex(137) : toHex(80001)
+      try {
+        await provider.provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: chainId }],
+        });
+      } catch (switchError) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+          const network = CHAIN === 'polygon' ? {
+            chainId: chainId,
+            chainName: "Polygon",
+            rpcUrls: ["https://polygon-rpc.com/"],
+            blockExplorerUrls: ["https://polygonscan.com/"],
+          } :
+          {
+            chainId: chainId,
+            chainName: "Polygon Mumbai",
+            rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+            blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+          }
+          try {
+            await provider.provider.request({
+              method: "wallet_addEthereumChain",
+              params: [network],
+            });
+          } catch (addError) {
+            throw addError;
+          }
+        }
+      }
+    };
+
+    switchNetwork()
   }
 
   // hook to automatically connect to the cached provider
@@ -197,9 +240,8 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     if (web3Modal.cachedProvider) {
       connectWallet();
   }}, [])
-  
+
   return (
-    
     <WalletContainer>
     { wallet.signer
     ? <>
