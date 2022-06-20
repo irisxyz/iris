@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import styled from "styled-components";
 import { GET_TIMELINE, EXPLORE_PUBLICATIONS, HAS_COLLECTED } from "../utils/queries";
 import Post from "../components/Post";
+import { useWallet } from "../utils/wallet";
 
 const Main = styled.main``;
 
-function Feed({ profile = {}, wallet, lensHub, isExplore }) {
+function Feed({ profile = {}, lensHub, isExplore }) {
     const [publications, setPublications] = useState([]);
+    const { wallet } = useWallet()
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
     const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);
@@ -113,7 +115,7 @@ function Feed({ profile = {}, wallet, lensHub, isExplore }) {
         <Main>
             {!profile.id && <h3>Popular Posts</h3>}
             {publications.map((post) => {
-                return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
+                return <Post key={post.id} post={post} lensHub={lensHub} profileId={profile.id} />;
             })}
         </Main>
     );

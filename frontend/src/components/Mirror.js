@@ -6,8 +6,10 @@ import omitDeep from 'omit-deep'
 import Retweet from '../assets/Retweet'
 import Button from './Button'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
+import { useWallet } from '../utils/wallet'
 
-function Mirror({ wallet, lensHub, profileId, publicationId, stats, setToastMsg }) {
+function Mirror({ lensHub, profileId, publicationId, stats, setToastMsg }) {
+    const { wallet } = useWallet()
     const [createMirrorTyped, createMirrorTypedData] = useMutation(CREATE_MIRROR_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})

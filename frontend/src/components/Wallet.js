@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
@@ -12,6 +12,7 @@ import { toHex } from '../utils/index'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import LensHub from '../abi/LensHub.json'
+import { WalletContext } from '../utils/wallet'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -113,7 +114,8 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 }
 
 
-function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
+function Wallet({ authToken, currProfile, setProfile, setLensHub }) {
+  const { wallet, setWallet } = useContext(WalletContext);
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 

@@ -71,7 +71,7 @@ const Cover = styled.div`
     border-radius: 16px 15px 0 0;
 `;
 
-function NewProfile({ profile = {}, wallet }) {
+function NewProfile({ profile = {} }) {
     const [toastMsg, setToastMsg] = useState({})
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE);
     const [submittedHandle, setSubmittedHandle] = useState('')

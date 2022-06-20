@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { GET_CHALLENGE, AUTHENTICATION, CREATE_PROFILE } from "../utils/queries";
+import { GET_CHALLENGE, AUTHENTICATION, CREATE_PROFILE } from '../utils/queries'
 import Button from './Button'
+import { useWallet } from '../utils/wallet'
 
-function Login({ wallet, auth }) {
+function Login({ auth }) {
+    const { wallet } = useWallet()
     const [authToken, setAuthToken] = auth
     const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE)
     const [mutateAuth, authData] = useMutation(AUTHENTICATION)
@@ -78,6 +80,7 @@ function Login({ wallet, auth }) {
 
     }
 
+    if(!wallet.address) return '';
     return (
         <div style={{ marginTop:'1em'}}>
             {

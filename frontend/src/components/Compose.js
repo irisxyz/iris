@@ -12,6 +12,7 @@ import { handleCompose } from '../utils/litIntegration'
 import { CHAIN } from '../utils/constants'
 import VisibilitySelector from './VisibilitySelector'
 import Toast from './Toast'
+import { useWallet } from '../utils/wallet'
 
 const StyledCard = styled(Card)`
     width: 100%;
@@ -82,7 +83,6 @@ const Actions = styled.div`
 `
 
 const Compose = ({
-    wallet,
     profileId,
     profileName,
     lensHub,
@@ -93,6 +93,7 @@ const Compose = ({
     isCommunity,
     isComment,
     }) => {
+    const { wallet } = useWallet()
     const [description, setDescription] = useState('')
     const [selectedVisibility, setSelectedVisibility] = useState('public')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)

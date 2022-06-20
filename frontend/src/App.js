@@ -21,6 +21,7 @@ import Feed from "./components/Feed";
 import logo from "./assets/logo.svg";
 // import LandingPage from './pages/LandingPage'
 import { CHAIN } from "./utils/constants";
+import { WalletContextProvider } from "./utils/wallet";
 
 const Container = styled.div`
     max-width: 1000px;
@@ -61,7 +62,6 @@ const Content = styled.main`
 `;
 
 function App() {
-    const [wallet, setWallet] = useState({});
     const [authToken, setAuthToken] = useState(false);
     const [profile, setProfile] = useState({});
     const [lensHub, setLensHub] = useState();
@@ -79,6 +79,7 @@ function App() {
     }, []);
 
     return (
+        <WalletContextProvider>
         <ApolloProvider>
             <ThemeProvider>
                 <GlobalStyle />
@@ -89,8 +90,6 @@ function App() {
                             <h1>iris</h1>
                         </LogoContainer>
                         <Wallet
-                            wallet={wallet}
-                            setWallet={setWallet}
                             authToken={authToken}
                             currProfile={profile}
                             setProfile={setProfile}
@@ -99,8 +98,8 @@ function App() {
                     </Navbar>
                     <Columns>
                         <Sidebar>
-                            <Profile profile={profile} wallet={wallet}>
-                                {wallet.address && <Login wallet={wallet} auth={[authToken, setAuthToken]} />}
+                            <Profile profile={profile}>
+                                <Login auth={[authToken, setAuthToken]} />
                             </Profile>
                             <Nav handle={profile?.handle} />
                         </Sidebar>
@@ -110,19 +109,18 @@ function App() {
                                     path="/"
                                     element={
                                         <div>
-                                            {/* <Livelinks wallet={wallet} /> */}
-                                            {profile && profile.__typename && <Compose wallet={wallet} profileId={profile.id} profileName={profile.name || profile.handle} lensHub={lensHub} isPost/>}
-                                            <Feed profile={profile} wallet={wallet} lensHub={lensHub} />
+                                            {profile && profile.__typename && <Compose profileId={profile.id} profileName={profile.name || profile.handle} lensHub={lensHub} isPost/>}
+                                            <Feed profile={profile} lensHub={lensHub} />
                                         </div>
                                     }
                                 />
-                                { CHAIN === 'mumbai' && <Route path="new-profile" element={<NewProfile wallet={wallet} />} />}
-                                <Route path="explore" element={<Feed profile={profile} wallet={wallet} lensHub={lensHub} isExplore/> } />
+                                { CHAIN === 'mumbai' && <Route path="new-profile" element={<NewProfile />} />}
+                                <Route path="explore" element={<Feed profile={profile} lensHub={lensHub} isExplore/> } />
                                 <Route path="user" element={<Outlet />}>
-                                    <Route path=":handle" element={<User wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} />} />
+                                    <Route path=":handle" element={<User lensHub={lensHub} profileId={profile && profile.id} />} />
                                 </Route>
                                 <Route path="post" element={<Outlet />}>
-                                    <Route path=":postId" element={<Post wallet={wallet} lensHub={lensHub} profileId={profile && profile.id} profileName={profile && (profile.name || profile.handle)}  />} />
+                                    <Route path=":postId" element={<Post lensHub={lensHub} profileId={profile && profile.id} profileName={profile && (profile.name || profile.handle)}  />} />
                                 </Route>
                                 <Route path="*" element={<NotFound />} />
                             </Routes>
@@ -131,6 +129,7 @@ function App() {
                 </Container>
             </ThemeProvider>
         </ApolloProvider>
+        </WalletContextProvider>
     );
 }
 

@@ -12,6 +12,7 @@ import Livestream from "../components/Livestream";
 import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
+import { useWallet } from "../utils/wallet";
 
 const Icon = styled.div`
     height: 100px;
@@ -118,7 +119,8 @@ const Opensea = styled.a`
     }
 `;
 
-function User({ wallet, lensHub, profileId }) {
+function User({ lensHub, profileId }) {
+    const { wallet } = useWallet()
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
@@ -340,9 +342,9 @@ function User({ wallet, lensHub, profileId }) {
                         </div>
                         <div>
                             {following ? (
-                                <Unfollow wallet={wallet} profileId={profile.id} />
+                                <Unfollow profileId={profile.id} />
                             ) : (
-                                <Follow wallet={wallet} lensHub={lensHub} profile={profile} profileId={profileId} />
+                                <Follow lensHub={lensHub} profile={profile} profileId={profileId} />
                             )}
                         </div>
                     </Columns>
@@ -350,7 +352,7 @@ function User({ wallet, lensHub, profileId }) {
             </StyledCard>
 
             {publications.map((post) => {
-                return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profileId} />;
+                return <Post key={post.id} post={post} lensHub={lensHub} profileId={profileId} />;
             })}
         </>
     );
