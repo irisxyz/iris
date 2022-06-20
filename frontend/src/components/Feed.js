@@ -9,7 +9,7 @@ const Main = styled.main``;
 
 function Feed({ profile = {}, isExplore }) {
     const [publications, setPublications] = useState([]);
-    const { wallet, lensHub } = useWallet()
+    const { wallet } = useWallet()
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
     const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);

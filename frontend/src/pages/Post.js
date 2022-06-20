@@ -7,7 +7,7 @@ import Compose from '../components/Compose'
 import { useWallet } from '../utils/wallet'
 
 function Post({ profileId, profileName }) {
-    const { wallet, lensHub } = useWallet()
+    const { wallet } = useWallet()
     let params = useParams();
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)

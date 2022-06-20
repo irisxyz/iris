@@ -6,7 +6,7 @@ import { CHAIN } from '../utils/constants'
 const client = create('https://ipfs.infura.io:5001/api/v0')
 
 const getAccessControlConditions = async (params) => {
-    const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo} = params
+    const {description, lensHub, profileId, profileName, selectedVisibility, replyTo} = params
 
     switch(selectedVisibility) {
         case 'follower':
@@ -58,7 +58,7 @@ const getAccessControlConditions = async (params) => {
 }
 
 const getEncodedMetadata = async (params) => {
-    const {description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo} = params
+    const {description, profileId, profileName, selectedVisibility, replyTo} = params
     
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
         description

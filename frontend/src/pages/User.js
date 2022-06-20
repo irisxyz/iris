@@ -120,7 +120,7 @@ const Opensea = styled.a`
 `;
 
 function User({ profileId }) {
-    const { wallet, lensHub } = useWallet()
+    const { wallet } = useWallet()
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
