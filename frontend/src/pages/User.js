@@ -76,9 +76,11 @@ const Cover = styled.div`
 `;
 
 const Stats = styled.div`
-    width: 400px;
-    display: flex;
-    justify-content: space-between;
+    @media (min-width: 768px) {
+        width: 400px;
+        display: flex;
+        justify-content: space-between;
+    }
 `;
 
 const Columns = styled.div`
