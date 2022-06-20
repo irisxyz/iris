@@ -13,7 +13,7 @@ import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
 import Login from './Login'
 import LensHub from '../abi/LensHub.json'
-import { WalletContext } from '../utils/wallet'
+import { useWallet } from '../utils/wallet'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -125,7 +125,7 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 
 
 function Wallet({ currProfile, setProfile }) {
-  const { wallet, setWallet, setLensHub, authToken } = useContext(WalletContext);
+  const { wallet, setWallet, setLensHub, authToken } = useWallet()
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 

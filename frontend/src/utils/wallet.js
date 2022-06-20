@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 const WalletContext = React.createContext();
 
@@ -22,4 +22,4 @@ const useWallet = () => {
   return context
 }
 
-export { WalletContextProvider, useWallet, WalletContext }
+export { WalletContextProvider, useWallet }
