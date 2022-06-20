@@ -29,6 +29,9 @@ const Container = styled.div`
     min-height: 90vh;
     box-sizing: border-box;
     margin: auto;
+    @media (max-width: 768px) {
+        padding: 0 0.5em 0.5em 0.5em;
+    }
 `;
 
 const LogoContainer = styled.div`
@@ -55,10 +58,15 @@ const Sidebar = styled.div`
   width: 300px;
   height: 100%
   float: left;
+  @media (max-width: 768px) {
+      display: none;
+  }
 `;
 
 const Content = styled.main`
-    width: 700px;
+    @media (min-width: 768px) {
+        width: 700px;
+    }
 `;
 
 function App() {
