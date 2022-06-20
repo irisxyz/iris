@@ -1,14 +1,13 @@
 import { useEffect } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { GET_CHALLENGE, AUTHENTICATION, CREATE_PROFILE } from '../utils/queries'
+import { GET_CHALLENGE, AUTHENTICATION } from '../utils/queries'
 import Button from './Button'
 import { useWallet } from '../utils/wallet'
 
-function Login() {
+function Login({ ...props }) {
     const { wallet, authToken, setAuthToken } = useWallet()
     const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE)
     const [mutateAuth, authData] = useMutation(AUTHENTICATION)
-    const [createProfile, createProfileData] = useMutation(CREATE_PROFILE)
 
     const handleClick = async () => {
     
@@ -68,23 +67,8 @@ function Login() {
       }
     }, [])
 
-    const handleCreate = async () => {
-      createProfile({
-        variables: {
-          request: {
-            handle: 'isaac'
-          }
-        }
-      })
-
-    }
-
     if(!wallet.address || authToken) return '';
-    return (
-        <div style={{ marginTop:'1em'}}>
-            <Button onClick={handleClick}>Login to Lens</Button>
-        </div>
-    )
+    return <Button onClick={handleClick} {...props}>Login to Lens</Button>;
 }
 
 export default Login
