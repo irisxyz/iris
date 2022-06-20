@@ -16,6 +16,7 @@ import { Avatar } from './Profile'
 import Toast from './Toast'
 import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
+import { random } from '../utils'
 
 const client = create("https://ipfs.infura.io:5001/api/v0")
 
@@ -151,10 +152,6 @@ const Mirrored = ({ children }) => {
         <Retweet width='15px' height='15px' />
         <Supertext>{children}</Supertext>
     </MirrorContainer>
-}
-
-const random = () => {
-    return (Math.random() + 1).toString(36).substring(7);
 }
 
 const exclusiveLabel = (postType) => {
