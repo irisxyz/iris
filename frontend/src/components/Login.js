@@ -4,9 +4,8 @@ import { GET_CHALLENGE, AUTHENTICATION, CREATE_PROFILE } from '../utils/queries'
 import Button from './Button'
 import { useWallet } from '../utils/wallet'
 
-function Login({ auth }) {
-    const { wallet } = useWallet()
-    const [authToken, setAuthToken] = auth
+function Login() {
+    const { wallet, authToken, setAuthToken } = useWallet()
     const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE)
     const [mutateAuth, authData] = useMutation(AUTHENTICATION)
     const [createProfile, createProfileData] = useMutation(CREATE_PROFILE)
@@ -80,20 +79,10 @@ function Login({ auth }) {
 
     }
 
-    if(!wallet.address) return '';
+    if(!wallet.address || authToken) return '';
     return (
         <div style={{ marginTop:'1em'}}>
-            {
-              authToken
-              ? <div>
-                  {/* Logged in. */}
-                  {/* <Button onClick={handleCreate}>Create Profile</Button> */}
-                </div>
-              : <Button onClick={handleClick}>Login to Lens</Button>
-            }
-            {
-              JSON.stringify(createProfileData.data)
-            }
+            <Button onClick={handleClick}>Login to Lens</Button>
         </div>
     )
 }

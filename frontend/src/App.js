@@ -62,7 +62,6 @@ const Content = styled.main`
 `;
 
 function App() {
-    const [authToken, setAuthToken] = useState(false);
     const [profile, setProfile] = useState({});
 
     useEffect(() => {
@@ -89,7 +88,6 @@ function App() {
                             <h1>iris</h1>
                         </LogoContainer>
                         <Wallet
-                            authToken={authToken}
                             currProfile={profile}
                             setProfile={setProfile}
                         />
@@ -97,7 +95,7 @@ function App() {
                     <Columns>
                         <Sidebar>
                             <Profile profile={profile}>
-                                <Login auth={[authToken, setAuthToken]} />
+                                <Login />
                             </Profile>
                             <Nav handle={profile?.handle} />
                         </Sidebar>
