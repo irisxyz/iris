@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { GET_PROFILES, GET_PUBLICATIONS, DOES_FOLLOW } from "../utils/queries";
+import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
 import { hexToDec } from "../utils";
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
@@ -137,19 +137,6 @@ function User({ profileId }) {
             },
         },
     });
-    const followInfos = [
-        {
-            followerAddress: wallet.address,
-            profileId: profile.id,
-        },
-    ];
-    const doesFollow = useQuery(DOES_FOLLOW, {
-        variables: {
-            request: {
-                followInfos,
-            },
-        },
-    });
 
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
@@ -162,7 +149,6 @@ function User({ profileId }) {
         }
 
         const ownedBy = data.profiles.items[0].ownedBy;
-        const handle = data.profiles.items[0].handle;
         const id = data.profiles.items[0].id;
         const decId = hexToDec(id.replace("0x", ""));
 
@@ -214,16 +200,6 @@ function User({ profileId }) {
 
     }, [publicationsData.data]);
 
-    useEffect(() => {
-        if (!doesFollow.data) return;
-
-        const handleCreate = async () => {
-            setFollowing(doesFollow.data.doesFollow[0].follows);
-        };
-
-        handleCreate();
-    }, [doesFollow.data]);
-
     if (notFound) {
         return (
             <>
@@ -260,7 +236,7 @@ function User({ profileId }) {
                             </Stats>
                         </div>
                         <div>
-                            {following ? (
+                            {profile.isFollowedByMe ? (
                                 <Unfollow profileId={profile.id} />
                             ) : (
                                 <Follow profile={profile} profileId={profileId} />

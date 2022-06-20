@@ -310,8 +310,6 @@ function Post({ profileId, isCommunityPost, ...props }) {
     const profileHandle = post.profile?.handle
     const profileName = post.profile?.name || post.profile?.handle
 
-    console.log(post)
-
     return <>
         {showModal && <Modal padding='0em' onExit={() => setShowModal(false)}>
             <ImageDisplay src={selectedImage} />
