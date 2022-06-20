@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
@@ -8,9 +8,12 @@ import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { GET_PROFILES } from '../utils/queries'
 import { CHAIN } from '../utils/constants'
+import { toHex } from '../utils/index'
 import avatar from '../assets/avatar.png'
 import WalletButton from './WalletButton'
+import Login from './Login'
 import LensHub from '../abi/LensHub.json'
+import { useWallet } from '../utils/wallet'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -103,6 +106,15 @@ const StyledLink = styled(Link)`
   transition: all 50ms ease-in-out;
 `
 
+const StyledLogin = styled(Login)`
+  width: 100%;
+  background: white;
+  color: black;
+  :hover {
+    background: white;
+    color: ${p=>p.theme.primary};
+  }
+`
 
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
@@ -112,7 +124,8 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 }
 
 
-function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLensHub }) {
+function Wallet({ currProfile, setProfile }) {
+  const { wallet, setWallet, setLensHub, authToken } = useWallet()
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 
@@ -189,7 +202,49 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     const contractAddr = CHAIN === 'polygon' ? '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d' : '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82';
     const contract = new ethers.Contract(contractAddr, LensHub, signer)
     setLensHub(contract)
-    setWallet({...wallet, signer, address})
+  
+    provider.getBalance(address).then((balance) => {
+      // convert a currency unit from wei to ether
+      const balanceInEth = ethers.utils.formatEther(balance)
+      // console.log({balanceInEth})
+      setWallet({...wallet, signer, address, balanceInEth})
+    })
+
+    const switchNetwork = async () => {
+      const chainId = CHAIN === 'polygon' ? toHex(137) : toHex(80001)
+      try {
+        await provider.provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: chainId }],
+        });
+      } catch (switchError) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+          const network = CHAIN === 'polygon' ? {
+            chainId: chainId,
+            chainName: "Polygon",
+            rpcUrls: ["https://polygon-rpc.com/"],
+            blockExplorerUrls: ["https://polygonscan.com/"],
+          } :
+          {
+            chainId: chainId,
+            chainName: "Polygon Mumbai",
+            rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+            blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+          }
+          try {
+            await provider.provider.request({
+              method: "wallet_addEthereumChain",
+              params: [network],
+            });
+          } catch (addError) {
+            throw addError;
+          }
+        }
+      }
+    };
+
+    switchNetwork()
   }
 
   // hook to automatically connect to the cached provider
@@ -197,33 +252,37 @@ function Wallet({ wallet, setWallet, authToken, currProfile, setProfile, setLens
     if (web3Modal.cachedProvider) {
       connectWallet();
   }}, [])
-  
+
   return (
-    
     <WalletContainer>
     { wallet.signer
     ? <>
-      <AccountPicker show={openPicker}>
-        {
-          profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
-        }
-        { CHAIN === 'polygon'
-        ? <StyledA href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
-          <StyledProfile onClick={() => handleNew()}>
-            <b>+ Create Profile</b>
-            <UserIcon/>
-          </StyledProfile>
-        </StyledA>
-        : <StyledLink to="/new-profile">
-          <StyledProfile onClick={() => handleNew()}>
-            <b>+ Create Profile</b>
-            <UserIcon/>
-          </StyledProfile>
-        </StyledLink>
-        }
-      </AccountPicker>
-      <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-      <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
+          <AccountPicker show={openPicker}>
+          { authToken
+            ? <>
+              {
+                profiles.data?.profiles.items.map((profile) => <Profile key={profile.id} profile={profile} currProfile={currProfile} handleClick={handleSelect} />)
+              }
+              { CHAIN === 'polygon'
+              ? <StyledA href='https://claim.lens.xyz/' target='_blank' rel='noopener noreferrer'>
+                <StyledProfile onClick={() => handleNew()}>
+                  <b>+ Create Profile</b>
+                  <UserIcon/>
+                </StyledProfile>
+              </StyledA>
+              : <StyledLink to="/new-profile">
+                <StyledProfile onClick={() => handleNew()}>
+                  <b>+ Create Profile</b>
+                  <UserIcon/>
+                </StyledProfile>
+              </StyledLink>
+              }
+              </>
+            : <StyledLogin />
+          }
+        </AccountPicker>
+        <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
+        <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
     </>
     : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }

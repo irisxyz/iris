@@ -4,11 +4,19 @@ import { utils } from 'ethers'
 import { CREATE_FOLLOW_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
 import Button from './Button'
+import Toast from './Toast'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
+import { useWallet } from '../utils/wallet'
 
 // profile being the user being viewed, profileId the id of the user using the app
-function Follow({ wallet, lensHub, profile = {}, profileId }) {
-    const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA);
+function Follow({ profile = {}, profileId }) {
+    const { wallet, lensHub} = useWallet()
+    const [toastMsg, setToastMsg] = useState('')
+    const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA, {
+        onError(error){
+            setToastMsg({ type: 'error', msg: error.message })
+        }
+    });
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
 
@@ -55,6 +63,7 @@ function Follow({ wallet, lensHub, profile = {}, profileId }) {
                     },
                 },
             });
+            
         // }
     };
 
@@ -70,6 +79,7 @@ function Follow({ wallet, lensHub, profile = {}, profileId }) {
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
             );
+            setToastMsg({ type: 'loading', msg: 'Transaction indexing...' })
 
             setSavedTypedData({
                 ...typedData,
@@ -118,9 +128,7 @@ function Follow({ wallet, lensHub, profile = {}, profileId }) {
                 console.log('follow: tx hash', tx.hash);
                 await pollUntilIndexed(tx.hash)
                 console.log('follow: success')
-                
-                //TODO: success modal
-
+                setToastMsg({ type: 'success', msg: 'Transaction indexed' })
                 return;
             }
             
@@ -129,8 +137,7 @@ function Follow({ wallet, lensHub, profile = {}, profileId }) {
             if (!txHash) return;
             await pollUntilIndexed(txHash)
             console.log('follow: success')
-            
-            //TODO: success modal
+            setToastMsg({ type: 'success', msg: 'Transaction indexed' })
         }
         processBroadcast()
 
@@ -138,6 +145,7 @@ function Follow({ wallet, lensHub, profile = {}, profileId }) {
 
     return (
         <div>
+            <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
             <Button onClick={handleClick}>Follow</Button>
         </div>
     );

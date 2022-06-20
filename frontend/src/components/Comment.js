@@ -1,4 +1,4 @@
-import CommentIcon from "../assets/Comment";
+import CommentIcon from '../assets/Comment'
 
 function Comment({ publicationId, stats }) {
     return (

@@ -25,3 +25,11 @@ export const blobToBase64 = (blob) => {
     });
 };
 
+export const random = () => {
+    return (Math.random() + 1).toString(36).substring(7);
+}
+
+export const toHex = (num) => {
+    const val = Number(num);
+    return "0x" + val.toString(16);
+};

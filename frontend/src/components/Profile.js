@@ -5,6 +5,7 @@ import Card from './Card'
 import avatar from '../assets/avatar.png'
 import Button from './Button'
 import Modal from './Modal'
+import { useWallet } from '../utils/wallet'
 
 export const Avatar = styled.div`
   height: 75px;
@@ -48,7 +49,8 @@ const Centered = styled.div`
   text-align: center;
 `
 
-function Profile({ profile = {}, wallet, children }) {
+function Profile({ profile = {}, children }) {
+  const { wallet } = useWallet()
 
   // Streaming
   const [liveStreamModal, setLiveStreamModal] = useState(false)

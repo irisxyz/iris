@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { ADD_REACTION_MUTATION, REMOVE_REACTION_MUTATION } from '../utils/queries'
 import Heart from '../assets/Heart'
 
-function Collect({ wallet, lensHub, profileId, publicationId, liked, stats, setToastMsg }) {
+function Like({ profileId, publicationId, liked, stats, setToastMsg }) {
     const [addReaction] = useMutation(ADD_REACTION_MUTATION, {
         onError(error) {
             setLiked(!stateLiked)
@@ -71,4 +71,4 @@ function Collect({ wallet, lensHub, profileId, publicationId, liked, stats, setT
     );
 }
 
-export default Collect;
+export default Like;
