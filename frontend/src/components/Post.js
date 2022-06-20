@@ -212,7 +212,7 @@ const PostBody = ({ children }) => {
     return <>{ replacedText }</>
 }
 
-function Post({ lensHub, profileId, isCommunityPost, ...props }) {
+function Post({ profileId, isCommunityPost, ...props }) {
     const { wallet } = useWallet()
     const [decryptedMsg, setDecryptedMsg] = useState("")
     const [showModal, setShowModal] = useState(false)
@@ -361,15 +361,15 @@ function Post({ lensHub, profileId, isCommunityPost, ...props }) {
                                 <Avatar src={post.metadata?.cover?.original?.url}/>
                             </Link>
                             <h2>{post.metadata?.name}</h2>
-                            <Collect lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCta />
+                            <Collect profileId={profileId} publicationId={post.id} stats={post.stats} collected={post.collected} isCta />
                         </CommunityDisplay>
                     </MediaContainer>}
 
                     <Actions>
                         <Comment profileId={profileId} publicationId={post.id} stats={post.stats} />
-                        <Mirror lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
+                        <Mirror profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
                         <Like profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
-                        <Collect lensHub={lensHub} profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
+                        <Collect profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

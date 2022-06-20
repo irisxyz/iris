@@ -85,7 +85,6 @@ const Actions = styled.div`
 const Compose = ({
     profileId,
     profileName,
-    lensHub,
     cta,
     placeholder,
     replyTo,
@@ -93,7 +92,7 @@ const Compose = ({
     isCommunity,
     isComment,
     }) => {
-    const { wallet } = useWallet()
+    const { wallet, lensHub } = useWallet()
     const [description, setDescription] = useState('')
     const [selectedVisibility, setSelectedVisibility] = useState('public')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)

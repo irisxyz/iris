@@ -9,8 +9,8 @@ import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { RoundedButton } from './Button'
 import { useWallet } from '../utils/wallet'
 
-function Collect({ lensHub, profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
-    const { wallet } = useWallet()
+function Collect({ profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
+    const { wallet, lensHub } = useWallet()
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})

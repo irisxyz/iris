@@ -7,9 +7,9 @@ import { useWallet } from "../utils/wallet";
 
 const Main = styled.main``;
 
-function Feed({ profile = {}, lensHub, isExplore }) {
+function Feed({ profile = {}, isExplore }) {
     const [publications, setPublications] = useState([]);
-    const { wallet } = useWallet()
+    const { wallet, lensHub } = useWallet()
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
     const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);
@@ -115,7 +115,7 @@ function Feed({ profile = {}, lensHub, isExplore }) {
         <Main>
             {!profile.id && <h3>Popular Posts</h3>}
             {publications.map((post) => {
-                return <Post key={post.id} post={post} lensHub={lensHub} profileId={profile.id} />;
+                return <Post key={post.id} post={post} profileId={profile.id} />;
             })}
         </Main>
     );

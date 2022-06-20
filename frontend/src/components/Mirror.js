@@ -8,8 +8,8 @@ import Button from './Button'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { useWallet } from '../utils/wallet'
 
-function Mirror({ lensHub, profileId, publicationId, stats, setToastMsg }) {
-    const { wallet } = useWallet()
+function Mirror({ profileId, publicationId, stats, setToastMsg }) {
+    const { wallet, lensHub } = useWallet()
     const [createMirrorTyped, createMirrorTypedData] = useMutation(CREATE_MIRROR_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})

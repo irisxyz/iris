@@ -119,8 +119,8 @@ const Opensea = styled.a`
     }
 `;
 
-function User({ lensHub, profileId }) {
-    const { wallet } = useWallet()
+function User({ profileId }) {
+    const { wallet, lensHub } = useWallet()
     let params = useParams();
     const [notFound, setNotFound] = useState(false);
     const [publications, setPublications] = useState([]);
@@ -267,52 +267,6 @@ function User({ lensHub, profileId }) {
         );
     }
 
-    // if (streamInfo.playbackId) {
-    //     return (
-    //         <>
-    //             <StyledCard>
-    //                 <LiveCardContent>
-    //                     <Livestream playbackId={streamInfo.playbackId} />
-    //                     <Columns>
-    //                         <div>
-    //                             <UserInfo>
-    //                                 <LiveIcon />
-    //                                 <Live>Live</Live>
-    //                                 <Handle>@{params.handle}</Handle>
-    //                                 <Address>{profile?.address}</Address>
-    //                                 <Opensea
-    //                                     target="_blank"
-    //                                     rel="noopener noreferrer"
-    //                                     href={`https://testnets.opensea.io/assets/mumbai/0x60ae865ee4c725cd04353b5aab364553f56cef82/${profile.decId}`}
-    //                                 >
-    //                                     <img src={opensea} alt="Opensea" />
-    //                                 </Opensea>
-    //                                 <div>
-    //                                     {following ? (
-    //                                         <Unfollow wallet={wallet} profile={profile} />
-    //                                     ) : (
-    //                                         <Follow wallet={wallet} lensHub={lensHub} profile={profile} />
-    //                                     )}
-    //                                 </div>
-    //                             </UserInfo>
-    //                             <Stats>
-    //                                 <p>{profile.stats?.totalFollowers} followers</p>
-    //                                 <p>{profile.stats?.totalFollowing} following</p>
-    //                                 <p>{profile.stats?.totalPublications} posts</p>
-    //                                 <p>{profile.stats?.totalCollects} collects</p>
-    //                             </Stats>
-    //                         </div>
-    //                     </Columns>
-    //                 </LiveCardContent>
-    //             </StyledCard>
-
-    //             {publications.map((post) => {
-    //                 return <Post key={post.id} post={post} wallet={wallet} lensHub={lensHub} profileId={profile.id} />;
-    //             })}
-    //         </>
-    //     );
-    // }
-
     return (
         <>
             <StyledCard>
@@ -344,7 +298,7 @@ function User({ lensHub, profileId }) {
                             {following ? (
                                 <Unfollow profileId={profile.id} />
                             ) : (
-                                <Follow lensHub={lensHub} profile={profile} profileId={profileId} />
+                                <Follow profile={profile} profileId={profileId} />
                             )}
                         </div>
                     </Columns>
@@ -352,7 +306,7 @@ function User({ lensHub, profileId }) {
             </StyledCard>
 
             {publications.map((post) => {
-                return <Post key={post.id} post={post} lensHub={lensHub} profileId={profileId} />;
+                return <Post key={post.id} post={post} profileId={profileId} />;
             })}
         </>
     );

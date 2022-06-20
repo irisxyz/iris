@@ -64,7 +64,6 @@ const Content = styled.main`
 function App() {
     const [authToken, setAuthToken] = useState(false);
     const [profile, setProfile] = useState({});
-    const [lensHub, setLensHub] = useState();
 
     useEffect(() => {
         const initLit = async () => {
@@ -93,7 +92,6 @@ function App() {
                             authToken={authToken}
                             currProfile={profile}
                             setProfile={setProfile}
-                            setLensHub={setLensHub}
                         />
                     </Navbar>
                     <Columns>
@@ -109,18 +107,18 @@ function App() {
                                     path="/"
                                     element={
                                         <div>
-                                            {profile && profile.__typename && <Compose profileId={profile.id} profileName={profile.name || profile.handle} lensHub={lensHub} isPost/>}
-                                            <Feed profile={profile} lensHub={lensHub} />
+                                            {profile && profile.__typename && <Compose profileId={profile.id} profileName={profile.name || profile.handle} isPost/>}
+                                            <Feed profile={profile} />
                                         </div>
                                     }
                                 />
                                 { CHAIN === 'mumbai' && <Route path="new-profile" element={<NewProfile />} />}
-                                <Route path="explore" element={<Feed profile={profile} lensHub={lensHub} isExplore/> } />
+                                <Route path="explore" element={<Feed profile={profile} isExplore/> } />
                                 <Route path="user" element={<Outlet />}>
-                                    <Route path=":handle" element={<User lensHub={lensHub} profileId={profile && profile.id} />} />
+                                    <Route path=":handle" element={<User profileId={profile && profile.id} />} />
                                 </Route>
                                 <Route path="post" element={<Outlet />}>
-                                    <Route path=":postId" element={<Post lensHub={lensHub} profileId={profile && profile.id} profileName={profile && (profile.name || profile.handle)}  />} />
+                                    <Route path=":postId" element={<Post profileId={profile && profile.id} profileName={profile && (profile.name || profile.handle)}  />} />
                                 </Route>
                                 <Route path="*" element={<NotFound />} />
                             </Routes>

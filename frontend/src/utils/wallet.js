@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const WalletContext = React.createContext();
 
 const WalletContextProvider = ({ children }) => {
   const [wallet, setWallet] = useState({});
+  const [lensHub, setLensHub] = useState();
+
   return (
-    <WalletContext.Provider value={{ wallet, setWallet }}>
+    <WalletContext.Provider value={{ wallet, setWallet, lensHub, setLensHub }}>
       {children}
     </WalletContext.Provider>
   );

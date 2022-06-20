@@ -114,8 +114,8 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 }
 
 
-function Wallet({ authToken, currProfile, setProfile, setLensHub }) {
-  const { wallet, setWallet } = useContext(WalletContext);
+function Wallet({ authToken, currProfile, setProfile }) {
+  const { wallet, setWallet, setLensHub } = useContext(WalletContext);
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 
