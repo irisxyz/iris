@@ -7,6 +7,7 @@ import Subscriptions from '../assets/Subscriptions'
 import Compass from '../assets/Compass'
 import Share from '../assets/Logout'
 import Heart from '../assets/Heart'
+import { useWallet } from '../utils/wallet'
 
 const StyledLink = styled(Link)`
 text-decoration: none;
@@ -51,6 +52,7 @@ const StyledCard = styled(Card)`
 `
 
 function Nav({ handle, setProfile, ...props }) {
+  const { authToken } = useWallet()
   const handleClick = () => {
     window.sessionStorage.removeItem('lensToken')
     window.sessionStorage.removeItem('signature')
@@ -79,7 +81,7 @@ function Nav({ handle, setProfile, ...props }) {
             <Compass/>
             <p>Explore</p>
         </StyledLink>
-        {handle && <StyledLink onClick={handleClick} to={``}>
+        {authToken && <StyledLink onClick={handleClick} to={``}>
             <Share/>
             <p>Logout</p>
         </StyledLink>}
