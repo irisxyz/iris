@@ -7,6 +7,15 @@ const Card = styled.div`
     box-sizing: border-box;
     padding: ${p => p.padding || '1em'};
     width: 100%;
+
+    @media (max-width: 768px) {
+        padding: 0.75em;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    
 `
 
 export default Card

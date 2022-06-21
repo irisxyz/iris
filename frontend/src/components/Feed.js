@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import styled from "styled-components";
 import { GET_TIMELINE, EXPLORE_PUBLICATIONS } from "../utils/queries";
 import Post from "../components/Post";
-
-const Main = styled.main``;
 
 function Feed({ profile = {}, isExplore }) {
     const [publications, setPublications] = useState([]);
@@ -74,12 +71,12 @@ function Feed({ profile = {}, isExplore }) {
     }, [explorePublicationsData.data]);
 
     return (
-        <Main>
+        <div>
             {!profile.id && <h3>Popular Posts</h3>}
             {publications.map((post) => {
                 return <Post key={post.id} post={post} profileId={profile.id} />;
             })}
-        </Main>
+        </div>
     );
 }
 

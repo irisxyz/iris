@@ -58,7 +58,7 @@ const Actions = styled.div`
     gap: 10px;
     align-items: center;
     justify-content: space-between;
-    width: 400px;
+    max-width: 400px;
 `;
 
 const Header = styled.div`
