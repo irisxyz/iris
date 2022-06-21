@@ -143,7 +143,7 @@ function Profile({ profile = {}, children }) {
 
       </Modal>}
       <StyledLink to={`user/${profile.handle}`}>
-        <Avatar src={profile.picture?.original.url}/>
+        <Avatar src={profile.picture?.original?.url}/>
         <Handle>@{profile.handle}</Handle>
       </StyledLink>
       <Stats>
