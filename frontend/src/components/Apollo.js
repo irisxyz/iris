@@ -37,6 +37,8 @@ const errorLink = onError(({ operation, graphQLErrors, forward }) => {
     window.sessionStorage.removeItem('signature')
     // window.location.reload()
     console.log('User token expired or was not authenticated')
+
+    alert('Please log in with Lens')
   }
   return
 });

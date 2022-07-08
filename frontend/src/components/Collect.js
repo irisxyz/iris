@@ -79,8 +79,14 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
 
             const signer = provider.getSigner();
 
-            await signer.sendTransaction(tx)
-            setToastMsg({ type: 'success', msg: 'Module approved', })
+            try {
+                await signer.sendTransaction(tx)
+                setToastMsg({ type: 'success', msg: 'Module approved', })
+            }
+            catch (err) {
+                setToastMsg({ type: 'error', msg: `Error. Do you have any ${collectModule?.amount?.asset?.symbol}?`, })
+                console.log(err)
+            }
         }
         handleGenModuleApproval();
 

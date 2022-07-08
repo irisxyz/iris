@@ -24,11 +24,17 @@ function Mirror({ profileId, publicationId, stats, setToastMsg }) {
             },
         };
 
-        createMirrorTyped({
-            variables: {
-                request: mirrorRequest,
-            },
-        });
+        try {
+            await createMirrorTyped({
+                variables: {
+                    request: mirrorRequest,
+                },
+            });
+        }
+        catch (err) {
+            alert(`${err}
+Are you logged in? Click 'Log in with Lens'`)
+        }
     };
 
     useEffect(() => {
