@@ -19,7 +19,11 @@ const StyledModal = styled(Modal)`
 function Collect({ profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg, collectModule }) {
     const { wallet, lensHub, provider } = useWallet()
     const [showModal, setShowModal] = useState(false)
-    const [getModuleApproval, getModuleApprovalData] = useLazyQuery(MODULE_APPROVAL_DATA)
+    const [getModuleApproval, getModuleApprovalData] = useLazyQuery(MODULE_APPROVAL_DATA, {
+        onError(error){
+            setToastMsg({ type: 'error', msg: error.message })
+        }
+    })
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA, {
         onError(error){
             if (error.message === 'You do not have enough allowance to collect this publication.'){
@@ -32,6 +36,9 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
                         }
                     }
                 })
+            }
+            else {
+                setToastMsg({ type: 'error', msg: error.message })
             }
         }
     })
@@ -84,7 +91,7 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
                 setToastMsg({ type: 'success', msg: 'Module approved', })
             }
             catch (err) {
-                setToastMsg({ type: 'error', msg: `Error. Do you have any ${collectModule?.amount?.asset?.symbol}?`, })
+                // setToastMsg({ type: 'error', msg: `Error. Do you have any ${collectModule?.amount?.asset?.symbol}?`, })
                 console.log(err)
             }
         }
