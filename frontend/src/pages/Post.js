@@ -14,7 +14,9 @@ function Post({ profileId, profileName }) {
     const [comments, setComments] = useState([]);
     const [isCommunity, setIsCommunity] = useState(false)
 
-    const [getPublication, publicationData] = useLazyQuery(GET_PUBLICATION)
+    const [getPublication, publicationData] = useLazyQuery(GET_PUBLICATION, {
+        fetchPolicy: 'no-cache'
+      })
     const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
 
     useEffect(() => {

@@ -32,22 +32,25 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
     const [savedTypedData, setSavedTypedData] = useState({})
     const [apiError, setApiError] = useState('')
 
-    const handleClick = async (e) => {
+    const handleClick = (e) => {
         e.stopPropagation()
-        const collectReq = {
-            publicationId: publicationId,
-        };
-        try {
-            await createCollectTyped({
-                variables: {
-                    request: collectReq,
-                },
-            });
-        }
-        catch (err) {
-            alert(err)
-            setApiError(apiError)
-        }
+
+        
+        // const collectReq = {
+        //     publicationId,
+        // };
+
+        // try {
+        //     await createCollectTyped({
+        //         variables: {
+        //             request: collectReq,
+        //         },
+        //     });
+        // }
+        // catch (err) {
+        //     alert(err)
+        //     setApiError(apiError)
+        // }
     };
 
     useEffect(() => {
@@ -152,13 +155,13 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
 
     }, [broadcastData.data])
 
-    if(isCta) return <RoundedButton onClick={handleClick}>{collected ? 'Joined' : 'Join Community'}</RoundedButton>
+    if(isCta) return <RoundedButton onClick={(e) => handleClick(e)}>{collected ? 'Joined' : 'Join Community'}</RoundedButton>
     
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             {isCommunity
-                ? <Community onClick={handleClick} filled={collected} />
-                : <Bookmark onClick={handleClick} filled={collected} />
+                ? <Community onClick={(e) => handleClick(e)} filled={collected} />
+                : <Bookmark onClick={(e) => handleClick(e)} filled={collected} />
             }
             <p>{ stats.totalAmountOfCollects }</p>
         </div>

@@ -1,5 +1,80 @@
 import { gql } from '@apollo/client'
 
+const CollectModuleFields = gql`
+  fragment CollectModuleFields on CollectModule {
+    __typename
+    ... on FreeCollectModuleSettings {
+      type
+      contractAddress
+      followerOnly
+    }
+    ... on FeeCollectModuleSettings {
+      type
+      recipient
+      referralFee
+      contractAddress
+      followerOnly
+      amount {
+        asset {
+          symbol
+          decimals
+          address
+        }
+        value
+      }
+    }
+    ... on LimitedFeeCollectModuleSettings {
+      type
+      collectLimit
+      recipient
+      referralFee
+      contractAddress
+      followerOnly
+      amount {
+        asset {
+          symbol
+          decimals
+          address
+        }
+        value
+      }
+    }
+    ... on LimitedTimedFeeCollectModuleSettings {
+      type
+      collectLimit
+      recipient
+      endTimestamp
+      referralFee
+      contractAddress
+      followerOnly
+      amount {
+        asset {
+          symbol
+          decimals
+          address
+        }
+        value
+      }
+    }
+    ... on TimedFeeCollectModuleSettings {
+      type
+      recipient
+      endTimestamp
+      referralFee
+      contractAddress
+      followerOnly
+      amount {
+        asset {
+          symbol
+          decimals
+          address
+        }
+        value
+      }
+    }
+  }
+`
+
 const MediaFields = gql`
   fragment MediaFields on Media {
     url
@@ -128,68 +203,6 @@ const MetadataOutputFields = gql`
   }
 `
 
-const CollectModuleFields = gql`
-  fragment CollectModuleFields on CollectModule {
-    __typename
-    ... on FreeCollectModuleSettings {
-      type
-      followerOnly
-      contractAddress
-    }
-    ... on FeeCollectModuleSettings {
-      type
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-    }
-    ... on LimitedFeeCollectModuleSettings {
-      type
-      collectLimit
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-    }
-    ... on LimitedTimedFeeCollectModuleSettings {
-      type
-      collectLimit
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-      endTimestamp
-    }
-    ... on RevertCollectModuleSettings {
-      type
-    }
-    ... on TimedFeeCollectModuleSettings {
-      type
-      amount {
-        asset {
-          ...Erc20Fields
-        }
-        value
-      }
-      recipient
-      referralFee
-      endTimestamp
-    }
-  }
-`
-
 const PublicationStatsFields = gql`
   fragment PublicationStatsFields on PublicationStats { 
     totalAmountOfMirrors
@@ -312,15 +325,6 @@ const MirrorFields = gql`
   }
 `
 
-const Erc20Fields = gql`
-  fragment Erc20Fields on Erc20 {
-    name
-    symbol
-    decimals
-    address
-  }
-`
-
 const CommentBaseFields = gql`
   fragment CommentBaseFields on Comment {
     id
@@ -390,7 +394,6 @@ ${MediaFields}
 ${ProfileFields}
 ${PublicationStatsFields}
 ${MetadataOutputFields}
-${Erc20Fields}
 ${CollectModuleFields}
 ${PostFields}
 ${MirrorBaseFields}
@@ -440,7 +443,6 @@ export const SEARCH = gql`
   ${ProfileFields}
   ${PublicationStatsFields}
   ${MetadataOutputFields}
-  ${Erc20Fields}
   ${CollectModuleFields}
   ${PostFields}
   ${CommentFields}
@@ -476,7 +478,6 @@ ${MediaFields}
 ${ProfileFields}
 ${PublicationStatsFields}
 ${MetadataOutputFields}
-${Erc20Fields}
 ${CollectModuleFields}
 ${PostFields}
 ${MirrorBaseFields}
@@ -571,7 +572,6 @@ export const GET_PUBLICATION = gql`
   ${ProfileFields}
   ${PublicationStatsFields}
   ${MetadataOutputFields}
-  ${Erc20Fields}
   ${CollectModuleFields}
   ${PostFields}
   ${MirrorBaseFields}
@@ -610,7 +610,6 @@ export const GET_PUBLICATIONS = gql`
   ${ProfileFields}
   ${PublicationStatsFields}
   ${MetadataOutputFields}
-  ${Erc20Fields}
   ${CollectModuleFields}
   ${PostFields}
   ${MirrorBaseFields}
