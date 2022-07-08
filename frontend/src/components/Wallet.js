@@ -125,7 +125,7 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 
 
 function Wallet({ currProfile, setProfile }) {
-  const { wallet, setWallet, setLensHub, authToken } = useWallet()
+  const { wallet, setWallet, setLensHub, authToken, setProvider } = useWallet()
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
 
@@ -194,6 +194,7 @@ function Wallet({ currProfile, setProfile }) {
     const instance = await web3Modal.connect();
 
     const provider = new ethers.providers.Web3Provider(instance)
+    setProvider(provider)
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner()

@@ -8,8 +8,10 @@ import Community from '../assets/Community'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { CHAIN } from '../utils/constants'
 import { RoundedButton } from './Button'
+import { useWallet } from '../utils/wallet'
 
-function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
+function Collect({ profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
+    const { wallet, lensHub, provider } = useWallet()
     const [getModuleApproval, getModuleApprovalData] = useLazyQuery(MODULE_APPROVAL_DATA)
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA, {
         onError(error){
@@ -47,6 +49,29 @@ function Collect({ wallet, lensHub, profileId, publicationId, collected, stats, 
             setApiError(apiError)
         }
     };
+
+    useEffect(() => {
+        if (!getModuleApprovalData.data) return;
+
+        const handleGenModuleApproval = async () => {
+
+            const generateModuleCurrencyApprovalData = getModuleApprovalData.data.generateModuleCurrencyApprovalData
+
+            const tx = {
+                to: generateModuleCurrencyApprovalData.to,
+                from: generateModuleCurrencyApprovalData.from,
+                data: generateModuleCurrencyApprovalData.data,
+                gasPrice: utils.hexlify(parseInt(await provider.getGasPrice())),
+            };
+
+            const signer = provider.getSigner();
+
+            await signer.sendTransaction(tx)
+            setToastMsg({ type: 'success', msg: 'Module approved', })
+        }
+        handleGenModuleApproval();
+
+    }, [getModuleApprovalData.data]);
 
     useEffect(() => {
         if (!createCollectTypedData.data) return;
