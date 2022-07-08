@@ -17,7 +17,7 @@ function Post({ profileId, profileName }) {
     const [getPublication, publicationData] = useLazyQuery(GET_PUBLICATION, {
         fetchPolicy: 'no-cache'
       })
-    const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
+    const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS, { fetchPolicy: 'no-cache' });
 
     useEffect(() => {
         getPublication({

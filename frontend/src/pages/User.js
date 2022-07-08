@@ -140,7 +140,7 @@ function User({ profileId }) {
         },
     });
 
-    const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS);
+    const [getPublications, publicationsData] = useLazyQuery(GET_PUBLICATIONS, { fetchPolicy: 'no-cache' });
 
     useEffect(() => {
         if (!data) return;

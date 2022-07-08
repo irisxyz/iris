@@ -39,25 +39,9 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
     const [savedTypedData, setSavedTypedData] = useState({})
     const [apiError, setApiError] = useState('')
 
-    const handleClick = (e) => {
+    const handleClick = async (e) => {
         e.stopPropagation()
-
         setShowModal(true)
-        // const collectReq = {
-        //     publicationId,
-        // };
-
-        // try {
-        //     await createCollectTyped({
-        //         variables: {
-        //             request: collectReq,
-        //         },
-        //     });
-        // }
-        // catch (err) {
-        //     alert(err)
-        //     setApiError(apiError)
-        // }
     };
 
     const handleCollect = async (e) => {
@@ -181,7 +165,7 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
 
     }, [broadcastData.data])
 
-    if(isCta) return <RoundedButton onClick={(e) => handleClick(e)}>{collected ? 'Joined' : 'Join Community'}</RoundedButton>
+    if(isCta) return <RoundedButton onClick={handleClick}>{collected ? 'Joined' : 'Join Community'}</RoundedButton>
     
     return <>
         {showModal && <StyledModal onExit={() => setShowModal(false)}>
@@ -193,8 +177,8 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
         </StyledModal>}
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             {isCommunity
-                ? <Community onClick={(e) => handleClick(e)} filled={collected} />
-                : <Bookmark onClick={(e) => handleClick(e)} filled={collected} />
+                ? <Community onClick={handleClick} filled={collected} />
+                : <Bookmark onClick={handleClick} filled={collected} />
             }
             <p>{ stats.totalAmountOfCollects }</p>
         </div>

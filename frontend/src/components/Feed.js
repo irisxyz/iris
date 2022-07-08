@@ -6,7 +6,7 @@ import Post from "../components/Post";
 function Feed({ profile = {}, isExplore }) {
     const [publications, setPublications] = useState([]);
 
-    const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
+    const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE, { fetchPolicy: 'no-cache' });
     const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);
 
     useEffect(() => {
