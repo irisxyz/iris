@@ -369,7 +369,15 @@ function Post({ profileId, isCommunityPost, ...props }) {
                         <Comment profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
                         <Like profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
-                        <Collect profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.hasCollectedByMe || post.mirrorOf?.hasCollectedByMe} isCommunity={postType === 'Community'} />
+                        <Collect
+                            profileId={profileId}
+                            publicationId={post.id}
+                            stats={post.stats}
+                            setToastMsg={setToastMsg}
+                            collected={post.hasCollectedByMe || post.mirrorOf?.hasCollectedByMe}
+                            isCommunity={postType === 'Community'}
+                            collectModule={post?.collectModule}
+                        />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

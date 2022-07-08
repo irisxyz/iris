@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import { MODULE_APPROVAL_DATA, CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
@@ -7,11 +8,17 @@ import Bookmark from '../assets/Bookmark'
 import Community from '../assets/Community'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { CHAIN } from '../utils/constants'
-import { RoundedButton } from './Button'
+import Button, { RoundedButton } from './Button'
+import Modal from './Modal'
 import { useWallet } from '../utils/wallet'
 
-function Collect({ profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
+const StyledModal = styled(Modal)`
+    max-width: 500px;
+`
+
+function Collect({ profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg, collectModule }) {
     const { wallet, lensHub, provider } = useWallet()
+    const [showModal, setShowModal] = useState(false)
     const [getModuleApproval, getModuleApprovalData] = useLazyQuery(MODULE_APPROVAL_DATA)
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA, {
         onError(error){
@@ -35,7 +42,7 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
     const handleClick = (e) => {
         e.stopPropagation()
 
-        
+        setShowModal(true)
         // const collectReq = {
         //     publicationId,
         // };
@@ -51,6 +58,25 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
         //     alert(err)
         //     setApiError(apiError)
         // }
+    };
+
+    const handleCollect = async (e) => {
+        e.stopPropagation()
+        const collectReq = {
+            publicationId,
+        };
+
+        try {
+            await createCollectTyped({
+                variables: {
+                    request: collectReq,
+                },
+            });
+        }
+        catch (err) {
+            alert(err)
+            setApiError(apiError)
+        }
     };
 
     useEffect(() => {
@@ -157,7 +183,14 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
 
     if(isCta) return <RoundedButton onClick={(e) => handleClick(e)}>{collected ? 'Joined' : 'Join Community'}</RoundedButton>
     
-    return (
+    return <>
+        {showModal && <StyledModal onExit={() => setShowModal(false)}>
+            <h3>Collect this Publication</h3>
+            <b>{collectModule.type}</b>
+            <p><b>{collectModule?.amount?.value} </b>{collectModule?.amount?.asset?.symbol}</p>
+            <br/>
+            <Button onClick={handleCollect}>Collect</Button>
+        </StyledModal>}
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px'}}>
             {isCommunity
                 ? <Community onClick={(e) => handleClick(e)} filled={collected} />
@@ -165,7 +198,7 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
             }
             <p>{ stats.totalAmountOfCollects }</p>
         </div>
-    );
+    </>
 }
 
 export default Collect;
