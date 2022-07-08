@@ -21,6 +21,8 @@ const ProfileFields = gql`
     metadata
     isDefault
     handle
+    isFollowing
+    isFollowedByMe
     picture {
       ... on NftImage {
         contractAddress
@@ -224,6 +226,7 @@ const PostFields = gql`
       ...MetadataOutputFields
     }
     createdAt
+    hasCollectedByMe
     collectModule {
       ...CollectModuleFields
     }
@@ -245,6 +248,7 @@ const CommentFields = gql`
   fragment CommentFields on Comment {
     ...CommentBaseFields
     reaction(request: $reactionRequest)
+    hasCollectedByMe
     collectedBy {
       ...WalletFields
     }
@@ -486,82 +490,8 @@ export const GET_PROFILES = gql`
   query($request: ProfileQueryRequest!) {
     profiles(request: $request) {
       items {
-        id
-        name
-        bio
-        attributes {
-          displayType
-          traitType
-          key
-          value
-        }
-        metadata
-        isDefault
-        picture {
-          ... on NftImage {
-            contractAddress
-            tokenId
-            uri
-            verified
-          }
-          ... on MediaSet {
-            original {
-              url
-              mimeType
-            }
-          }
-          __typename
-        }
-        handle
-        coverPicture {
-          ... on NftImage {
-            contractAddress
-            tokenId
-            uri
-            verified
-          }
-          ... on MediaSet {
-            original {
-              url
-              mimeType
-            }
-          }
-          __typename
-        }
-        ownedBy
-        dispatcher {
-          address
-          canUseRelay
-        }
-        stats {
-          totalFollowers
-          totalFollowing
-          totalPosts
-          totalComments
-          totalMirrors
-          totalPublications
-          totalCollects
-        }
-        followModule {
-          ... on FeeFollowModuleSettings {
-            type
-            amount {
-              asset {
-                symbol
-                name
-                decimals
-                address
-              }
-              value
-            }
-            recipient
-          }
-          ... on ProfileFollowModuleSettings {
-            type
-          }
-          ... on RevertFollowModuleSettings {
-            type
-          }
+        ... on Profile {
+          ...ProfileFields
         }
       }
       pageInfo {
@@ -571,6 +501,7 @@ export const GET_PROFILES = gql`
       }
     }
   }
+  ${ProfileFields}
 `;
 
 export const CREATE_POST_TYPED_DATA = gql`
@@ -706,6 +637,8 @@ export const GET_FOLLOWING = gql`
               }
               metadata
               isDefault
+              isFollowedByMe
+              isFollowing
               handle
               picture {
                 ... on NftImage {
@@ -810,19 +743,6 @@ export const GET_FOLLOWING = gql`
   }
 `;
 
-export const HAS_COLLECTED = gql`
-  query($request: HasCollectedRequest!) {
-    hasCollected(request: $request) {
-      walletAddress
-      results {
-        collected
-        publicationId
-        collectedTimes
-      }
-    }
-  }
-`;
-
 export const CREATE_PROFILE = gql`
   mutation($request: CreateProfileRequest!) { 
     createProfile(request: $request) {
@@ -903,17 +823,6 @@ export const CREATE_UNFOLLOW_TYPED_DATA = gql`
     }
  }
 `;
-
-export const DOES_FOLLOW = gql`
-  query($request: DoesFollowRequest!) {
-    doesFollow(request: $request) { 
-			followerAddress
-    	profileId
-    	follows
-		}
-  }
-`;
-
 
 export const CREATE_MIRROR_TYPED_DATA = gql`
 mutation($request: CreateMirrorRequest!) { 

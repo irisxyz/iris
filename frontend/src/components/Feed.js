@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import styled from "styled-components";
-import { GET_TIMELINE, EXPLORE_PUBLICATIONS, HAS_COLLECTED } from "../utils/queries";
+import { GET_TIMELINE, EXPLORE_PUBLICATIONS } from "../utils/queries";
 import Post from "../components/Post";
-import { useWallet } from "../utils/wallet";
-
-const Main = styled.main``;
 
 function Feed({ profile = {}, isExplore }) {
     const [publications, setPublications] = useState([]);
-    const { wallet } = useWallet()
 
     const [getTimeline, timelineData] = useLazyQuery(GET_TIMELINE);
     const [explorePublications, explorePublicationsData] = useLazyQuery(EXPLORE_PUBLICATIONS);
-    const [hasCollected, hasCollectedData] = useLazyQuery(HAS_COLLECTED);
 
     useEffect(() => {
         if (!profile.id || isExplore) {
@@ -60,23 +54,7 @@ function Feed({ profile = {}, isExplore }) {
         })
 
         setPublications(pubs);
-
-        const publications = timelineData.data.timeline.items.map((thing) => {
-            return thing.id
-        })
-
-        hasCollected({
-            variables: {
-                request: {
-                    collectRequests: [
-                        {
-                          walletAddress: wallet.address,
-                          publicationIds: publications,
-                        },
-                    ],
-                },
-            },
-        })
+        
     }, [timelineData.data]);
 
     useEffect(() => {
@@ -92,32 +70,13 @@ function Feed({ profile = {}, isExplore }) {
         setPublications(explorePublicationsData.data.explorePublications.items);
     }, [explorePublicationsData.data]);
 
-    useEffect(() => {
-        if (!hasCollectedData.data) return;
-
-        const collectedIds = {}
-
-        hasCollectedData.data.hasCollected[0].results.forEach((result) => {
-            if(result.collected) {
-                collectedIds[result.publicationId] = true
-            }
-        })
-
-        const newPubs = publications.map((post) => {
-            return {...post, collected: collectedIds[post.id]}
-        })
-
-        setPublications([...newPubs])
-
-    }, [hasCollectedData.data]);
-
     return (
-        <Main>
+        <div>
             {!profile.id && <h3>Popular Posts</h3>}
             {publications.map((post) => {
                 return <Post key={post.id} post={post} profileId={profile.id} />;
             })}
-        </Main>
+        </div>
     );
 }
 

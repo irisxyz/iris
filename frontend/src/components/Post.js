@@ -58,7 +58,7 @@ const Actions = styled.div`
     gap: 10px;
     align-items: center;
     justify-content: space-between;
-    width: 400px;
+    max-width: 400px;
 `;
 
 const Header = styled.div`
@@ -344,13 +344,13 @@ function Post({ profileId, isCommunityPost, ...props }) {
                             post.metadata.media.map((media) => {
                                 if(media.original.mimeType.includes('image')) {
                                     return <StyledImage
-                                        key={media.original.url}
-                                        src={media.original.url}
+                                        key={media.original?.url}
+                                        src={media.original?.url}
                                         alt={post.metadata.content}
-                                        onClick={() => handleImageClick(media.original.url)}
+                                        onClick={() => handleImageClick(media.original?.url)}
                                     />
                                 }
-                                return <p key={media.original.url}>Video</p>
+                                return <p key={media.original?.url}>Video</p>
                             })
                         }
                     </MediaContainer> : ''}
@@ -369,7 +369,7 @@ function Post({ profileId, isCommunityPost, ...props }) {
                         <Comment profileId={profileId} publicationId={post.id} stats={post.stats} />
                         <Mirror profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} />
                         <Like profileId={profileId} publicationId={post.mirrorOf?.id || post.id} stats={post.stats} setToastMsg={setToastMsg} liked={post.reaction === 'UPVOTE' || post.mirrorOf?.reaction === 'UPVOTE'} />
-                        <Collect profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.collected || post.mirrorOf?.collected} isCommunity={postType === 'Community'} />
+                        <Collect profileId={profileId} publicationId={post.id} stats={post.stats} setToastMsg={setToastMsg} collected={post.hasCollectedByMe || post.mirrorOf?.hasCollectedByMe} isCommunity={postType === 'Community'} />
                         {/* <Share /> */}
                     </Actions>
                 </Content>

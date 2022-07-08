@@ -7,6 +7,7 @@ import Subscriptions from '../assets/Subscriptions'
 import Compass from '../assets/Compass'
 import Share from '../assets/Logout'
 import Heart from '../assets/Heart'
+import { useWallet } from '../utils/wallet'
 
 const StyledLink = styled(Link)`
 text-decoration: none;
@@ -19,6 +20,9 @@ p {
     display: inline;
     color: black;
     transition: all 100ms ease-in-out;
+    @media (max-width: 768px) {
+        display: none;
+    }
 }
 
 padding: .5em;
@@ -36,9 +40,19 @@ border: 2px solid transparent;
 
 const StyledCard = styled(Card)`
   margin-top: 1em;
+  @media (max-width: 768px) {
+      display: flex;
+      justify-content: space-between;
+      position: fixed;
+      bottom: 0;
+      z-index: 100;
+      border-radius: 0;
+      padding: 0.3em 1em;
+  }
 `
 
-function Nav({ handle, setProfile }) {
+function Nav({ handle, setProfile, ...props }) {
+  const { authToken } = useWallet()
   const handleClick = () => {
     window.sessionStorage.removeItem('lensToken')
     window.sessionStorage.removeItem('signature')
@@ -46,7 +60,7 @@ function Nav({ handle, setProfile }) {
   }
 
   return (
-    <StyledCard>
+    <StyledCard {...props}>
         <StyledLink to={`/`}>
             <Home/>
             <p>Home</p>
@@ -67,7 +81,7 @@ function Nav({ handle, setProfile }) {
             <Compass/>
             <p>Explore</p>
         </StyledLink>
-        {handle && <StyledLink onClick={handleClick} to={``}>
+        {authToken && <StyledLink onClick={handleClick} to={``}>
             <Share/>
             <p>Logout</p>
         </StyledLink>}

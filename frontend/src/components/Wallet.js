@@ -119,7 +119,7 @@ const StyledLogin = styled(Login)`
 const Profile = ({ profile, currProfile, handleClick }) => {
   return <StyledProfile onClick={() => handleClick(profile)} selected={currProfile.id === profile.id}>
     <b>@{profile.handle}</b>
-    <UserIcon href={profile.picture?.original.url} />
+    <UserIcon href={profile.picture?.original?.url} />
   </StyledProfile>
 }
 
@@ -281,8 +281,8 @@ function Wallet({ currProfile, setProfile }) {
             : <StyledLogin />
           }
         </AccountPicker>
-        <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(37, wallet.address.length-1)}</Address>
-        <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original.url} />
+        <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(38, wallet.address.length)}</Address>
+        <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original?.url} />
     </>
     : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
     }

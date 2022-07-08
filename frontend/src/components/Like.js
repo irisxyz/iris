@@ -6,15 +6,15 @@ import Heart from '../assets/Heart'
 function Like({ profileId, publicationId, liked, stats, setToastMsg }) {
     const [addReaction] = useMutation(ADD_REACTION_MUTATION, {
         onError(error) {
-            setLiked(!stateLiked)
-            setCount(count-1)
+            setLiked(false)
+            setCount(count)
             console.warn(error)
         }
     })
     const [removeReaction] = useMutation(REMOVE_REACTION_MUTATION, {
         onError(error) {
-            setLiked(!stateLiked)
-            setCount(count+1)
+            setLiked(true)
+            setCount(count)
             console.warn(error)
         }
     })
