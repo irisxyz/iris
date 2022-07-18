@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_PROFILES, GET_PUBLICATIONS } from "../utils/queries";
 import { hexToDec } from "../utils";
+import { CHAIN } from '../utils/constants'
 import Follow from "../components/Follow";
 import Unfollow from "../components/Unfollow";
 import Post from "../components/Post";
 import Card from "../components/Card";
 import Livestream from "../components/Livestream";
+import Button from '../components/Button'
 import avatar from "../assets/avatar.png";
 import rainbow from "../assets/rainbow.png";
 import opensea from "../assets/opensea.svg";
@@ -120,6 +122,13 @@ const Opensea = styled.a`
         box-shadow: 0px 3px 12px rgba(236, 176, 178, 1);
     }
 `;
+
+const ProfileOptions = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
+`
 
 function User({ profileId }) {
     const { wallet } = useWallet()
@@ -237,13 +246,20 @@ function User({ profileId }) {
                                 <p>{profile.stats?.totalCollects} collects</p>
                             </Stats>
                         </div>
-                        <div>
-                            {profile.isFollowedByMe ? (
-                                <Unfollow profileId={profile.id} />
-                            ) : (
-                                <Follow profile={profile} profileId={profileId} />
-                            )}
-                        </div>
+                        <ProfileOptions>
+                            <div>
+                                {profile.isFollowedByMe ? (
+                                    <Unfollow profileId={profile.id} />
+                                ) : (
+                                    <Follow profile={profile} profileId={profileId} />
+                                )}
+                            </div>
+                            <div>
+                                <a href={CHAIN === "polygon" ? `https://lensfrens.xyz/${params.handle}/edit` : `https://testnet.lensfrens.xyz/${params.handle}/edit`} target="_blank" rel="noreferrer">
+                                    <Button>Edit Profile</Button>
+                                </a>
+                            </div>
+                        </ProfileOptions>
                     </Columns>
                 </CardContent>
             </StyledCard>
