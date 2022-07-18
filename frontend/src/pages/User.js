@@ -129,7 +129,6 @@ const ProfileOptions = styled.div`
     flex-direction: column;
     gap: 1em;
 `
-
 function User({ profileId }) {
     const { wallet } = useWallet()
     let params = useParams();
