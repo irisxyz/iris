@@ -44,4 +44,19 @@ export const RoundedButton = styled(Button)`
     }
 `;
 
+export const FollowButton = styled(Button)`
+    width: 9em;
+    color: ${(p) => p.theme.primary};
+    background: ${(p) => p.theme.textLight};
+    outline: 2px solid ${(p) => p.theme.primary};
+    outline-offset: -2px;
+    :hover span {
+        display: none;
+    }
+    :hover:before {
+        color: ${(p) => p.theme.textLight};
+        content: "Unfollow";
+    }
+`;
+
 export default Button;

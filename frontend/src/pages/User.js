@@ -125,8 +125,7 @@ const Opensea = styled.a`
 
 const ProfileOptions = styled.div`
     display: flex;
-    align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     gap: 1em;
 `;
 
@@ -256,7 +255,7 @@ function User({ profileId }) {
                             </div>
                             <div>
                                 <a href={CHAIN === "polygon" ? `https://lensfrens.xyz/${params.handle}/edit` : `https://testnet.lensfrens.xyz/${params.handle}/edit`} target="_blank" rel="noreferrer">
-                                    <Button>Edit Profile</Button>
+                                    <Button>Edit</Button>
                                 </a>
                             </div>
                         </ProfileOptions>
