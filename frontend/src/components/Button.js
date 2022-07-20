@@ -44,7 +44,7 @@ export const RoundedButton = styled(Button)`
     }
 `;
 
-export const FollowButton = styled(Button)`
+export const OutlineButton = styled(Button)`
     width: 9em;
     color: ${(p) => p.theme.primary};
     background: ${(p) => p.theme.textLight};
