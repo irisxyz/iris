@@ -27,7 +27,7 @@ p {
 
 padding: .5em;
 transition: all 150ms ease-in-out;
-border-radius: 12px;
+border-radius: 8px;
 border: 2px solid transparent;
 &:hover {
   border: ${p=>p.theme.border};

@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react'
+import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
 import { GET_PUBLICATION, GET_PUBLICATIONS } from '../utils/queries'
 import PostComponent from '../components/Post'
 import Compose from '../components/Compose'
+import Card from '../components/Card'
 import { useWallet } from '../utils/wallet'
+
+const StyledCard = styled(Card)`
+    padding: 0;
+    margin-bottom: 1em;
+`
 
 function Post({ profileId, profileName }) {
     const { wallet } = useWallet()
@@ -62,7 +69,9 @@ function Post({ profileId, profileName }) {
     return (
         <>
             {notFound && <h3>No Post Found</h3>}
-            {publication.metadata && <PostComponent post={publication} profileId={profileId} />}
+            <StyledCard>
+                {publication.metadata && <PostComponent post={publication} profileId={profileId} />}
+            </StyledCard>
             <Compose
                 profileId={profileId}
                 profileName={profileName} 

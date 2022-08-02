@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useLazyQuery } from "@apollo/client";
-import { GET_TIMELINE, EXPLORE_PUBLICATIONS } from "../utils/queries";
-import Post from "../components/Post";
+import React, { useState, useEffect } from 'react'
+import { useLazyQuery } from '@apollo/client'
+import { GET_TIMELINE, EXPLORE_PUBLICATIONS } from '../utils/queries'
+import Post from '../components/Post'
+import Card from '../components/Card'
+
 
 function Feed({ profile = {}, isExplore }) {
     const [publications, setPublications] = useState([]);
@@ -70,14 +72,14 @@ function Feed({ profile = {}, isExplore }) {
         setPublications(explorePublicationsData.data.explorePublications.items);
     }, [explorePublicationsData.data]);
 
-    return (
-        <div>
-            {!profile.id && <h3>Popular Posts</h3>}
+    return <>    
+        {!profile.id && <h3>Popular Posts</h3>}
+        <Card padding='0'>
             {publications.map((post) => {
                 return <Post key={post.id} post={post} profileId={profile.id} />;
             })}
-        </div>
-    );
+        </Card>
+    </>
 }
 
 export default Feed;

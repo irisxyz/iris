@@ -2,8 +2,8 @@ import styled from 'styled-components'
 
 const Card = styled.div`
     background: #fff;
-    box-shadow: 0px 4px 12px rgba(236, 176, 178, 0.8);
-    border-radius: 18px;
+    box-shadow: 0px 2px 5px rgba(200, 176, 178, 0.6);
+    border-radius: 8px;
     box-sizing: border-box;
     padding: ${p => p.padding || '1em'};
     width: 100%;

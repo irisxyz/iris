@@ -74,7 +74,7 @@ const Cover = styled.div`
     height: 200px;
     background: url(${p => p.src || rainbow});
     background-size: cover;
-    border-radius: 16px 15px 0 0;
+    border-radius: 8px 8px 0 0;
 `;
 
 const Stats = styled.div`
@@ -100,7 +100,7 @@ const Handle = styled.h3`
 `;
 
 const Address = styled.code`
-    box-shadow: 0px 3px 12px rgba(236, 176, 178, 0.8);
+    box-shadow: 0px 2px 5px rgba(200, 176, 178, 0.6);
     border-radius: 100px;
     padding: 0.6em;
     background: white;
@@ -109,18 +109,6 @@ const Address = styled.code`
 
 const UserInfo = styled.div`
     margin-bottom: 2em;
-`;
-
-const Opensea = styled.a`
-    display: flex;
-    align-items: center;
-    gap: 1em;
-    border-radius: 100px;
-    box-shadow: 0px 3px 12px rgba(236, 176, 178, 0.2);
-    transition: all 100ms ease-in-out;
-    &:hover {
-        box-shadow: 0px 3px 12px rgba(236, 176, 178, 1);
-    }
 `;
 
 const ProfileOptions = styled.div`
@@ -262,10 +250,11 @@ function User({ profileId }) {
                     </Columns>
                 </CardContent>
             </StyledCard>
-
+            <Card padding="0">
             {publications.map((post) => {
                 return <Post key={post.id} post={post} profileId={profileId} />;
             })}
+            </Card>
         </>
     );
 }

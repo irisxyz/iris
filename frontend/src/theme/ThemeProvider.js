@@ -2,10 +2,10 @@ import React from 'react'
 import { ThemeProvider } from 'styled-components'
 
 const theme = {
-    primary: '#F28A56',
+    primary: '#FF835B',
     primaryHover: '#FF9C7D',
     border: '#F28A56 2px solid',
-    background: 'linear-gradient(90deg, #F4E1E4 12.82%, #FFE6DC 91.48%)',
+    background: '#EFEFEF',
     text: '#232323',
     textLight: '#fff',
     greyed: '#747c90',

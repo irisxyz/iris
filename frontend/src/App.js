@@ -18,7 +18,7 @@ import Compose from "./components/Compose";
 import Login from "./components/Login";
 import Feed from "./components/Feed";
 // import Livelinks from "./components/Livelinks";
-import logo from "./assets/logo.svg";
+import logo from "./assets/iris.svg";
 // import LandingPage from './pages/LandingPage'
 import { CHAIN } from "./utils/constants";
 import { WalletContextProvider } from "./utils/wallet";
@@ -101,7 +101,7 @@ function App() {
                 <Container>
                     <Navbar>
                         <LogoContainer>
-                            <img src={logo} alt="iris logo" width="50px" height="50px" />
+                            <img src={logo} alt="iris logo" width="46px" height="46px" />
                             <h1>iris</h1>
                         </LogoContainer>
                         <Wallet
