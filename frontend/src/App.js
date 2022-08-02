@@ -80,6 +80,7 @@ const MobileNav = styled(Nav)`
 
 const Announcement = styled(Card)`
     margin-top: 1em;
+    margin-bottom: 0.5em;
     background: #FFCBBB;
     border: #FF9776 1px solid;
     h4 {
@@ -133,6 +134,7 @@ function App() {
                                 <h4>hello fren 🍑</h4>
                                 iris is still in early development so you may run into bugs as your explore the app. Handle with care 💌
                             </Announcement>
+                            © iris
                         </Sidebar>
                         <Content>
                             <Routes>
