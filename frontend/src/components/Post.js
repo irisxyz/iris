@@ -82,15 +82,15 @@ const Premium = styled.span`
     color: ${p=>p.theme.greyed};
 `;
 
-const StyledCard = styled(Card)`
-    margin-bottom: 1em;
-    padding-right: 1.5em;
+const PostArea = styled.div`
+    padding: 1em;
     transition: background 100ms;
     &:hover {
         background: ${p => p.theme.darken};
         cursor: pointer;
     }
-`;
+    border-bottom: #D9D9D9 1px solid;
+`
 
 const MediaContainer = styled.div`
     margin-top: 0.75em;
@@ -315,7 +315,7 @@ function Post({ profileId, isCommunityPost, ...props }) {
             <ImageDisplay src={selectedImage} />
         </Modal>}
         <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
-        <StyledCard onClick={() => navigate(`/post/${post.id}`)}>
+        <PostArea onClick={() => navigate(`/post/${post.id}`)}>
             {mirror && <Mirrored>mirrored by {mirror.profile?.name || mirror.profile?.handle}</Mirrored>}
             <Container>
                 <Link to={`/user/${profileHandle}`} onClick={(e) => e.stopPropagation()}>
@@ -374,7 +374,7 @@ function Post({ profileId, isCommunityPost, ...props }) {
                     </Actions>
                 </Content>
             </Container>
-        </StyledCard>
+        </PostArea>
     </>
 }
 
