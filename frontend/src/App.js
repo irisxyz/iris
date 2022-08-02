@@ -17,6 +17,7 @@ import Wallet from "./components/Wallet";
 import Compose from "./components/Compose";
 import Login from "./components/Login";
 import Feed from "./components/Feed";
+import Card from "./components/Card";
 // import Livelinks from "./components/Livelinks";
 import logo from "./assets/iris.svg";
 // import LandingPage from './pages/LandingPage'
@@ -77,6 +78,19 @@ const MobileNav = styled(Nav)`
     }
 `
 
+const Announcement = styled(Card)`
+    margin-top: 1em;
+    background: #FFCBBB;
+    border: #FF9776 1px solid;
+    h4 {
+        margin: 0;
+        padding-bottom: .25em;
+        color: #F66030;
+        font-weight: 500;
+        
+    }
+`
+
 function App() {
     const [profile, setProfile] = useState({});
 
@@ -115,6 +129,10 @@ function App() {
                                 <Login />
                             </Profile>
                             <Nav handle={profile?.handle} />
+                            <Announcement>
+                                <h4>hello fren 🍑</h4>
+                                iris is still in early development so you may run into bugs as your explore the app. Handle with care 💌
+                            </Announcement>
                         </Sidebar>
                         <Content>
                             <Routes>
