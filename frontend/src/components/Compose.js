@@ -6,6 +6,9 @@ import omitDeep from 'omit-deep'
 
 import Button from './Button'
 import Card from './Card'
+import Video from './Video'
+import Filmstrip from '../assets/Filmstrip'
+import ImageIcon from '../assets/Image'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { handleCompose } from '../utils/litIntegration'
@@ -48,6 +51,10 @@ const TextArea = styled.textarea`
     }
 `
 
+const InputWrapper = styled.div`
+    margin-bottom: 0.4em;
+`;
+
 const FileInput = styled.input`
     opacity: 0;
     width: 0.1px;
@@ -55,32 +62,51 @@ const FileInput = styled.input`
     position: absolute;
 `
 
+const Image = styled.img`
+    width: 100%;
+    height: 100%;
+`
+
+const ImageWrapper = styled.div`
+    height: auto;
+`;
+
 const CustomLabel = styled.label`
     border: none;
     border-radius: 6px;
-    padding: 0.6em 2em;
+    padding: 0.9em 0.3em 0.1em;
     display: inline-block;
     font-family: ${p => p.theme.font};
     font-weight: 500;
     font-size: 0.8em;
     color: ${p => p.theme.textLight};
-    background: ${p => p.theme.primary};
     letter-spacing: 0.02em;
     transition: all 100ms;
-    :hover {
-        background: ${p => p.theme.primaryHover};
-        cursor: pointer;
-    }
     :focus {
         box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #D25D38;
         outline: none;
     }
+    svg: hover {
+        cursor: pointer;
+    }
+    svg: hover path {
+        stroke: ${p => p.theme.primaryHover};
+    }
+`
+
+const PostButtonWrapper = styled.div`
+    align-items: right;
+    text-align: right;
 `
 
 const Actions = styled.div`
     display: flex;
     align-items: center;
 `
+
+const videoFileTypes = ['.mp4','.mov','.webm','.3gpp','.3gpp2','.flv','.mpeg']
+
+const imageFileTypes = ['.jpg','.jpeg','.png','.gif']
 
 const Compose = ({
     profileId,
@@ -223,6 +249,22 @@ const Compose = ({
 
     }, [broadcastData.data])
 
+    const removeFile = () => {
+        setSelectedFile("")
+    }
+
+    const isValidFileType = (validFileTypes, file) => {
+        if (!file.type) {
+            return false;
+        }
+        const fileType = "." + file.type.split("/").pop();
+        return validFileTypes.includes(fileType);
+    }
+
+    const isInvalidFileType = (file) => {
+        return !(isValidFileType(imageFileTypes, file) || isValidFileType(videoFileTypes, file))
+    }
+
     return (
         <>
             <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
@@ -233,8 +275,28 @@ const Compose = ({
                     height={5}
                     onChange={e => setDescription(e.target.value)}
                 />
+                {selectedFile && isValidFileType(videoFileTypes, selectedFile) &&
+                    <Video 
+                        src={URL.createObjectURL(selectedFile)}
+                        hasCloseButton={true}
+                        closeButtonFn={removeFile}
+                    />
+                }
+                {selectedFile && isValidFileType(imageFileTypes, selectedFile) &&
+                    <ImageWrapper>
+                        <Image src={URL.createObjectURL(selectedFile)}/>
+                        <Button onClick={removeFile}></Button>
+                    </ImageWrapper>
+                }
                 <Actions>
-                    {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
+                    <InputWrapper>
+                        <div class="file-input">
+                            <FileInput type="file" id="fileVideo" accept={videoFileTypes.join(',')} class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <CustomLabel for="fileVideo"><Filmstrip/></CustomLabel>
+                            <FileInput type="file" id="fileImage" accept={imageFileTypes.join(',')} class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <CustomLabel for="fileImage"><ImageIcon/></CustomLabel>
+                        </div>
+                    </InputWrapper>
                     {CHAIN === 'mumbai' && <VisibilitySelector
                         showFollower={isPost}
                         showCommunity={isCommunity}
@@ -243,19 +305,12 @@ const Compose = ({
                         setSelectedVisibility={setSelectedVisibility} />}
                 </Actions>
 
-                {/* <input
-                type="file"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-            /> */}
-                {/* <InputWrapper>
-                    {selectedFile ? <>
-                        {selectedFile.name}  <Button onClick={videoUpload}>Upload</Button>
-                    </>
-                        : <div class="file-input">
-                            <FileInput type="file" id="file" class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-                            <CustomLabel for="file">Select Video</CustomLabel>
-                        </div>}
-                </InputWrapper> */}
+                <PostButtonWrapper>
+                {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
+                </PostButtonWrapper>
+
+
+
 
             </StyledCard>
         </>
