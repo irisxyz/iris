@@ -6,9 +6,10 @@ import omitDeep from 'omit-deep'
 
 import Button from './Button'
 import Card from './Card'
+import Image from './Image'
 import Video from './Video'
 import Filmstrip from '../assets/Filmstrip'
-import ImageIcon from '../assets/Image'
+import ImageIcon from '../assets/Thumbnail'
 import { CREATE_POST_TYPED_DATA, CREATE_COMMENT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { handleCompose } from '../utils/litIntegration'
@@ -61,15 +62,6 @@ const FileInput = styled.input`
     height: 0.1px;
     position: absolute;
 `
-
-const Image = styled.img`
-    width: 100%;
-    height: 100%;
-`
-
-const ImageWrapper = styled.div`
-    height: auto;
-`;
 
 const CustomLabel = styled.label`
     border: none;
@@ -277,23 +269,25 @@ const Compose = ({
                 />
                 {selectedFile && isValidFileType(videoFileTypes, selectedFile) &&
                     <Video 
+                        key={URL.createObjectURL(selectedFile)}
                         src={URL.createObjectURL(selectedFile)}
                         hasCloseButton={true}
                         closeButtonFn={removeFile}
                     />
                 }
                 {selectedFile && isValidFileType(imageFileTypes, selectedFile) &&
-                    <ImageWrapper>
-                        <Image src={URL.createObjectURL(selectedFile)}/>
-                        <Button onClick={removeFile}></Button>
-                    </ImageWrapper>
+                    <Image 
+                        src={URL.createObjectURL(selectedFile)} 
+                        hasCloseButton={true}
+                        closeButtonFn={removeFile}
+                    />
                 }
                 <Actions>
                     <InputWrapper>
                         <div class="file-input">
-                            <FileInput type="file" id="fileVideo" accept={videoFileTypes.join(',')} class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <FileInput type="file" id="fileVideo" accept={videoFileTypes.join(',')} class="file" onClick={(e) => e.target.value = ''} onChange={(e) => setSelectedFile(e.target.files[0])}/>
                             <CustomLabel for="fileVideo"><Filmstrip/></CustomLabel>
-                            <FileInput type="file" id="fileImage" accept={imageFileTypes.join(',')} class="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <FileInput type="file" id="fileImage" accept={imageFileTypes.join(',')} class="file" onClick={(e) => e.target.value = ''} onChange={(e) => setSelectedFile(e.target.files[0])} />
                             <CustomLabel for="fileImage"><ImageIcon/></CustomLabel>
                         </div>
                     </InputWrapper>
@@ -308,9 +302,6 @@ const Compose = ({
                 <PostButtonWrapper>
                 {videoUploading ? <Button>Video Uploading...</Button> : <Button disabled={!description} onClick={handleSubmit}>{cta || 'Post'}</Button>}
                 </PostButtonWrapper>
-
-
-
 
             </StyledCard>
         </>

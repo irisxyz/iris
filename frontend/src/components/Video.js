@@ -8,6 +8,19 @@ const CloseButton = styled.button``;
 
 const Container = styled.div`
     background-color: black;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+`;
+
+const VideoContainer = styled.div`
+    background-color: black;
+    display: flex;
+    width: 100%;
+    height: 18em;
+`;
+
+const ControlsContainer = styled.div`
 `;
 
 const VideoPlayer = styled.video`
@@ -26,6 +39,8 @@ const TimeControls = styled.div`
     display: flex;
 `
 
+const TimeText = styled.p``;
+
 const VolumeControls = styled.div``;
 
 // https://blog.avneesh.tech/create-a-custom-video-player-in-react
@@ -37,22 +52,26 @@ const Video = ({src, hasCloseButton, closeButtonFn}) => {
     return (
         <Container>
             {hasCloseButton && <CloseButton onClick={closeButtonFn} />}
-            <VideoPlayer ref={videoRef} key={src} controls>
-                <source src={src}/>
-            </VideoPlayer>
-            {/* <Controls>
-                <Play/>
-                <TimeControls>
-                    <p className="controlsTime">0:05 / 0:08</p>
-                    <div className="time_progressbarContainer">
-                    <div style={{ width: "40%" }} className="time_progressBar"></div>
-                    </div>
-                </TimeControls>
-                <VolumeControls>
-                    <VolumeSpeaker />
-                </VolumeControls>
-                <FullScreen />
-            </Controls> */}
+            <VideoContainer>
+                <VideoPlayer ref={videoRef} key={src}>
+                    <source src={src}/>
+                </VideoPlayer>
+            </VideoContainer>
+            <ControlsContainer>
+                <Controls>
+                    <Play/>
+                    <TimeControls>
+                        <TimeText>0:05 / 0:08</TimeText>
+                        <div className="time_progressbarContainer">
+                        <div style={{ width: "40%" }} className="time_progressBar"></div>
+                        </div>
+                    </TimeControls>
+                    <VolumeControls>
+                        <VolumeSpeaker />
+                    </VolumeControls>
+                    <FullScreen />
+                </Controls>
+            </ControlsContainer>
         </Container>
     );
     
