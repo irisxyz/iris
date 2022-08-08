@@ -9,7 +9,7 @@ const Container = styled.div`
 const CloseButton = styled.button`
     color: white;
     padding-top: 3px;
-    background-color:rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     border: none;
     border-radius: 4px;
     position: absolute;
@@ -36,7 +36,7 @@ const Image = ({src, hasCloseButton, closeButtonFn}) => {
     return (
         <Container>
             <ImageWrapper>
-                <Img src={src}/>
+                <Img src={URL.createObjectURL(src)}/>
                 {hasCloseButton && <CloseButton onClick={closeButtonFn}><X/></CloseButton>}
             </ImageWrapper>
         </Container>

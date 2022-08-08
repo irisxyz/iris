@@ -269,15 +269,14 @@ const Compose = ({
                 />
                 {selectedFile && isValidFileType(videoFileTypes, selectedFile) &&
                     <Video 
-                        key={URL.createObjectURL(selectedFile)}
-                        src={URL.createObjectURL(selectedFile)}
+                        src={selectedFile}
                         hasCloseButton={true}
                         closeButtonFn={removeFile}
                     />
                 }
                 {selectedFile && isValidFileType(imageFileTypes, selectedFile) &&
                     <Image 
-                        src={URL.createObjectURL(selectedFile)} 
+                        src={selectedFile} 
                         hasCloseButton={true}
                         closeButtonFn={removeFile}
                     />
