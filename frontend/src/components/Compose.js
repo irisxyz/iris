@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
@@ -241,10 +241,6 @@ const Compose = ({
 
     }, [broadcastData.data])
 
-    const removeFile = () => {
-        setSelectedFile("")
-    }
-
     const isValidFileType = (validFileTypes, file) => {
         if (!file.type) {
             return false;
@@ -252,11 +248,7 @@ const Compose = ({
         const fileType = "." + file.type.split("/").pop();
         return validFileTypes.includes(fileType);
     }
-
-    const isInvalidFileType = (file) => {
-        return !(isValidFileType(imageFileTypes, file) || isValidFileType(videoFileTypes, file))
-    }
-
+    
     return (
         <>
             <Toast type={toastMsg.type}>{toastMsg.msg}</Toast>
@@ -271,14 +263,14 @@ const Compose = ({
                     <Video 
                         src={selectedFile}
                         hasCloseButton={true}
-                        closeButtonFn={removeFile}
+                        closeButtonFn={() => setSelectedFile("")}
                     />
                 }
                 {selectedFile && isValidFileType(imageFileTypes, selectedFile) &&
                     <Image 
                         src={selectedFile} 
                         hasCloseButton={true}
-                        closeButtonFn={removeFile}
+                        closeButtonFn={() => setSelectedFile("")}
                     />
                 }
                 <Actions>

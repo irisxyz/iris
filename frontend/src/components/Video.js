@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components'
 import X from '../assets/X';
 import 'plyr-react/plyr.css'
@@ -35,7 +36,13 @@ const Container = styled.div`
     }
 `;
 
-const Video = ({src, hasCloseButton, closeButtonFn}) => {
+const areEqual = (prevProps, nextProps) => {
+    return (prevProps.name === nextProps.name && prevProps.lastModified === nextProps.lastModified && prevProps.lastModifiedDate === nextProps.lastModifiedDate && prevProps.size === nextProps.size && prevProps.type === nextProps.type && prevProps.webkitRelativePath === nextProps.webkitRelativePath)
+}
+
+// Using memo so video does not re-render after writing in text box.
+
+const Video = React.memo(({src, hasCloseButton, closeButtonFn}) => {
     const url = URL.createObjectURL(src);
 
     return (
@@ -63,6 +70,6 @@ const Video = ({src, hasCloseButton, closeButtonFn}) => {
         </Container>
     );
     
-}
+}, areEqual)
 
 export default Video;
