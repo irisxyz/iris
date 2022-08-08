@@ -19,6 +19,7 @@
     "moment": "^2.29.3",
     "omit-deep": "^0.3.0",
     "plyr": "^3.6.12",
+    "plyr-react": "^5.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.2.2",
