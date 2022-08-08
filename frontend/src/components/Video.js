@@ -94,54 +94,75 @@ const convertSeconds = (e, includeHours) => {
         //return `${h}:${m}:${s}`;
     }
 
-const Video = ({src, hasCloseButton, closeButtonFn}) => {
-    const videoRef = useRef(null);
+
+const useVideoPlayer = (videoRef) => {
     const [isPaused, setIsPaused] = useState(true);
     const [volume, setVolume] = useState(100);
-    const [time, setTime] = useState(0);
-    const [progress, setProgress] = useState(0);
-    const [fullscreened, setFullscreened] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
 
-    const url = URL.createObjectURL(src);
-    console.log(videoRef);
-
-    const handleOnTimeUpdate = () => {
-        const progress = (videoRef.current?.currentTime / videoRef.current?.duration) * 100;
-        setProgress(progress);
-        // setTime(videoRef.current.currentTime);
-      };
-    
     const handleVideoProgress = (event) => {
         const manualChange = Number(event.target.value);
         videoRef.current.currentTime = (videoRef.current?.duration / 100) * manualChange;
-        setProgress(manualChange);
-        setTime(videoRef.current?.currentTime);
     };
 
-    const conversionFn = (e) => convertSeconds(e, videoRef.current?.duration > 3600);
-
-    const togglePause = () => {
+    useEffect(() => {
+        setDuration(videoRef.current?.duration);
         if (isPaused) {
-            videoRef.current?.play();
-            setIsPaused(false);
-        } else {
             videoRef.current?.pause();
-            setIsPaused(true);
+        } else {
+            videoRef.current?.play();
+        }
+    }, [isPaused, videoRef])
+
+    const onTimeUpdate = () => {
+        const ref = videoRef.current;
+        if (ref) {
+            setDuration(ref.duration);
+            setCurrentTime(ref.currentTime);
         }
     }
 
+    return {
+        isPaused,
+        setIsPaused,
+        volume,
+        currentTime,
+        duration,
+        handleVideoProgress,
+        onTimeUpdate
+    };
+}
+
+const Video = ({src, hasCloseButton, closeButtonFn}) => {
+    const containerRef = useRef(null);
+    const videoRef = useRef(null);
+    const [fullscreened, setFullscreened] = useState(false);
+    const {
+        isPaused,
+        setIsPaused,
+        volume,
+        currentTime,
+        duration,
+        handleVideoProgress,
+        onTimeUpdate
+      } = useVideoPlayer(videoRef);
+
+    const url = URL.createObjectURL(src);
+    
+    const conversionFn = (e) => convertSeconds(e, videoRef.current?.duration > 3600);
+
     // Functions needed to deal with fullscreening and exiting fullscreen
     const toggleFullScreen = () => {
-        const el = document.getElementById("full-screenVideo");
         if (!document.fullscreenElement) {
-            if (el.requestFullscreen) {
-              el.requestFullscreen();
-            } else if (el.msRequestFullscreen) {
-              el.msRequestFullscreen();
-            } else if (el.mozRequestFullScreen) {
-              el.mozRequestFullScreen();
-            } else if (el.webkitRequestFullscreen) {
-              el.webkitRequestFullscreen();
+            if (containerRef.current?.requestFullscreen) {
+              containerRef.current?.requestFullscreen();
+            } else if (containerRef.current?.msRequestFullscreen) {
+              containerRef.current?.msRequestFullscreen();
+            } else if (containerRef.current?.mozRequestFullScreen) {
+              containerRef.current?.mozRequestFullScreen();
+            } else if (containerRef.current?.webkitRequestFullscreen) {
+              containerRef.current?.webkitRequestFullscreen();
             }
             setFullscreened(true);
         } else {
@@ -162,35 +183,43 @@ const Video = ({src, hasCloseButton, closeButtonFn}) => {
           if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
               setFullscreened(false);
           }
-    }  
+    }
 
-    document.addEventListener('fullscreenchange', exitHandler);
-    document.addEventListener('webkitfullscreenchange', exitHandler);
-    document.addEventListener('mozfullscreenchange', exitHandler);
-    document.addEventListener('MSFullscreenChange', exitHandler);
+    useEffect(() => {
+        document.addEventListener('fullscreenchange', exitHandler);
+        document.addEventListener('webkitfullscreenchange', exitHandler);
+        document.addEventListener('mozfullscreenchange', exitHandler);
+        document.addEventListener('MSFullscreenChange', exitHandler);
+        return () => {
+            document.removeEventListener('fullscreenchange', exitHandler);
+            document.removeEventListener('webkitfullscreenchange', exitHandler);
+            document.removeEventListener('mozfullscreenchange', exitHandler);
+            document.removeEventListener('MSFullscreenChange', exitHandler);
+        }
+    })
 
     return (
-        <Container id="full-screenVideo">
+        <Container ref={containerRef}>
             <VideoContainer fullscreened={fullscreened}>
-                <VideoPlayer ref={videoRef} key={url} onTimeUpdate={() => handleOnTimeUpdate()}>
+                <VideoPlayer ref={videoRef} key={url} onTimeUpdate={onTimeUpdate}>
                     <source src={url}/>
                 </VideoPlayer>
                 {hasCloseButton && !fullscreened && <CloseButton onClick={closeButtonFn}><X/></CloseButton>}
             </VideoContainer>
             <ControlsContainer>
                 <Controls>
-                    <Icon onClick={() => togglePause()}>
+                    <Icon onClick={() => setIsPaused(!isPaused)}>
                         {isPaused ? <Play/> : <Pause/>}
                     </Icon>
                     <TimeControls>
-                        <TimeText>{conversionFn(time)} / {conversionFn(videoRef.current?.duration)}</TimeText>
+                        <TimeText>{conversionFn(currentTime)} / {conversionFn(duration)}</TimeText>
                         <TimeProgressBarContainer>
                             <TimeProgressBar />
                             <input
                                 type="range"
                                 min="0"
                                 max="100"
-                                value={progress}
+                                value={(currentTime / duration) ?? 0}
                                 onChange={(e) => handleVideoProgress(e)}
                             />
                         </TimeProgressBarContainer>
