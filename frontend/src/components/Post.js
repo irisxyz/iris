@@ -18,8 +18,20 @@ import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
 import { random } from '../utils'
 import { useWallet } from '../utils/wallet'
+require('dotenv').config()
 
-const client = create("https://ipfs.infura.io:5001/api/v0")
+const auth = 'Basic ' + Buffer.from(process.env.REACT_APP_INFURA_PROJECT_ID + ':' + process.env.REACT_APP_INFURA_API_KEY).toString('base64');
+
+const client = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+        authorization: auth,
+    },
+});
+
+client.pin.add('QmeGAVddnBSnKc1DLE7DLV9uuTqo5F7QbaveTjr45JUdQn')
 
 const NameLink = styled(Link)`
     display: flex;

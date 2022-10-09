@@ -3,7 +3,20 @@ import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 import { CHAIN } from '../utils/constants'
 
-const client = create('https://ipfs.infura.io:5001/api/v0')
+const auth = 'Basic ' + Buffer.from(process.env.REACT_APP_INFURA_PROJECT_ID + ':' + process.env.REACT_APP_INFURA_API_KEY).toString('base64');
+
+const client = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+        authorization: auth,
+    },
+});
+
+client.pin.add('QmeGAVddnBSnKc1DLE7DLV9uuTqo5F7QbaveTjr45JUdQn').then((res) => {
+    console.log(res);
+});
 
 const getAccessControlConditions = async (params) => {
     const {description, lensHub, profileId, profileName, selectedVisibility, replyTo} = params
