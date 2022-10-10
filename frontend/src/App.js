@@ -4,6 +4,7 @@ import styled from "styled-components";
 import LitJsSdk from "lit-js-sdk";
 
 import ApolloProvider from "./components/Apollo";
+import LivepeerProvider from "./components/Livepeer";
 import GlobalStyle from "./theme/GlobalStyle";
 import ThemeProvider from "./theme/ThemeProvider";
 import NotFound from "./pages/NotFound";
@@ -109,6 +110,7 @@ function App() {
 
     return (
         <WalletContextProvider>
+        <LivepeerProvider>
         <ApolloProvider>
             <ThemeProvider>
                 <GlobalStyle />
@@ -162,6 +164,7 @@ function App() {
                 </Container>
             </ThemeProvider>
         </ApolloProvider>
+        </LivepeerProvider>
         </WalletContextProvider>
     );
 }

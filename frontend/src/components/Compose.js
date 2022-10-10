@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
+import { useAsset, useCreateAsset } from '@livepeer/react';
+import useInterval from '@use-it/interval';
 
 import Button from './Button'
 import Card from './Card'
@@ -17,6 +19,7 @@ import { CHAIN } from '../utils/constants'
 import VisibilitySelector from './VisibilitySelector'
 import Toast from './Toast'
 import { useWallet } from '../utils/wallet'
+import { upload } from '@testing-library/user-event/dist/upload'
 
 const StyledCard = styled(Card)`
     width: 100%;
@@ -123,43 +126,62 @@ const Compose = ({
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
-    const [video, setVideo] = useState("")
-    const [videoNftMetadata, setVideoNftMetadata] = useState({})
+    const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus, error } = useCreateAsset();
+    const { data: asset, status: assetStatus } = useAsset({
+        assetId: createdAsset?.id,
+        refetchInterval: (asset) =>
+          asset?.status?.phase !== 'ready' ? 5000 : false,
+    });
 
-    const videoUpload = async () => {
-        setVideoUploading(true)
-        const formData = new FormData();
-        console.log(selectedFile)
-        formData.append(
-            "fileName",
-            selectedFile,
-            selectedFile.name
-        );
+    // we check here for either creating the asset, or polling for the asset
+    // until the video is in the ready phase and can be consumed
+    const isLoading = useMemo(
+        () =>
+        createStatus === 'loading' ||
+        assetStatus === 'loading' ||
+        (asset && asset?.status?.phase !== 'ready'),
+        [createStatus, asset, assetStatus],
+    );
+    
+    useEffect(() => {
+        const videoUpload = async () => {
+            if (!selectedFile) { return }
+            
+            console.log(selectedFile)
+            setVideoUploading(true)
+            console.log("Creating asset")
+            createAsset({
+                name: selectedFile.name,
+                file: selectedFile,
+            });
+        }
 
-        const response = await fetch('https://irisxyz.herokuapp.com/upload', { method: "POST", body: formData, mode: "cors" });
-        const data = await response.json();
+        videoUpload()
+    }, [selectedFile])
 
-        console.log(data);
-
-        // console.log("The nftmetadataURL ", data["nftMetadataGatewayUrl"])
-
-        // Get metadata from livepeer
-        const responseVidNftMetadata = await fetch(data["nftMetadataGatewayUrl"], { method: "GET" });
-        const vidNftData = await responseVidNftMetadata.json();
-
-        setVideoNftMetadata(vidNftData)
-        console.log("VideoNFTMetaData :", vidNftData)
-
-        setVideoUploading(false)
-
-
-        // console.log(data);
-        // const ipfs = await fetch(`https://ipfs.io/${data.data.replace(":", "")}`);
-        // const nftMetadata = await ipfs.json()
-        // console.log(nftMetadata);
-        // setVideo(`https://ipfs.io/${nftMetadata.properties.video.replace(":", "")}`)
-
-    }
+    useEffect(() => {
+        if (assetStatus === 'ready') {
+            const exportToIPFS = async () => {
+                console.log("Exporting to IPFS")
+                const storeAssetOnIPFS = await fetch(`https://livepeer.studio/api/asset/${createdAsset?.id}`, {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${process.env.REACT_APP_LIVEPEER_API_KEY}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: {
+                        "storage": {
+                            "ipfs": true,
+                        },
+                    },
+                });
+                const ipfsData = await storeAssetOnIPFS.json()
+                console.log(ipfsData)
+                setVideoUploading(false)
+            }
+            exportToIPFS()
+        }
+    }, [assetStatus])
 
     const handleSubmit = async () => {
         await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
