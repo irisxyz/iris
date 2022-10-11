@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
-import { useAsset, useCreateAsset } from '@livepeer/react';
+import { useAsset, useCreateAsset, useUpdateAsset } from '@livepeer/react';
 import useInterval from '@use-it/interval';
 
 import Button from './Button'
@@ -126,12 +126,13 @@ const Compose = ({
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
-    const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus, error } = useCreateAsset();
+    const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset();
     const { data: asset, status: assetStatus } = useAsset({
         assetId: createdAsset?.id,
         refetchInterval: (asset) =>
           asset?.status?.phase !== 'ready' ? 5000 : false,
     });
+    const { mutate: updateAsset, status, error } = useUpdateAsset();
 
     // we check here for either creating the asset, or polling for the asset
     // until the video is in the ready phase and can be consumed
@@ -160,28 +161,18 @@ const Compose = ({
     }, [selectedFile])
 
     useEffect(() => {
-        if (assetStatus === 'ready') {
-            const exportToIPFS = async () => {
-                console.log("Exporting to IPFS")
-                const storeAssetOnIPFS = await fetch(`https://livepeer.studio/api/asset/${createdAsset?.id}`, {
-                    method: "PATCH",
-                    headers: {
-                        Authorization: `Bearer ${process.env.REACT_APP_LIVEPEER_API_KEY}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: {
-                        "storage": {
-                            "ipfs": true,
-                        },
-                    },
-                });
-                const ipfsData = await storeAssetOnIPFS.json()
-                console.log(ipfsData)
-                setVideoUploading(false)
-            }
-            exportToIPFS()
+        const exportToIPFS = async () => {
+            console.log("Export?")
+            if (asset?.status?.phase !== 'ready') { return }
+            console.log("Exporting to IPFS")
+            updateAsset({
+                assetId: asset.id,
+                storage: { ipfs: true },
+            });
         }
-    }, [assetStatus])
+
+        exportToIPFS()
+    }, [asset?.status?.phase])
 
     const handleSubmit = async () => {
         await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
