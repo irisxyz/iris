@@ -126,11 +126,14 @@ const Compose = ({
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
+    const [nftMetadata, setNftMetadata] = useState("");
     const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset();
     const { data: asset, status: assetStatus } = useAsset({
         assetId: createdAsset?.id,
         refetchInterval: (asset) =>
-          asset?.status?.phase !== 'ready' ? 5000 : false,
+            asset?.status?.phase !== 'ready' ? 5000 : false,
+        refetchInterval: (asset) =>
+            asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
     });
     const { mutate: updateAsset, status, error } = useUpdateAsset();
 
@@ -173,6 +176,13 @@ const Compose = ({
 
         exportToIPFS()
     }, [asset?.status?.phase])
+
+    useEffect(() => {
+        if (asset?.storage?.status?.phase !== 'ready') { return }
+        console.log("Exported to IPFS!")
+        setNftMetadata(asset?.storage?.ipfs)
+        console.log(nftMetadata)
+    }, [asset?.storage?.status?.phase])
 
     const handleSubmit = async () => {
         await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
