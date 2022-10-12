@@ -126,7 +126,7 @@ const Compose = ({
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
-    const [nftMetadata, setNftMetadata] = useState("");
+    const [ipfsCID, setIpfsCID] = useState("");
     const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset();
     const { data: asset, status: assetStatus } = useAsset({
         assetId: createdAsset?.id,
@@ -180,12 +180,15 @@ const Compose = ({
     useEffect(() => {
         if (asset?.storage?.status?.phase !== 'ready') { return }
         console.log("Exported to IPFS!")
-        setNftMetadata(asset?.storage?.ipfs)
-        console.log(nftMetadata)
+        setIpfsCID(asset?.storage?.ipfs?.cid)
+        setVideoUploading(false)
+        console.log("CID", asset?.storage?.ipfs?.cid)
+        console.log("URL", asset?.storage?.ipfs?.url)
+
     }, [asset?.storage?.status?.phase])
 
     const handleSubmit = async () => {
-        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
+        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, ipfsCID, mutateCommentTypedData, mutatePostTypedData})
     }
 
     useEffect(() => {

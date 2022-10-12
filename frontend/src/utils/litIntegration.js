@@ -120,14 +120,31 @@ const getEncodedMetadata = async (params) => {
 }
 
 export const handleCompose = async (params) => {
-    const {description, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData} = params
+    const {description, profileId, profileName, selectedVisibility, replyTo, ipfsCID, mutateCommentTypedData, mutatePostTypedData} = params
     if (!description) return;
 
     let ipfsResult;
     let metadata;
 
-    if(selectedVisibility !== 'public') {
+    if (selectedVisibility !== 'public') {
         metadata = await getEncodedMetadata(params)
+    } else if (ipfsCID) {
+        metadata = {
+            name: `post by ${profileName}`,
+            description,
+            content: description,
+            external_url: null,
+            image: "ipfs://" + ipfsCID,
+            imageMimeType: null,
+            version: "1.0.0",
+            appId: 'iris',
+            attributes: [],
+            media: [{
+                item: "ipfs://" + ipfsCID,
+                type: "video/mp4"
+            }],
+            metadata_id: uuidv4(),
+        }
     } else {
         metadata = {
             name: `post by ${profileName}`,
@@ -143,8 +160,7 @@ export const handleCompose = async (params) => {
             metadata_id: uuidv4(),
         }
     }
-
-    // For Only Text Post
+    
     ipfsResult = await client.add(JSON.stringify(metadata))
 
     if(replyTo) {

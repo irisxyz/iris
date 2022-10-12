@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
 import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
+import { Player } from '@livepeer/react';
 import moment from 'moment'
 import reactStringReplace from 'react-string-replace'
 import Card from '../components/Card'
@@ -351,6 +352,7 @@ function Post({ profileId, isCommunityPost, ...props }) {
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
                     </video> : <p></p>} */}
+                    {/* {post.metadata.media.length ? <Player src={`https://ipfs.livepeer.studio/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" /> : <p></p>} */}
                     {post.metadata.media.length ? <MediaContainer onClick={(e) => e.stopPropagation()}>
                         {
                             post.metadata.media.map((media) => {
