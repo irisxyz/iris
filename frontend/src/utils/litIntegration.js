@@ -120,7 +120,7 @@ const getEncodedMetadata = async (params) => {
 }
 
 export const handleCompose = async (params) => {
-    const {description, profileId, profileName, selectedVisibility, replyTo, ipfsCID, mutateCommentTypedData, mutatePostTypedData} = params
+    const {description, profileId, profileName, selectedVisibility, replyTo, ipfsMetadata, mutateCommentTypedData, mutatePostTypedData} = params
     if (!description) return;
 
     let ipfsResult;
@@ -128,19 +128,20 @@ export const handleCompose = async (params) => {
 
     if (selectedVisibility !== 'public') {
         metadata = await getEncodedMetadata(params)
-    } else if (ipfsCID) {
+    } else if (ipfsMetadata) {
         metadata = {
             name: `post by ${profileName}`,
             description,
             content: description,
             external_url: null,
-            image: "ipfs://" + ipfsCID,
+            image: null,
             imageMimeType: null,
+            animation_url: `ipfs://${ipfsMetadata.cid}`,
             version: "1.0.0",
             appId: 'iris',
             attributes: [],
             media: [{
-                item: "ipfs://" + ipfsCID,
+                item: `ipfs://${ipfsMetadata.cid}`,
                 type: "video/mp4"
             }],
             metadata_id: uuidv4(),

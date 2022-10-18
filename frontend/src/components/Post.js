@@ -348,12 +348,13 @@ function Post({ profileId, isCommunityPost, ...props }) {
                     <div>
                         {post.appId === "iris exclusive" ? <>{decryptedMsg ? decryptedMsg : <code>{exclusiveDescription(postType)}</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
                     </div>
-                    {/* {post.metadata.media.length ? <video width="500px" controls>
+                    {post.metadata.media.length && post.metadata.media[0]?.original.mimeType == 'video/mp4' ? <video width="500px" controls>
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
-                    </video> : <p></p>} */}
-                    {/* {post.metadata.media.length ? <Player src={`https://ipfs.livepeer.studio/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" /> : <p></p>} */}
-                    {post.metadata.media.length ? <MediaContainer onClick={(e) => e.stopPropagation()}>
+                    </video> : <p></p>}
+                    {/* {post.metadata.media.length && post.metadata.media[0]?.original.mimeType == 'video/mp4' ? <Player src={`https://ipfs.livepeer.studio/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" /> : <p></p>} */}
+                    {post.metadata.media.length && (post.metadata.media[0]?.original.mimeType == 'image/jpeg' || post.metadata.media[0]?.original.mimeType == 'image/png') ? 
+                        <MediaContainer onClick={(e) => e.stopPropagation()}>
                         {
                             post.metadata.media.map((media) => {
                                 if(media.original.mimeType.includes('image')) {
