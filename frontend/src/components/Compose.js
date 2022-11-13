@@ -126,7 +126,7 @@ const Compose = ({
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
-    const [ipfsMetadata, setIpfsMetadata] = useState({});
+    const [videoIPFSData, setVideoIPFSData] = useState({});
     const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset();
     const { data: asset, status: assetStatus } = useAsset({
         assetId: createdAsset?.id,
@@ -180,7 +180,7 @@ const Compose = ({
     useEffect(() => {
         if (asset?.storage?.status?.phase !== 'ready') { return }
         console.log("Exported to IPFS!")
-        setIpfsMetadata(asset?.storage?.ipfs?.nftMetadata)
+        setVideoIPFSData(asset?.storage?.ipfs)
         setVideoUploading(false)
         console.log(asset?.storage?.ipfs?.nftMetadata)
         console.log("CID", asset?.storage?.ipfs?.cid)
@@ -189,7 +189,7 @@ const Compose = ({
     }, [asset?.storage?.status?.phase])
 
     const handleSubmit = async () => {
-        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, ipfsMetadata, mutateCommentTypedData, mutatePostTypedData})
+        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, videoIPFSData, mutateCommentTypedData, mutatePostTypedData})
     }
 
     useEffect(() => {
@@ -252,6 +252,7 @@ const Compose = ({
                 await pollUntilIndexed(tx.hash)
                 setShowModal(false)
                 setDescription('')
+                setSelectedFile('')
                 setToastMsg({type: 'success', msg: 'Transaction indexed'})
                 return;
             }
@@ -262,6 +263,7 @@ const Compose = ({
             await pollUntilIndexed(txHash)
             setShowModal(false)
             setDescription('')
+            setSelectedFile('')
             setToastMsg({type: 'success', msg: 'Transaction indexed'})
         }
         processBroadcast()
