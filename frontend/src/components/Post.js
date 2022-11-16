@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
-import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 import moment from 'moment'
 import reactStringReplace from 'react-string-replace'
@@ -18,20 +17,8 @@ import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
 import { random } from '../utils'
 import { useWallet } from '../utils/wallet'
+import { client } from '../utils/infuraClient'
 require('dotenv').config()
-
-const auth = 'Basic ' + Buffer.from(process.env.REACT_APP_INFURA_PROJECT_ID + ':' + process.env.REACT_APP_INFURA_API_KEY).toString('base64');
-
-const client = create({
-    host: 'ipfs.infura.io',
-    port: 5001,
-    protocol: 'https',
-    headers: {
-        authorization: auth,
-    },
-});
-
-client.pin.add('QmeGAVddnBSnKc1DLE7DLV9uuTqo5F7QbaveTjr45JUdQn')
 
 const NameLink = styled(Link)`
     display: flex;
