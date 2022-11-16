@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
-import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 import moment from 'moment'
 import reactStringReplace from 'react-string-replace'
@@ -18,8 +17,8 @@ import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
 import { random } from '../utils'
 import { useWallet } from '../utils/wallet'
-
-const client = create("https://ipfs.infura.io:5001/api/v0")
+import { client } from '../utils/infuraClient'
+require('dotenv').config()
 
 const NameLink = styled(Link)`
     display: flex;

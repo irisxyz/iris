@@ -1,9 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
-import { create } from 'ipfs-http-client'
 import LitJsSdk from 'lit-js-sdk'
 import { CHAIN } from '../utils/constants'
-
-const client = create('https://ipfs.infura.io:5001/api/v0')
+import { client } from './infuraClient'
 
 const getAccessControlConditions = async (params) => {
     const {description, lensHub, profileId, profileName, selectedVisibility, replyTo} = params
