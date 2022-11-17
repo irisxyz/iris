@@ -102,6 +102,14 @@ const videoFileTypes = ['.mp4','.mov','.webm','.3gpp','.3gpp2','.flv','.mpeg']
 
 const imageFileTypes = ['.jpg','.jpeg','.png','.gif']
 
+const isValidFileType = (validFileTypes, file) => {
+    if (!file.type) {
+        return false;
+    }
+    const fileType = "." + file.type.split("/").pop();
+    return validFileTypes.includes(fileType);
+}
+
 const Compose = ({
     profileId,
     profileName,
@@ -127,7 +135,13 @@ const Compose = ({
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [videoIPFSData, setVideoIPFSData] = useState({});
-    const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset();
+    const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset(
+        selectedFile && isValidFileType(videoFileTypes, selectedFile)
+        ? {
+            sources: [{ name: selectedFile.name, file: selectedFile }],
+          }
+        : null,
+    );
     const { data: asset, status: assetStatus } = useAsset({
         assetId: createdAsset?.id,
         refetchIntervalStatus: (asset) =>
@@ -135,7 +149,10 @@ const Compose = ({
         refetchInterval: (asset) =>
             asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
     });
-    const { mutate: updateAsset, status, error } = useUpdateAsset();
+    const { mutate: updateAsset, status, error } = useUpdateAsset({
+        assetId: asset?.id,
+        storage: { ipfs: true },
+    });
 
     // we check here for either creating the asset, or polling for the asset
     // until the video is in the ready phase and can be consumed
@@ -154,10 +171,7 @@ const Compose = ({
             console.log(selectedFile)
             setVideoUploading(true)
             console.log("Creating asset")
-            createAsset({
-                name: selectedFile.name,
-                file: selectedFile,
-            });
+            createAsset?.();
         }
 
         videoUpload()
@@ -168,10 +182,7 @@ const Compose = ({
             console.log("Export?")
             if (asset?.status?.phase !== 'ready') { return }
             console.log("Exporting to IPFS")
-            updateAsset({
-                assetId: asset.id,
-                storage: { ipfs: true },
-            });
+            updateAsset?.();
         }
 
         exportToIPFS()
@@ -189,7 +200,7 @@ const Compose = ({
     }, [asset?.storage?.status?.phase])
 
     const handleSubmit = async () => {
-        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, videoIPFSData, mutateCommentTypedData, mutatePostTypedData})
+        await handleCompose({description, lensHub, profileId, profileName, selectedVisibility, replyTo, videoIPFSData, mutateCommentTypedData, mutatePostTypedData})
     }
 
     useEffect(() => {
@@ -269,14 +280,6 @@ const Compose = ({
         processBroadcast()
 
     }, [broadcastData.data])
-
-    const isValidFileType = (validFileTypes, file) => {
-        if (!file.type) {
-            return false;
-        }
-        const fileType = "." + file.type.split("/").pop();
-        return validFileTypes.includes(fileType);
-    }
     
     return (
         <>

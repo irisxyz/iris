@@ -114,8 +114,6 @@ export const handleCompose = async (params) => {
     //     metadata = await getEncodedMetadata(params)
     // } else {
         if (videoIPFSData) {
-            // ipfs.cid: bafybeihv5ahbgd2awcpmdzmonow4jx7d5okljxcrgu4mhbzmhudb7gugcq
-            // ipfs.nftMetadata.cid: bafkreibgs2wbczztbojot6ynyjhbv6hp6moiyf5laxegshfbevcm3pvm6a
             console.log("posting video")
             console.log(videoIPFSData)
             metadata = {
