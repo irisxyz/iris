@@ -3,9 +3,12 @@ import { useLazyQuery, useMutation } from '@apollo/client'
 import { GET_CHALLENGE, AUTHENTICATION } from '../utils/queries'
 import Button from './Button'
 import { useWallet } from '../utils/wallet'
+import { useAccount, useSigner } from 'wagmi'
 
 function Login({ ...props }) {
-    const { wallet, authToken, setAuthToken } = useWallet()
+    const { authToken, setAuthToken } = useWallet()
+    const { data: signer } = useSigner()
+    const { address } = useAccount()
     const [getChallenge, challengeData] = useLazyQuery(GET_CHALLENGE)
     const [mutateAuth, authData] = useMutation(AUTHENTICATION)
 
@@ -16,12 +19,12 @@ function Login({ ...props }) {
             return;
         }
         
-        console.log('login: address', wallet.address);
+        console.log('login: address', address);
 
         getChallenge({ 
           variables: {
             request: {
-              address: wallet.address,
+              address: address,
             },
           },
          })
@@ -31,17 +34,17 @@ function Login({ ...props }) {
       if (!challengeData.data) return
 
       const handleSign = async () => {
-        const signature = await wallet.signer.signMessage(challengeData.data.challenge.text);
+        const signature = await signer.signMessage(challengeData.data.challenge.text);
         window.sessionStorage.setItem('signature', JSON.stringify({
           sig: signature,
           derivedVia: 'ethers.signer.signMessage',
           signedMessage: challengeData.data.challenge.text,
-          address: wallet.address,
+          address: address,
       }))
         mutateAuth({
           variables: {
             request: {
-              address: wallet.address,
+              address: address,
               signature,
             },
           },
@@ -67,7 +70,7 @@ function Login({ ...props }) {
       }
     }, [])
 
-    if(!wallet.address || authToken) return '';
+    if(!address || authToken) return '';
     return <Button onClick={handleClick} {...props}>Login to Lens</Button>;
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
+import { useAccount, useSigner } from 'wagmi'
 import { CREATE_COLLECT_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
 import Bookmark from '../assets/Bookmark'
@@ -10,7 +11,9 @@ import { RoundedButton } from './Button'
 import { useWallet } from '../utils/wallet'
 
 function Collect({ profileId, publicationId, collected, stats, isCommunity, isCta, setToastMsg }) {
-    const { wallet, lensHub } = useWallet()
+    const { lensHub } = useWallet()
+    const { data: signer } = useSigner()
+    const { address } = useAccount()
     const [createCollectTyped, createCollectTypedData] = useMutation(CREATE_COLLECT_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
@@ -43,7 +46,7 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
 
             const { domain, types, value } = typedData;
 
-            const signature = await wallet.signer._signTypedData(
+            const signature = await signer._signTypedData(
                 omitDeep(domain, "__typename"),
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
@@ -80,7 +83,7 @@ function Collect({ profileId, publicationId, collected, stats, isCommunity, isCt
                 const { v, r, s } = utils.splitSignature(savedTypedData.signature);
 
                 const tx = await lensHub.collectWithSig({
-                    collector: wallet.address,
+                    collector: address,
                     profileId: savedTypedData.value.profileId,
                     pubId: savedTypedData.value.pubId,
                     data: savedTypedData.value.data,

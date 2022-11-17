@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components'
 import X from '../assets/X';
-import 'plyr-react/plyr.css'
-import Plyr from 'plyr-react'
+// import 'plyr-react/plyr.css'
+// import Plyr from 'plyr-react'
 
 const CloseButton = styled.button`
     color: white;
@@ -47,7 +47,7 @@ const Video = React.memo(({src, hasCloseButton, closeButtonFn}) => {
 
     return (
         <Container key={url}>
-            <Plyr
+            {/* <Plyr
                 source={{
                     type: 'video',
                     sources: [{src: url}]
@@ -65,7 +65,7 @@ const Video = React.memo(({src, hasCloseButton, closeButtonFn}) => {
                     ratio: '16:9',
                     invertTime: false
                 }}
-            />
+            /> */}
             {hasCloseButton && <CloseButton onClick={closeButtonFn}><X/></CloseButton>}
         </Container>
     );

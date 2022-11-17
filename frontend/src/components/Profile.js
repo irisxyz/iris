@@ -5,7 +5,6 @@ import Card from './Card'
 import avatar from '../assets/avatar.png'
 import Button from './Button'
 import Modal from './Modal'
-import { useWallet } from '../utils/wallet'
 
 export const Avatar = styled.div`
   height: 75px;
@@ -50,7 +49,6 @@ const Centered = styled.div`
 `
 
 function Profile({ profile = {}, children }) {
-  const { wallet } = useWallet()
 
   // Streaming
   const [liveStreamModal, setLiveStreamModal] = useState(false)
@@ -58,14 +56,13 @@ function Profile({ profile = {}, children }) {
 
 
   const goLiveStream = async () => {
-    console.log(wallet.address)
     const response = await fetch("https://irisxyz.herokuapp.com/new-stream",
       {
         method: "POST",
         'headers': {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ wallet: wallet.address, handle: profile.handle }), mode: "cors"
+        // body: JSON.stringify({ wallet: address, handle: profile.handle }), mode: "cors"
       });
     const data = await response.json();
 
@@ -90,7 +87,7 @@ function Profile({ profile = {}, children }) {
         // const responseData = await response.json();
   
         // responseData.map((streamInfo) => {
-        //   if (streamInfo.isActive & streamInfo.name === `${wallet.address},${profile.handle}`) {
+        //   if (streamInfo.isActive & streamInfo.name === `${address},${profile.handle}`) {
   
         //     console.log("PROFILE Woooo")
         //     setStreamInfo(streamInfo)

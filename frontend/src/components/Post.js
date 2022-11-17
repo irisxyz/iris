@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
 import LitJsSdk from 'lit-js-sdk'
 import moment from 'moment'
+import { useSigner } from 'wagmi'
 import reactStringReplace from 'react-string-replace'
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
@@ -16,7 +17,6 @@ import Toast from './Toast'
 import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
 import { random } from '../utils'
-import { useWallet } from '../utils/wallet'
 import { client } from '../utils/infuraClient'
 require('dotenv').config()
 
@@ -212,7 +212,7 @@ const PostBody = ({ children }) => {
 }
 
 function Post({ profileId, isCommunityPost, ...props }) {
-    const { wallet } = useWallet()
+    const { data: signer } = useSigner()
     const [decryptedMsg, setDecryptedMsg] = useState("")
     const [showModal, setShowModal] = useState(false)
     const [selectedImage, setSelectedImage] = useState('')
@@ -252,7 +252,7 @@ function Post({ profileId, isCommunityPost, ...props }) {
 
     useEffect(() => {
 
-        if (!wallet.signer) return;
+        if (!signer) return;
 
         const decode = async () => {
             await new Promise(r => setTimeout(r, 100));
@@ -288,7 +288,7 @@ function Post({ profileId, isCommunityPost, ...props }) {
         }
 
         decode()
-    }, [wallet.signer]);
+    }, [signer]);
     
     const handleImageClick = (media) => {
         setShowModal(true)

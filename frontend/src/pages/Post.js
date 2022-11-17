@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
+import { useAccount } from 'wagmi'
 import { GET_PUBLICATION, GET_PUBLICATIONS } from '../utils/queries'
 import PostComponent from '../components/Post'
 import Compose from '../components/Compose'
@@ -14,7 +15,7 @@ const StyledCard = styled(Card)`
 `
 
 function Post({ profileId, profileName }) {
-    const { wallet } = useWallet()
+    const { address } = useAccount()
     let params = useParams();
     const [publication, setPublication] = useState({})
     const [notFound, setNotFound] = useState(false)
@@ -64,7 +65,7 @@ function Post({ profileId, profileName }) {
 
         setComments(publicationsData.data.publications.items);
 
-    }, [wallet.address, publicationsData.data]);
+    }, [address, publicationsData.data]);
 
     return (
         <>

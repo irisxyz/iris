@@ -17,6 +17,7 @@ import { CHAIN } from '../utils/constants'
 import VisibilitySelector from './VisibilitySelector'
 import Toast from './Toast'
 import { useWallet } from '../utils/wallet'
+import { useSigner } from 'wagmi'
 
 const StyledCard = styled(Card)`
     width: 100%;
@@ -110,7 +111,8 @@ const Compose = ({
     isCommunity,
     isComment,
     }) => {
-    const { wallet, lensHub } = useWallet()
+    const { data: signer } = useSigner()
+    const { lensHub } = useWallet()
     const [description, setDescription] = useState('')
     const [selectedVisibility, setSelectedVisibility] = useState('public')
     const [mutatePostTypedData, typedPostData] = useMutation(CREATE_POST_TYPED_DATA)
@@ -162,14 +164,14 @@ const Compose = ({
     }
 
     const handleSubmit = async () => {
-        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
+        await handleCompose({description, lensHub, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
     }
 
     useEffect(() => {
         const processPost = async (data) => {
             const { domain, types, value } = data.typedData
 
-            const signature = await wallet.signer._signTypedData(
+            const signature = await signer._signTypedData(
                 omitDeep(domain, '__typename'),
                 omitDeep(types, '__typename'),
                 omitDeep(value, '__typename'),

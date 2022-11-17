@@ -3,13 +3,15 @@ import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import { CREATE_MIRROR_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
+import { useAccount, useSigner } from 'wagmi'
 import Retweet from '../assets/Retweet'
 import Button from './Button'
 import pollUntilIndexed from '../utils/pollUntilIndexed'
 import { useWallet } from '../utils/wallet'
 
 function Mirror({ profileId, publicationId, stats, setToastMsg }) {
-    const { wallet, lensHub } = useWallet()
+    const { lensHub } = useWallet()
+    const { data: signer } = useSigner()
     const [createMirrorTyped, createMirrorTypedData] = useMutation(CREATE_MIRROR_TYPED_DATA)
     const [broadcast, broadcastData] = useMutation(BROADCAST)
     const [savedTypedData, setSavedTypedData] = useState({})
@@ -40,7 +42,7 @@ function Mirror({ profileId, publicationId, stats, setToastMsg }) {
 
             const { domain, types, value } = typedData
 
-            const signature = await wallet.signer._signTypedData(
+            const signature = await signer._signTypedData(
                 omitDeep(domain, "__typename"),
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
