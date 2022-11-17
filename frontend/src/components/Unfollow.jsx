@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { utils, ethers } from "ethers";
 import { useSigner } from 'wagmi'
-import { LENS_FOLLOW_NFT_ABI } from "../config.ts";
+// import { LENS_FOLLOW_NFT_ABI } from "../config.ts";
 import { CREATE_UNFOLLOW_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import { OutlineButton } from '../components/Button';
@@ -41,9 +41,10 @@ function Follow({ profileId }) {
             const { v, r, s } = utils.splitSignature(signature);
 
             // load up the follower nft contract
+            // this is defs broken now
             const followNftContract = new ethers.Contract(
                 typedData.domain.verifyingContract,
-                LENS_FOLLOW_NFT_ABI,
+                // LENS_FOLLOW_NFT_ABI,
                 signer
             );
 

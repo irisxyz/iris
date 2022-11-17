@@ -24,7 +24,7 @@ On localhost you must run app on port 4783 to enable gasless tx with Lens API
 
 ### Changing Chain
 
-Default chain on localhost is `mumbai`. If you want to change it change `/frontend/.env` to `REACT_APP_CHAIN="polygon"`
+Default chain on localhost is `mumbai`. If you want to change it change `/frontend/.env` to `VITE_CHAIN="polygon"`
 
 
 Remember all `.env` changes require an `npm start` restart.
@@ -32,11 +32,11 @@ Remember all `.env` changes require an `npm start` restart.
 ## Deploying
 
 Testnet
-- change `.env` to `REACT_APP_CHAIN="mumbai"`
+- change `.env` to `VITE_CHAIN="mumbai"`
 - `npm run build`
 - `firebase deploy --only hosting:testnet`
 
 Prod
-- change `.env` to `REACT_APP_CHAIN="polygon"` or remove `REACT_APP_CHAIN`
+- change `.env` to `VITE_CHAIN="polygon"` or remove `VITE_CHAIN`
 - `npm run build`
 - `firebase deploy --only hosting:prod`

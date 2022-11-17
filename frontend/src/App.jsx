@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import styled from "styled-components";
-import LitJsSdk from "lit-js-sdk";
 
 import ApolloProvider from "./components/Apollo";
 import GlobalStyle from "./theme/GlobalStyle";
@@ -111,22 +110,22 @@ const Announcement = styled(Card)`
 function App() {
     const [profile, setProfile] = useState({});
 
-    useEffect(() => {
-        const initLit = async () => {
-            const client = new LitJsSdk.LitNodeClient({
-                alertWhenUnauthorized: false,
-                debug: false,
-            });
-            await client.connect();
-            window.litNodeClient = client;
-        };
-        initLit();
-    }, []);
+    // useEffect(() => {
+    //     const initLit = async () => {
+    //         const client = new LitJsSdk.LitNodeClient({
+    //             alertWhenUnauthorized: false,
+    //             debug: false,
+    //         });
+    //         await client.connect();
+    //         window.litNodeClient = client;
+    //     };
+    //     initLit();
+    // }, []);
   
     const { chains, provider } = configureChains(
-        process.env.REACT_APP_CHAIN === 'mumbai' ? [chain.polygonMumbai] : [chain.polygon],
+        import.meta.env.VITE_CHAIN === 'mumbai' ? [chain.polygonMumbai] : [chain.polygon],
         [
-            alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
+            alchemyProvider({ apiKey: import.meta.env.ALCHEMY_ID }),
             publicProvider()
         ]
     );

@@ -1,0 +1,2 @@
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const CHAIN = import.meta.env.VITE_CHAIN ? import.meta.env.VITE_CHAIN : import.meta.env.NODE_ENV === 'production' ? 'polygon' : 'mumbai'
