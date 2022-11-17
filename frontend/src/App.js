@@ -124,9 +124,9 @@ function App() {
     }, []);
   
     const { chains, provider } = configureChains(
-        process.env.REACT_APP_CHAIN === 'mumbai' ? [chain.polygonMumbai] : [chain.polygon],
+        import.meta.env.VITE_CHAIN === 'mumbai' ? [chain.polygonMumbai] : [chain.polygon],
         [
-            alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
+            alchemyProvider({ apiKey: import.meta.env.ALCHEMY_ID }),
             publicProvider()
         ]
     );
