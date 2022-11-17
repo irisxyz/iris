@@ -1,11 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
-import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
-import Web3Modal from 'web3modal'
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import { GET_PROFILES } from '../utils/queries'
 import { CHAIN } from '../utils/constants'
 import { toHex } from '../utils/index'
@@ -14,6 +10,8 @@ import WalletButton from './WalletButton'
 import Login from './Login'
 import LensHub from '../abi/LensHub.json'
 import { useWallet } from '../utils/wallet'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi'
 
 const WalletContainer = styled.div`
   display: flex;
@@ -125,9 +123,10 @@ const Profile = ({ profile, currProfile, handleClick }) => {
 
 
 function Wallet({ currProfile, setProfile }) {
-  const { wallet, setWallet, setLensHub, authToken } = useWallet()
+  const { setWallet, setLensHub, authToken } = useWallet()
   const [getProfiles, profiles] = useLazyQuery(GET_PROFILES)
   const [openPicker, setPicker] = useState(false)
+  const { address, isConnecting, isDisconnected } = useAccount()
 
   const handleSelect = (profile) => {
     console.log(profile)
@@ -142,20 +141,19 @@ function Wallet({ currProfile, setProfile }) {
   
   useEffect(() => {
     if (!authToken) return;
-    if (!wallet.address) return;
-    // console.log("wallet", wallet)
+    if (!address) return;
     getProfiles({
       variables: {
         request: {
           // profileIds?: string[];
-          ownedBy: [wallet.address]
+          ownedBy: [address]
           // handles?: string[];
           // whoMirroredPublicationId?: string;
         },
       },
      })
 
-  }, [wallet.address, authToken])
+  }, [address, authToken, getProfiles])
 
   useEffect(() => {
     if (!profiles.data) return
@@ -165,97 +163,97 @@ function Wallet({ currProfile, setProfile }) {
 
   }, [profiles.data])
 
-  const providerOptions = {
-    coinbasewallet: {
-      package: CoinbaseWalletSDK, // Required
-      options: {
-        appName: "iris", // Required
-        infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
-        rpc: "", // Optional if `infuraId` is provided; otherwise it's required
-        chainId: 137, // Optional. It defaults to 1 if not provided
-        darkMode: false // Optional. Use dark theme, defaults to false
-      }
-    },
-    walletconnect: {
-      package: WalletConnectProvider, // required
-      options: {
-        infuraId: "6a436461eae543349fa0de6bc4152fb9" // required
-      }
-    }
-  };
+  // const providerOptions = {
+  //   coinbasewallet: {
+  //     package: CoinbaseWalletSDK, // Required
+  //     options: {
+  //       appName: "iris", // Required
+  //       infuraId: "6a436461eae543349fa0de6bc4152fb9", // Required
+  //       rpc: "", // Optional if `infuraId` is provided; otherwise it's required
+  //       chainId: 137, // Optional. It defaults to 1 if not provided
+  //       darkMode: false // Optional. Use dark theme, defaults to false
+  //     }
+  //   },
+  //   walletconnect: {
+  //     package: WalletConnectProvider, // required
+  //     options: {
+  //       infuraId: "6a436461eae543349fa0de6bc4152fb9" // required
+  //     }
+  //   }
+  // };
 
-  const web3Modal = new Web3Modal({
-    network: "mainnet", // optional
-    cacheProvider: true, 
-    providerOptions // required
-  });
+  // const web3Modal = new Web3Modal({
+  //   network: "mainnet", // optional
+  //   cacheProvider: true, 
+  //   providerOptions // required
+  // });
 
-  const connectWallet = async () => {
-    const instance = await web3Modal.connect();
+  // const connectWallet = async () => {
+  //   const instance = await web3Modal.connect();
 
-    const provider = new ethers.providers.Web3Provider(instance)
-    // const provider = new ethers.providers.Web3Provider(window.ethereum)
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner()
-    const address = await signer.getAddress()
+  //   const provider = new ethers.providers.Web3Provider(instance)
+  //   // const provider = new ethers.providers.Web3Provider(window.ethereum)
+  //   await provider.send("eth_requestAccounts", []);
+  //   const signer = provider.getSigner()
+  //   const address = await signer.getAddress()
 
-    const contractAddr = CHAIN === 'polygon' ? '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d' : '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82';
-    const contract = new ethers.Contract(contractAddr, LensHub, signer)
-    setLensHub(contract)
+  //   const contractAddr = CHAIN === 'polygon' ? '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d' : '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82';
+  //   const contract = new ethers.Contract(contractAddr, LensHub, signer)
+  //   setLensHub(contract)
   
-    provider.getBalance(address).then((balance) => {
-      // convert a currency unit from wei to ether
-      const balanceInEth = ethers.utils.formatEther(balance)
-      // console.log({balanceInEth})
-      setWallet({...wallet, signer, address, balanceInEth})
-    })
+  //   provider.getBalance(address).then((balance) => {
+  //     // convert a currency unit from wei to ether
+  //     const balanceInEth = ethers.utils.formatEther(balance)
+  //     // console.log({balanceInEth})
+  //     setWallet({...wallet, signer, address, balanceInEth})
+  //   })
 
-    const switchNetwork = async () => {
-      const chainId = CHAIN === 'polygon' ? toHex(137) : toHex(80001)
-      try {
-        await provider.provider.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: chainId }],
-        });
-      } catch (switchError) {
-        // This error code indicates that the chain has not been added to MetaMask.
-        if (switchError.code === 4902) {
-          const network = CHAIN === 'polygon' ? {
-            chainId: chainId,
-            chainName: "Polygon",
-            rpcUrls: ["https://polygon-rpc.com/"],
-            blockExplorerUrls: ["https://polygonscan.com/"],
-          } :
-          {
-            chainId: chainId,
-            chainName: "Polygon Mumbai",
-            rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
-            blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
-          }
-          try {
-            await provider.provider.request({
-              method: "wallet_addEthereumChain",
-              params: [network],
-            });
-          } catch (addError) {
-            throw addError;
-          }
-        }
-      }
-    };
+  //   const switchNetwork = async () => {
+  //     const chainId = CHAIN === 'polygon' ? toHex(137) : toHex(80001)
+  //     try {
+  //       await provider.provider.request({
+  //         method: "wallet_switchEthereumChain",
+  //         params: [{ chainId: chainId }],
+  //       });
+  //     } catch (switchError) {
+  //       // This error code indicates that the chain has not been added to MetaMask.
+  //       if (switchError.code === 4902) {
+  //         const network = CHAIN === 'polygon' ? {
+  //           chainId: chainId,
+  //           chainName: "Polygon",
+  //           rpcUrls: ["https://polygon-rpc.com/"],
+  //           blockExplorerUrls: ["https://polygonscan.com/"],
+  //         } :
+  //         {
+  //           chainId: chainId,
+  //           chainName: "Polygon Mumbai",
+  //           rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+  //           blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+  //         }
+  //         try {
+  //           await provider.provider.request({
+  //             method: "wallet_addEthereumChain",
+  //             params: [network],
+  //           });
+  //         } catch (addError) {
+  //           throw addError;
+  //         }
+  //       }
+  //     }
+  //   };
 
-    switchNetwork()
-  }
+  //   switchNetwork()
+  // }
 
-  // hook to automatically connect to the cached provider
-  useEffect(() => {
-    if (web3Modal.cachedProvider) {
-      connectWallet();
-  }}, [])
+  // // hook to automatically connect to the cached provider
+  // useEffect(() => {
+  //   if (web3Modal.cachedProvider) {
+  //     connectWallet();
+  // }}, [])
 
   return (
     <WalletContainer>
-    { wallet.signer
+    { address
     ? <>
           <AccountPicker show={openPicker}>
           { authToken
@@ -281,10 +279,10 @@ function Wallet({ currProfile, setProfile }) {
             : <StyledLogin />
           }
         </AccountPicker>
-        <Address>{wallet.address.substring(0, 6)}...{wallet.address.substring(38, wallet.address.length)}</Address>
+        <Address>{address.substring(0, 6)}...{address.substring(38, address.length)}</Address>
         <UserIcon onClick={() => setPicker(!openPicker)} link={true} selected={openPicker} href={profiles.data?.profiles.items[0]?.picture?.original?.url} />
     </>
-    : <WalletButton onClick={connectWallet} >Connect Wallet</WalletButton>
+    : <ConnectButton />
     }
   </WalletContainer>
   );

@@ -23,6 +23,22 @@ import logo from "./assets/iris.svg";
 // import LandingPage from './pages/LandingPage'
 import { CHAIN } from "./utils/constants";
 import { WalletContextProvider } from "./utils/wallet";
+import '@rainbow-me/rainbowkit/styles.css';
+
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme 
+} from '@rainbow-me/rainbowkit';
+import {
+  chain,
+  configureChains,
+  createClient,
+  WagmiConfig,
+} from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+
 
 const Container = styled.div`
     max-width: 1000px;
@@ -106,8 +122,29 @@ function App() {
         };
         initLit();
     }, []);
+  
+    const { chains, provider } = configureChains(
+        process.env.REACT_APP_CHAIN === 'mumbai' ? [chain.polygonMumbai] : [chain.polygon],
+        [
+            alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
+            publicProvider()
+        ]
+    );
+
+    const { connectors } = getDefaultWallets({
+        appName: 'Iris',
+        chains
+    });
+    
+    const wagmiClient = createClient({
+        autoConnect: true,
+        connectors,
+        provider
+    })
 
     return (
+        <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
         <WalletContextProvider>
         <ApolloProvider>
             <ThemeProvider>
@@ -163,6 +200,8 @@ function App() {
             </ThemeProvider>
         </ApolloProvider>
         </WalletContextProvider>
+        </RainbowKitProvider>
+        </WagmiConfig>
     );
 }
 

@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { utils, ethers } from "ethers";
+import { useSigner } from 'wagmi'
 import { LENS_FOLLOW_NFT_ABI } from "../config.ts";
 import { CREATE_UNFOLLOW_TYPED_DATA } from "../utils/queries";
 import omitDeep from "omit-deep";
 import { OutlineButton } from '../components/Button';
-import { useWallet } from "../utils/wallet";
 
 function Follow({ profileId }) {
-    const { wallet } = useWallet()
+    const { data: signer } = useSigner()
     const [createUnfollowTyped, createUnfollowTypedData] = useMutation(CREATE_UNFOLLOW_TYPED_DATA);
 
     const unfollowRequest = {
@@ -32,7 +32,7 @@ function Follow({ profileId }) {
             const typedData = createUnfollowTypedData.data.createUnfollowTypedData.typedData;
             const { domain, types, value } = typedData;
 
-            const signature = await wallet.signer._signTypedData(
+            const signature = await signer._signTypedData(
                 omitDeep(domain, "__typename"),
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
@@ -44,7 +44,7 @@ function Follow({ profileId }) {
             const followNftContract = new ethers.Contract(
                 typedData.domain.verifyingContract,
                 LENS_FOLLOW_NFT_ABI,
-                wallet.signer
+                signer
             );
 
             const sig = {

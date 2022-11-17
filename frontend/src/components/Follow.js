@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
+import { useAccount, useSigner } from 'wagmi'
 import { CREATE_FOLLOW_TYPED_DATA, BROADCAST } from '../utils/queries'
 import omitDeep from 'omit-deep'
 import Button from './Button'
@@ -10,7 +11,9 @@ import { useWallet } from '../utils/wallet'
 
 // profile being the user being viewed, profileId the id of the user using the app
 function Follow({ profile = {}, profileId }) {
-    const { wallet, lensHub} = useWallet()
+    const { data: signer } = useSigner()
+    const { address } = useAccount()
+    const { lensHub} = useWallet()
     const [toastMsg, setToastMsg] = useState('')
     const [createFollowTyped, createFollowTypedData] = useMutation(CREATE_FOLLOW_TYPED_DATA, {
         onError(error){
@@ -74,7 +77,7 @@ function Follow({ profile = {}, profileId }) {
             const typedData = createFollowTypedData.data.createFollowTypedData.typedData;
             const { domain, types, value } = typedData;
 
-            const signature = await wallet.signer._signTypedData(
+            const signature = await signer._signTypedData(
                 omitDeep(domain, "__typename"),
                 omitDeep(types, "__typename"),
                 omitDeep(value, "__typename")
@@ -112,7 +115,7 @@ function Follow({ profile = {}, profileId }) {
 
                 const tx = await lensHub.followWithSig(
                     {
-                        follower: wallet.address,
+                        follower: address,
                         profileIds: savedTypedData.value.profileIds,
                         datas: savedTypedData.value.datas,
                         sig: {
