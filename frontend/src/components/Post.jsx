@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import { useSigner } from 'wagmi'
 import reactStringReplace from 'react-string-replace'
+import { Player } from '@livepeer/react'
 import Card from '../components/Card'
 import { UserIcon } from '../components/Wallet'
 import Comment from './Comment'
@@ -336,7 +337,10 @@ function Post({ profileId, isCommunityPost, ...props }) {
                         <source src={`https://ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" />
 
                     </video> : <p></p>} */}
-                    {post.metadata.media.length ? <MediaContainer onClick={(e) => e.stopPropagation()}>
+                    {post?.metadata?.media?.length && post?.metadata?.media[0]?.original?.mimeType == 'video/mp4' ? <Player src={`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" autoPlay muted autoUrlUpload /> : <p></p>}
+                    {post.metadata.media.length && (post.metadata.media[0]?.original.mimeType == 'image/jpeg' || post.metadata.media[0]?.original.mimeType == 'image/png') ? 
+                    <MediaContainer onClick={(e) => e.stopPropagation()}>
+                    {/* {post.metadata.media.length ? <MediaContainer onClick={(e) => e.stopPropagation()}> */}
                         {
                             post.metadata.media.map((media) => {
                                 if(media.original.mimeType.includes('image')) {
