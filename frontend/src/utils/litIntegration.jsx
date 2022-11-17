@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid'
-import LitJsSdk from 'lit-js-sdk'
 import { CHAIN } from '../utils/constants'
 import { client } from './infuraClient'
 
@@ -55,54 +54,54 @@ const getAccessControlConditions = async (params) => {
 
 }
 
-const getEncodedMetadata = async (params) => {
-    const {description, profileId, profileName, selectedVisibility, replyTo} = params
+// const getEncodedMetadata = async (params) => {
+//     const {description, profileId, profileName, selectedVisibility, replyTo} = params
     
-    const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
-        description
-    );
+//     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
+//         description
+//     );
 
-    const authSig = JSON.parse(window.sessionStorage.getItem('signature'))
+//     const authSig = JSON.parse(window.sessionStorage.getItem('signature'))
 
-    const accessControlConditions = await getAccessControlConditions(params)
+//     const accessControlConditions = await getAccessControlConditions(params)
 
-    const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
-        accessControlConditions,
-        symmetricKey,
-        authSig,
-        chain: CHAIN,
-    });
+//     const encryptedSymmetricKey = await window.litNodeClient.saveEncryptionKey({
+//         accessControlConditions,
+//         symmetricKey,
+//         authSig,
+//         chain: CHAIN,
+//     });
 
-    const ipfsResult = await client.add(encryptedString)
+//     const ipfsResult = await client.add(encryptedString)
     
-    const encryptedPost = {
-        key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
-        blobPath: ipfsResult.path,
-        accessControlConditions
-    }
+//     const encryptedPost = {
+//         key: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+//         blobPath: ipfsResult.path,
+//         accessControlConditions
+//     }
 
-    const attributes = [];
-    const metadata = {
-        name: `encoded post by ${profileName}`,
-        description: `This post is encoded. View it on https://irisapp.xyz`,
-        content: `This post is encoded. View it on https://irisapp.xyz`,
-        external_url: `https://irisapp.xyz`,
-        image: null,
-        imageMimeType: null,
-        version: "1.0.0",
-        appId: 'iris exclusive',
-        attributes,
-        media: [],
-        metadata_id: uuidv4(),
-    }
+//     const attributes = [];
+//     const metadata = {
+//         name: `encoded post by ${profileName}`,
+//         description: `This post is encoded. View it on https://irisapp.xyz`,
+//         content: `This post is encoded. View it on https://irisapp.xyz`,
+//         external_url: `https://irisapp.xyz`,
+//         image: null,
+//         imageMimeType: null,
+//         version: "1.0.0",
+//         appId: 'iris exclusive',
+//         attributes,
+//         media: [],
+//         metadata_id: uuidv4(),
+//     }
 
-    attributes.push({
-        traitType: 'Encoded Post Data',
-        value: `${JSON.stringify(encryptedPost)}`,
-    })
+//     attributes.push({
+//         traitType: 'Encoded Post Data',
+//         value: `${JSON.stringify(encryptedPost)}`,
+//     })
 
-    return metadata
-}
+//     return metadata
+// }
 
 export const handleCompose = async (params) => {
     const {description, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData} = params
@@ -111,9 +110,9 @@ export const handleCompose = async (params) => {
     let ipfsResult;
     let metadata;
 
-    if(selectedVisibility !== 'public') {
-        metadata = await getEncodedMetadata(params)
-    } else {
+    // if(selectedVisibility !== 'public') {
+    //     metadata = await getEncodedMetadata(params)
+    // } else {
         metadata = {
             name: `post by ${profileName}`,
             description,
@@ -127,7 +126,7 @@ export const handleCompose = async (params) => {
             media: [],
             metadata_id: uuidv4(),
         }
-    }
+    // }
 
     // For Only Text Post
     ipfsResult = await client.add(JSON.stringify(metadata))

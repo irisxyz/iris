@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
-import LitJsSdk from 'lit-js-sdk'
 import moment from 'moment'
 import { useSigner } from 'wagmi'
 import reactStringReplace from 'react-string-replace'
@@ -18,7 +17,6 @@ import Retweet from '../assets/Retweet'
 import { CHAIN } from '../utils/constants'
 import { random } from '../utils'
 import { client } from '../utils/infuraClient'
-require('dotenv').config()
 
 const NameLink = styled(Link)`
     display: flex;
@@ -279,9 +277,9 @@ function Post({ profileId, isCommunityPost, ...props }) {
                         authSig,
                     });
     
-                    const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
+                    // const decryptedString = await LitJsSdk.decryptString(newEcnrypt, key);
     
-                    setDecryptedMsg(decryptedString);
+                    // setDecryptedMsg(decryptedString);
                 })();
             }
 
