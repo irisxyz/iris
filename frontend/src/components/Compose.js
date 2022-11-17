@@ -275,11 +275,11 @@ const Compose = ({
                 }
                 <Actions>
                     <InputWrapper>
-                        <div class="file-input">
-                            <FileInput type="file" id="fileVideo" accept={videoFileTypes.join(',')} class="file" onClick={(e) => e.target.value = ''} onChange={(e) => setSelectedFile(e.target.files[0])}/>
-                            <CustomLabel for="fileVideo"><Filmstrip/></CustomLabel>
-                            <FileInput type="file" id="fileImage" accept={imageFileTypes.join(',')} class="file" onClick={(e) => e.target.value = ''} onChange={(e) => setSelectedFile(e.target.files[0])} />
-                            <CustomLabel for="fileImage"><ImageIcon/></CustomLabel>
+                        <div className="file-input">
+                            <FileInput type="file" id="fileVideo" accept={videoFileTypes.join(',')} className="file" onClick={(e) => e.target.value = ''} onChange={(e) => setSelectedFile(e.target.files[0])}/>
+                            <CustomLabel htmlFor="fileVideo"><Filmstrip/></CustomLabel>
+                            <FileInput type="file" id="fileImage" accept={imageFileTypes.join(',')} className="file" onClick={(e) => e.target.value = ''} onChange={(e) => setSelectedFile(e.target.files[0])} />
+                            <CustomLabel htmlFor="fileImage"><ImageIcon/></CustomLabel>
                         </div>
                     </InputWrapper>
                     {CHAIN === 'mumbai' && <VisibilitySelector
