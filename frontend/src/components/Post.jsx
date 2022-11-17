@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { Link, useNavigate } from 'react-router-dom'
 import moment from 'moment'
@@ -333,20 +333,20 @@ function Post({ profileId, isCommunityPost, ...props }) {
                     <div>
                         {post.appId === "iris exclusive" ? <>{decryptedMsg ? decryptedMsg : <code>{exclusiveDescription(postType)}</code>}</> : <PostBody>{post.metadata.content}</PostBody>}
                     </div>
-                    {post?.metadata?.media?.length && post?.metadata?.media[0]?.original?.mimeType === 'video/mp4' ? <Player src={`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" autoPlay muted autoUrlUpload /> : <p></p>}
+                    {post?.metadata?.media?.length && post?.metadata?.media[0]?.original?.mimeType === 'video/mp4' ? <Player src={`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`} type="video/mp4" autoPlay muted /> : <p></p>}
                     {post.metadata.media.length && (post.metadata.media[0]?.original.mimeType === 'image/jpeg' || post.metadata.media[0]?.original.mimeType === 'image/png') ? 
                     <MediaContainer onClick={(e) => e.stopPropagation()}>
                         {
                             post.metadata.media.map((media) => {
                                 if(media.original.mimeType.includes('image')) {
                                     return <StyledImage
-                                        key={media.original?.url}
-                                        src={media.original?.url}
+                                        key={`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`}
+                                        src={`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`}
                                         alt={post.metadata.content}
-                                        onClick={() => handleImageClick(media.original?.url)}
+                                        onClick={() => handleImageClick(`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`)}
                                     />
                                 }
-                                return <p key={media.original?.url}>Video</p>
+                                return <p key={`https://lens.infura-ipfs.io/ipfs/${post.metadata.media[0]?.original?.url.replace("ipfs://", "")}`}>Video</p>
                             })
                         }
                     </MediaContainer> : ''}

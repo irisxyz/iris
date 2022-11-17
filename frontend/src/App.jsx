@@ -126,7 +126,7 @@ function App() {
     const { chains, provider } = configureChains(
         import.meta.env.VITE_CHAIN === 'mumbai' ? [chain.polygonMumbai] : [chain.polygon],
         [
-            alchemyProvider({ apiKey: import.meta.env.ALCHEMY_ID }),
+            alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_ID }),
             publicProvider()
         ]
     );

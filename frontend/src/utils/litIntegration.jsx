@@ -104,7 +104,7 @@ const getAccessControlConditions = async (params) => {
 // }
 
 export const handleCompose = async (params) => {
-    const {description, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData} = params
+    const {description, profileId, profileName, selectedVisibility, replyTo, videoIPFSData, mutateCommentTypedData, mutatePostTypedData} = params
     if (!description) return;
 
     let ipfsResult;
@@ -113,18 +113,42 @@ export const handleCompose = async (params) => {
     // if(selectedVisibility !== 'public') {
     //     metadata = await getEncodedMetadata(params)
     // } else {
-        metadata = {
-            name: `post by ${profileName}`,
-            description,
-            content: description,
-            external_url: null,
-            image: null,
-            imageMimeType: null,
-            version: "1.0.0",
-            appId: 'iris',
-            attributes: [],
-            media: [],
-            metadata_id: uuidv4(),
+        if (videoIPFSData) {
+            // ipfs.cid: bafybeihv5ahbgd2awcpmdzmonow4jx7d5okljxcrgu4mhbzmhudb7gugcq
+            // ipfs.nftMetadata.cid: bafkreibgs2wbczztbojot6ynyjhbv6hp6moiyf5laxegshfbevcm3pvm6a
+            console.log("posting video")
+            console.log(videoIPFSData)
+            metadata = {
+                name: `post by ${profileName}`,
+                description,
+                content: description,
+                external_url: null,
+                image: null,
+                imageMimeType: null,
+                animation_url: `ipfs://${videoIPFSData.cid}`,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [{
+                    item: `ipfs://${videoIPFSData.cid}`,
+                    type: "video/mp4"
+                }],
+                metadata_id: uuidv4(),
+            }
+        } else {
+            metadata = {
+                name: `post by ${profileName}`,
+                description,
+                content: description,
+                external_url: null,
+                image: null,
+                imageMimeType: null,
+                version: "1.0.0",
+                appId: 'iris',
+                attributes: [],
+                media: [],
+                metadata_id: uuidv4(),
+            }
         }
     // }
 

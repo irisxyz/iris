@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
 import omitDeep from 'omit-deep'
+import { useAsset, useCreateAsset, useUpdateAsset } from '@livepeer/react';
 
 import Button from './Button'
 import Card from './Card'
@@ -125,46 +126,70 @@ const Compose = ({
     // Uploading Video
     const [videoUploading, setVideoUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
-    const [video, setVideo] = useState("")
-    const [videoNftMetadata, setVideoNftMetadata] = useState({})
+    const [videoIPFSData, setVideoIPFSData] = useState({});
+    const { mutate: createAsset, data: createdAsset, uploadProgress, status: createStatus } = useCreateAsset();
+    const { data: asset, status: assetStatus } = useAsset({
+        assetId: createdAsset?.id,
+        refetchIntervalStatus: (asset) =>
+            asset?.status?.phase !== 'ready' ? 5000 : false,
+        refetchInterval: (asset) =>
+            asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
+    });
+    const { mutate: updateAsset, status, error } = useUpdateAsset();
 
-    const videoUpload = async () => {
-        setVideoUploading(true)
-        const formData = new FormData();
-        console.log(selectedFile)
-        formData.append(
-            "fileName",
-            selectedFile,
-            selectedFile.name
-        );
+    // we check here for either creating the asset, or polling for the asset
+    // until the video is in the ready phase and can be consumed
+    const isLoading = useMemo(
+        () =>
+        createStatus === 'loading' ||
+        assetStatus === 'loading' ||
+        (asset && asset?.status?.phase !== 'ready'),
+        [createStatus, asset, assetStatus],
+    );
 
-        const response = await fetch('https://irisxyz.herokuapp.com/upload', { method: "POST", body: formData, mode: "cors" });
-        const data = await response.json();
+    useEffect(() => {
+        const videoUpload = async () => {
+            if (!selectedFile) { return }
 
-        console.log(data);
+            console.log(selectedFile)
+            setVideoUploading(true)
+            console.log("Creating asset")
+            createAsset({
+                name: selectedFile.name,
+                file: selectedFile,
+            });
+        }
 
-        // console.log("The nftmetadataURL ", data["nftMetadataGatewayUrl"])
+        videoUpload()
+    }, [selectedFile])
 
-        // Get metadata from livepeer
-        const responseVidNftMetadata = await fetch(data["nftMetadataGatewayUrl"], { method: "GET" });
-        const vidNftData = await responseVidNftMetadata.json();
+    useEffect(() => {
+        const exportToIPFS = async () => {
+            console.log("Export?")
+            if (asset?.status?.phase !== 'ready') { return }
+            console.log("Exporting to IPFS")
+            updateAsset({
+                assetId: asset.id,
+                storage: { ipfs: true },
+            });
+        }
 
-        setVideoNftMetadata(vidNftData)
-        console.log("VideoNFTMetaData :", vidNftData)
+        exportToIPFS()
+    }, [asset?.status?.phase])
 
+    useEffect(() => {
+        if (asset?.storage?.status?.phase !== 'ready') { return }
+        console.log("Exported to IPFS!")
+        setVideoIPFSData(asset?.storage?.ipfs)
         setVideoUploading(false)
+        console.log(asset?.storage?.ipfs?.nftMetadata)
+        console.log("CID", asset?.storage?.ipfs?.cid)
+        console.log("URL", asset?.storage?.ipfs?.url)
 
-
-        // console.log(data);
-        // const ipfs = await fetch(`https://ipfs.io/${data.data.replace(":", "")}`);
-        // const nftMetadata = await ipfs.json()
-        // console.log(nftMetadata);
-        // setVideo(`https://ipfs.io/${nftMetadata.properties.video.replace(":", "")}`)
-
-    }
+    }, [asset?.storage?.status?.phase])
 
     const handleSubmit = async () => {
-        await handleCompose({description, lensHub, profileId, profileName, selectedVisibility, replyTo, mutateCommentTypedData, mutatePostTypedData})
+        await handleCompose({description, lensHub, wallet, profileId, profileName, selectedVisibility, replyTo, videoIPFSData, mutateCommentTypedData, mutatePostTypedData})
     }
 
     useEffect(() => {
@@ -227,6 +252,7 @@ const Compose = ({
                 await pollUntilIndexed(tx.hash)
                 setShowModal(false)
                 setDescription('')
+                setSelectedFile('')
                 setToastMsg({type: 'success', msg: 'Transaction indexed'})
                 return;
             }
@@ -237,6 +263,7 @@ const Compose = ({
             await pollUntilIndexed(txHash)
             setShowModal(false)
             setDescription('')
+            setSelectedFile('')
             setToastMsg({type: 'success', msg: 'Transaction indexed'})
         }
         processBroadcast()

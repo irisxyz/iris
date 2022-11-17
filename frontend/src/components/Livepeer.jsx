@@ -6,7 +6,7 @@ import {
 
 export const client = createReactClient({
     provider: studioProvider({ 
-        apiKey: process.env.REACT_APP_LIVEPEER_API_KEY 
+        apiKey: import.meta.env.VITE_LIVEPEER_API_KEY
     }),
 });
 
