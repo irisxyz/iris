@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/client'
 import { utils } from 'ethers'
@@ -153,16 +153,6 @@ const Compose = ({
         assetId: asset?.id,
         storage: { ipfs: true },
     });
-
-    // we check here for either creating the asset, or polling for the asset
-    // until the video is in the ready phase and can be consumed
-    const isLoading = useMemo(
-        () =>
-        createStatus === 'loading' ||
-        assetStatus === 'loading' ||
-        (asset && asset?.status?.phase !== 'ready'),
-        [createStatus, asset, assetStatus],
-    );
 
     useEffect(() => {
         const videoUpload = async () => {
