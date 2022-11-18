@@ -144,7 +144,7 @@ const Compose = ({
     );
     const { data: asset, status: assetStatus } = useAsset({
         assetId: createdAsset?.id,
-        refetchIntervalStatus: (asset) =>
+        refetchInterval: (asset) =>
             asset?.status?.phase !== 'ready' ? 5000 : false,
         refetchInterval: (asset) =>
             asset?.storage?.status?.phase !== 'ready' ? 5000 : false,
